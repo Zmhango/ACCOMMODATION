@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/tenant_head")%>
+  <body>
+    <%- include("./partials/admin_header")%> <%-
+    include("./partials/progress-bar") %>
+    <!-- Main content area -->
+    <main class="container">
+      <section class="search-section">
+        <!-- Search bar and options -->
+        <form class="search-form">
+          <input type="text" placeholder="Search for hostels..." />
+          <!-- Additional search filters/buttons if needed -->
+          <button type="submit">Search</button>
+        </form>
+      </section>
+
+      <section class="booking-section">
+        <!-- Display booked hostels or bookings history -->
+        <!-- Example: Cards displaying booked hostels -->
+        <div class="card">
+          <img src="/images/M1.jpg" alt="Hostel Image" />
+          <div class="card-info">
+            <h2>Hostel Name</h2>
+            <p>Booking Date: DD/MM/YYYY</p>
+            <p>Status: Confirmed</p>
+          </div>
+        </div>
+        <!-- More booking cards or booking history -->
+      </section>
+
+      <!-- Additional sections: Profile, Feedback, etc. -->
+    </main>
+
+    <%- include("./partials/footer")%>
+  </body>
+</html>

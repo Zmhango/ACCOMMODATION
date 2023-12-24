@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head") %>
+  <body>
+    <!-- Header -->
+    <%- include("./partials/header")%> <%- include("./partials/progress-bar") %>
+    <section class="register-page">
+      <!-- Your HTML content -->
+
+      <form action="/register" method="POST" id="registerForm">
+        <h1 class="user-login">Sign Up</h1>
+        <br />
+        <label for="username" class="label">Username</label><br />
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          size="50"
+          class="input"
+          required
+          autocomplete="username"
+        /><br />
+        <label for="email" class="label">Email</label><br />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Zondiwe@gmail.com"
+          size="50"
+          class="input"
+          required
+          autocomplete="email"
+        /><br />
+
+        <label for="password" class="label">Password</label><br />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          size="50"
+          class="input"
+          required
+          autocomplete="password"
+        /><br />
+        <p id="errorMessage" hidden></p>
+
+        <button type="submit" id="submit" class="button">Sign Up</button>
+        <p>Already Have An Account? <a class="renew" href="/login">Login</a></p>
+      </form>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("registerForm");
+          const username = document.getElementById("username");
+          const password = document.getElementById("password");
+          const errorMessage = document.getElementById("errorMessage");
+
+          form.addEventListener("submit", async (e) => {
+            const errors = [];
+
+            if (username.value.trim() === "") {
+              errors.push("Username Required!");
+            }
+
+            if (username.value.length < 4) {
+              errors.push("Username Can't be less than 4 Characters");
+            }
+
+            if (password.value.length < 4) {
+              errors.push("Password must be at least 4 characters");
+            }
+
+            if (errors.length > 0) {
+              errorMessage.textContent = errors.join(", ");
+              errorMessage.removeAttribute("hidden");
+              e.preventDefault(); // Prevent form submission if there are errors
+            } else {
+              errorMessage.setAttribute("hidden", true);
+              // Proceed with form submission
+              submitForm();
+            }
+          });
+
+          // Function to submit the form
+          function submitForm() {
+            const formData = new FormData(form);
+            fetch("/register", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Error submitting form");
+                }
+                // Handle success if needed
+              })
+              .catch((error) => {
+                console.error("Form submission error:", error);
+              });
+          }
+        });
+      </script>
+    </section>
+    <%- include("./partials/footer") %>
+  </body>
+</html>

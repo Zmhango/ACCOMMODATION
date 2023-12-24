@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head") %>
+  <body>
+    <!-- Header -->
+    <%- include("./partials/header")%> <%- include("./partials/progress-bar") %>
+    <section class="register-page">
+      <form action="/login" method="POST" id="loginForm">
+        <h1 class="user-login">User Login</h1>
+        <br />
+        <label for="username" class="label">Username</label><br />
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          size="50"
+          class="input"
+          required
+        /><br />
+        <label for="password" class="label">Password</label><br />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          size="50"
+          class="input"
+          required
+        /><br />
+        <p id="errorMessage" hidden></p>
+        <button type="submit" id="submit" class="button">LOGIN</button>
+        <p>
+          Not Registered?
+          <a class="create" href="/register">Create an Account</a>
+        </p>
+      </form>
+    </section>
+
+    <%- include("./partials/footer") %>
+    <script src="/js/index.js"></script>
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevent the default form submission
+
+          const form = event.target;
+          const username = form.elements.username.value;
+          const password = form.elements.password.value;
+
+          // Make a POST request to the login route
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }), // Send username and password as JSON
+          });
+
+          const result = await response.json(); // Parse the response as JSON
+
+          if (response.status === 401) {
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = result.message; // Display the error message
+            errorMessage.hidden = false; // Show the error message
+          } else if (response.status === 200) {
+            window.location.href = result.redirect; // Redirect to the appropriate page
+          }
+        });
+    </script>
+  </body>
+</html>

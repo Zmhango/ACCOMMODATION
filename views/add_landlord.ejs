@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/admin_head") %>
+  <body>
+    <!-- Header -->
+    <%- include("./partials/admin_header")%> <%-
+    include("./partials/progress-bar") %>
+    <section class="register-page">
+      <!-- Your HTML content -->
+
+      <form action="/add_landlord" method="POST" id="registerForm">
+        <h1 class="user-login">Sign Up</h1>
+        <br />
+        <label for="username" class="label">Username</label><br />
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          size="50"
+          class="input"
+          required
+          autocomplete="username"
+        /><br />
+        <label for="email" class="label">Email</label><br />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Zondiwe@gmail.com"
+          size="50"
+          class="input"
+          required
+          autocomplete="email"
+        /><br />
+
+        <label for="password" class="label">Password</label><br />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          size="50"
+          class="input"
+          required
+          autocomplete="password"
+        /><br />
+        <p id="errorMessage" hidden></p>
+        <div>
+          <label for="role">Role:</label>
+          <select id="role" name="role">
+            <option value="landlord">Landlord</option>
+            <option value="tenant">Tenant</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submit" class="button">Sign Up</button>
+      </form>
+      <script src="/js/index.js"></script>
+    </section>
+    <%- include("./partials/footer") %>
+  </body>
+</html>

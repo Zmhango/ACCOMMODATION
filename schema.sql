@@ -12,13 +12,13 @@ CREATE TABLE users (
 
 CREATE TABLE tenants (
     tenant_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    userId INT NOT NULL,
     fname VARCHAR(50),
     lname VARCHAR(50),
     gender VARCHAR(10),
     phone VARCHAR(20),
     university VARCHAR(100),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 -- LANDLORDS TABLE --

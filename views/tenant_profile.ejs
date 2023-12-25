@@ -1,129 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include("./partials/head") %>
-
-    <style>
-      /* General styles */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      main {
-        padding: 20px;
-      }
-
-      .profile {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-
-      form div {
-        margin-bottom: 1rem;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 5px;
-      }
-
-      input[type="text"],
-      input[type="file"] {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-
-      button[type="submit"] {
-        padding: 10px 20px;
-        background-color: #333333;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      /* Responsive styles */
-      @media (max-width: 768px) {
-        .profile {
-          width: 90%;
-        }
-      }
-
-      /* Additional styles for profile pic */
-      .profile-pic {
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      .rounded-pic {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        object-fit: cover;
-      }
-    </style>
-  </head>
+  <%- include("./partials/tenant_head") %>
   <body>
-    <%- include("./partials/tenant_header") %> <%-
+    <%- include("./partials/tenant_header") %> <%
     include("./partials/progress-bar") %>
-
-    <!-- Main Content -->
-    <main class="container">
-      <div class="profile">
-        <div class="profile-pic">
-          <img
-            src="/images/profile.jpeg"
-            alt="Profile Picture"
-            class="rounded-pic"
-          />
-        </div>
-        <div
-          style="text-align: center; font-size: xx-large; font-weight: bolder"
-          class="username"
-        >
-          <% if (username) { %> Username: <%= username %> <% } %>
-        </div>
-        <h1 style="text-align: center">User Profile</h1>
-        <form
-          action="tenant/tenant_profile"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          <div>
-            <label for="fname">First Name</label>
-            <input type="text" id="fname" name="fname" required />
-          </div>
-          <div>
-            <label for="lname">Last Name</label>
-            <input type="text" id="lname" name="lname" required />
-          </div>
-          <div>
-            <label for="gender">Gender</label>
-            <input type="text" id="gender" name="gender" />
-          </div>
-          <div>
-            <label for="phone">Phone</label>
-            <input type="text" id="phone" name="phone" />
-          </div>
-          <div>
-            <label for="university">University</label>
-            <input type="text" id="university" name="university" />
-          </div>
-          <button type="submit">Update Profile</button>
-        </form>
+    <h1>Tenant Profile</h1>
+    <form action="/tenant/tenant_profile" method="POST">
+      <div>
+        <label for="fname">First Name</label>
+        <input
+          type="text"
+          id="fname"
+          name="fname"
+          value="<%= profile ? profile.fname : '' %>"
+        />
       </div>
-    </main>
-
+      <div>
+        <label for="lname">Last Name</label>
+        <input
+          type="text"
+          id="lname"
+          name="lname"
+          value="<%= profile ? profile.lname : '' %>"
+        />
+      </div>
+      <div>
+        <label for="gender">Gender</label>
+        <input
+          type="text"
+          id="gender"
+          name="gender"
+          value="<%= profile ? profile.gender : '' %>"
+        />
+      </div>
+      <div>
+        <label for="phone">Phone</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value="<%= profile ? profile.phone : '' %>"
+        />
+      </div>
+      <div>
+        <label for="university">University</label>
+        <input
+          type="text"
+          id="university"
+          name="university"
+          value="<%= profile ? profile.university : '' %>"
+        />
+      </div>
+      <button type="submit">Update Profile</button>
+    </form>
     <%- include("./partials/footer") %>
   </body>
 </html>

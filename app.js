@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const pool = require("./db");
 const crypto = require("crypto");
+const { body, validationResult } = require("express-validator");
 
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
@@ -146,60 +147,75 @@ app.get("/admin/add_landlord", (req, res) => {
   res.render("add_landlord");
 });
 
-
-app.get('/tenant/tenant_profile', async (req, res) => {
+app.get("/tenant/tenant_profile", async (req, res) => {
   try {
     const userId = req.session.userId;
 
     // Fetch the user's profile data from the tenants table
     const [profileData] = await pool.execute(
-      'SELECT * FROM tenants WHERE userId = ?',
+      "SELECT * FROM tenants WHERE userId = ?",
       [userId]
     );
 
     // Render the tenant_profile view and pass the profile data to pre-fill the form
-    res.render('tenant_profile', { profile: profileData[0] });
+    res.render("tenant_profile", { profile: profileData[0] });
   } catch (error) {
-    console.error('Error fetching tenant profile:', error);
-    res.status(500).send('Error fetching tenant profile');
+    console.error("Error fetching tenant profile:", error);
+    res.status(500).send("Error fetching tenant profile");
   }
 });
 
+app.post(
+  "/tenant/tenant_profile",
+  [
+    // Validation and sanitization for form fields
+    body("fname").trim().escape(),
+    body("lname").trim().escape(),
+    body("gender").trim().escape(),
+    body("phone").trim().escape(),
+    body("university").trim().escape(),
+  ],
+  async (req, res) => {
+    try {
+      // Handle validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-app.post('/tenant/tenant_profile', async (req, res) => {
-  try {
-    const { fname, lname, gender, phone, university } = req.body;
-    const userId = req.session.userId;
+      const { fname, lname, gender, phone, university } = req.body;
+      const userId = req.session.userId;
 
-    // Check if the user's profile already exists in the tenants table
-    const [existingProfile] = await pool.execute(
-      'SELECT * FROM tenants WHERE userId = ?',
-      [userId]
-    );
-
-    if (existingProfile.length === 0) {
-      // If the profile doesn't exist, insert a new one
-      await pool.execute(
-        'INSERT INTO tenants (userId, fname, lname, gender, phone, university) VALUES (?, ?, ?, ?, ?, ?)',
-        [userId, fname, lname, gender, phone, university]
+      // Check if the user's profile already exists in the tenants table
+      const [existingProfile] = await pool.execute(
+        "SELECT * FROM tenants WHERE userId = ?",
+        [userId]
       );
-    } else {
-      // If the profile exists, update the existing profile
-      await pool.execute(
-        'UPDATE tenants SET fname = ?, lname = ?, gender = ?, phone = ?, university = ? WHERE userId = ?',
-        [fname, lname, gender, phone, university, userId]
-      );
+
+      if (existingProfile.length === 0) {
+        // If the profile doesn't exist, insert a new one
+        await pool.execute(
+          "INSERT INTO tenants (userId, fname, lname, gender, phone, university) VALUES (?, ?, ?, ?, ?, ?)",
+          [userId, fname, lname, gender, phone, university]
+        );
+      } else {
+        // If the profile exists, update the existing profile
+        await pool.execute(
+          "UPDATE tenants SET fname = ?, lname = ?, gender = ?, phone = ?, university = ? WHERE userId = ?",
+          [fname, lname, gender, phone, university, userId]
+        );
+      }
+
+      // Return success message upon successful profile update/insert
+      res.redirect('/tenant/tenant_profile');
+    } catch (error) {
+      console.error("Error updating/inserting tenant profile:", error);
+      res
+        .status(500)
+        .send("Error updating/inserting tenant profile. Please try again.");
     }
-
-    res.status(200).send('Tenant profile updated successfully');
-  } catch (error) {
-    console.error('Error updating tenant profile:', error);
-    res.status(500).send('Error updating tenant profile');
   }
-});
-
-
-
+);
 
 // Adding Landlord in database
 app.post("/add_landlord", async (req, res) => {

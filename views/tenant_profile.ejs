@@ -5,6 +5,12 @@
     <%- include("./partials/tenant_header") %> <%
     include("./partials/progress-bar") %>
     <h1>Tenant Profile</h1>
+    <div
+      style="text-align: center; font-size: xx-large; font-weight: bolder"
+      class="username"
+    >
+      <% if (username) { %> Username: <%= username %> <% } %>
+    </div>
     <form action="/tenant/tenant_profile" method="POST">
       <div>
         <label for="fname">First Name</label>

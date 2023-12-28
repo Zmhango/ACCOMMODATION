@@ -4,6 +4,9 @@
   <body>
     <%- include("./partials/tenant_header")%> <%-
     include("./partials/progress-bar") %>
+    <div class="notification" id="notification">
+      Congratulations! Successfully Logged In
+    </div>
     <!-- Main content area -->
     <main class="container">
       <section class="search-section">
@@ -31,7 +34,20 @@
 
       <!-- Additional sections: Profile, Feedback, etc. -->
     </main>
+    <script>
+      // jQuery to show the notification and then hide it after 3 seconds
+      $(document).ready(function () {
+        var notification = $("#notification");
 
+        // Show the notification
+        notification.addClass("show-notification");
+
+        // Hide the notification after 3 seconds
+        setTimeout(function () {
+          notification.removeClass("show-notification");
+        }, 3000); // 3000 milliseconds = 3 seconds
+      });
+    </script>
     <%- include("./partials/footer")%>
   </body>
 </html>

@@ -150,6 +150,7 @@ app.get("/admin/add_landlord", (req, res) => {
 app.get("/tenant/tenant_profile", async (req, res) => {
   try {
     const userId = req.session.userId;
+    const username = req.session.username; // Assuming username is available in the session
 
     // Fetch the user's profile data from the tenants table
     const [profileData] = await pool.execute(
@@ -157,13 +158,14 @@ app.get("/tenant/tenant_profile", async (req, res) => {
       [userId]
     );
 
-    // Render the tenant_profile view and pass the profile data to pre-fill the form
-    res.render("tenant_profile", { profile: profileData[0] });
+    // Render the tenant_profile view and pass the profile and username data
+    res.render("tenant_profile", { profile: profileData[0], username });
   } catch (error) {
     console.error("Error fetching tenant profile:", error);
     res.status(500).send("Error fetching tenant profile");
   }
 });
+
 
 app.post(
   "/tenant/tenant_profile",
@@ -207,7 +209,7 @@ app.post(
       }
 
       // Return success message upon successful profile update/insert
-      res.redirect('/tenant/tenant_profile');
+      res.redirect("/tenant/tenant_profile");
     } catch (error) {
       console.error("Error updating/inserting tenant profile:", error);
       res
@@ -221,7 +223,6 @@ app.post(
 app.post("/add_landlord", async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
-    console.log(req.body);
 
     const hashedPassword = await hashPassword(password);
 

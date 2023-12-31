@@ -267,3 +267,42 @@ footer {
 .show-notification {
   left: 0; /* Slide into view */
 }
+
+
+/* Additional form styles */
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+h1,
+h2 {
+  margin-bottom: 10px;
+}
+
+.delete-form {
+  margin-bottom: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.user-info span {
+  flex: 1;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

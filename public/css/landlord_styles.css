@@ -252,3 +252,22 @@ footer {
   width: 0; /* Initially, the progress bar is empty */
   transition: width 0.2s ease-out; /* Animation for the progress bar */
 }
+
+/* Styles for the sliding notification */
+.notification {
+  position: fixed;
+  left: -100%; /* Initially off-screen */
+  top: 0;
+  width: 40%; /* Adjust width as needed */
+  height: auto; /* Adjust height as needed */
+  background-color: green;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  transition: left 0.5s ease; /* Animation duration and easing */
+}
+
+.show-notification {
+  left: 0; /* Slide into view */
+}

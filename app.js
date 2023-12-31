@@ -139,6 +139,75 @@ app.get("/landlord", (req, res) => {
   res.render("landlord");
 });
 
+app.get("/landlord/landlord_profile", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const username = req.session.username; // Assuming username is available in the session
+
+    // Fetch the user's profile data from the landlords table
+    const [profileData] = await pool.execute(
+      "SELECT * FROM landlords WHERE userId = ?",
+      [userId]
+    );
+
+    // Render the tenant_profile view and pass the profile and username data
+    res.render("landlord_profile", { profile: profileData[0], username });
+  } catch (error) {
+    console.error("Error fetching landlord profile:", error);
+    res.status(500).send("Error fetching landlord profile");
+  }
+});
+
+app.post(
+  "/landlord/landlord_profile",
+  [
+    // Validation and sanitization for form fields
+    body("fname").trim().escape(),
+    body("lname").trim().escape(),
+    body("phone").trim().escape(),
+  ],
+  async (req, res) => {
+    try {
+      // Handle validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { fname, lname, phone } = req.body;
+      const userId = req.session.userId;
+
+      // Check if the user's profile already exists in the landlords table
+      const [existingProfile] = await pool.execute(
+        "SELECT * FROM landlords WHERE userId = ?",
+        [userId]
+      );
+
+      if (existingProfile.length === 0) {
+        // If the profile doesn't exist, insert a new one
+        await pool.execute(
+          "INSERT INTO landlords (userId, fname, lname, phone) VALUES (?, ?, ?, ?)",
+          [userId, fname, lname, phone]
+        );
+      } else {
+        // If the profile exists, update the existing profile
+        await pool.execute(
+          "UPDATE landlords SET fname = ?, lname = ?, phone = ? WHERE userId = ?",
+          [fname, lname, phone, userId]
+        );
+      }
+
+      // Return success message upon successful profile update/insert
+      res.redirect("/landlord/landlord_profile");
+    } catch (error) {
+      console.error("Error updating/inserting landlord profile:", error);
+      res
+        .status(500)
+        .send("Error updating/inserting landlord profile. Please try again.");
+    }
+  }
+);
+
 app.get("/admin", (req, res) => {
   res.render("admin");
 });
@@ -165,7 +234,6 @@ app.get("/tenant/tenant_profile", async (req, res) => {
     res.status(500).send("Error fetching tenant profile");
   }
 });
-
 
 app.post(
   "/tenant/tenant_profile",
@@ -245,6 +313,45 @@ app.post("/add_landlord", async (req, res) => {
   }
 });
 
+// Delete User
+
+app.get("/admin/delete_user", async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const [users] = await pool.query("SELECT * FROM users");
+
+    // Separate users by role (landlords and tenants)
+    const landlords = users.filter((user) => user.role === "landlord");
+    const tenants = users.filter((user) => user.role === "tenant");
+
+    // Render the delete_users view and pass the users data
+    res.render("delete_user", { landlords, tenants }); // Pass landlords and tenants data to the template
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Error fetching users");
+  }
+});
+
+// Endpoint to handle user deletion
+app.post("/admin/delete_user", async (req, res) => {
+  try {
+    const userIdToDelete = req.body.userId;
+
+    // Check if the user ID exists
+    if (!userIdToDelete) {
+      return res.status(400).send("Invalid user ID");
+    }
+
+    // Delete the user from the database
+    await pool.query("DELETE FROM users WHERE userId = ?", [userIdToDelete]);
+
+    res.redirect("/admin/delete_user");
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).send("Error deleting user");
+  }
+});
+
 // Logout route
 
 app.get("/logout", (req, res) => {
@@ -255,7 +362,7 @@ app.get("/logout", (req, res) => {
       return res.status(500).send("Error logging out");
     }
     // Redirect to the login page or any other desired page after logout
-    res.redirect("/login");
+    res.redirect("/");
   });
 });
 

@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-      crossorigin="anonymous"
-    ></script>
     <style>
       /* Reset default margin and padding */
       * {
@@ -19,6 +14,7 @@
       body {
         font-size: 16px;
         line-height: 1.6;
+        font-family: Arial, sans-serif;
         background-color: #f7f7f7;
         color: #333;
         background-image: url("/images/b2.jpg");
@@ -102,7 +98,12 @@
       /* Main content styles */
       .container {
         width: 80%;
-        margin: 0 auto;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       }
 
       .search-section {
@@ -185,6 +186,10 @@
         background-color: #ddd;
       }
 
+      .active {
+        background-color: #347935;
+      }
+
       /* Media Queries */
       @media screen and (max-width: 600px) {
         ul.navbar {
@@ -261,140 +266,171 @@
         transition: width 0.2s ease-out; /* Animation for the progress bar */
       }
 
-      /* Additional styles for the tenant profile form */
-      .profile-form {
-        width: 80%; /* Adjust as needed */
-        margin: 0 auto;
-        padding: 20px; /* You can adjust the padding */
-        background-color: #fff; /* Adjust background color if needed */
-        border-radius: 10px; /* Rounded corners */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+      .show-notification {
+        left: 0; /* Slide into view */
       }
 
-      .profile-form label,
-      .profile-form input[type="text"] {
+      /* Form styles */
+      .add-hostel-form {
+        margin-top: 2rem;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .add-hostel-form h2 {
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        color: #333;
+      }
+
+      .add-hostel-form label {
         display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #555;
+      }
+
+      .add-hostel-form input[type="text"],
+      .add-hostel-form input[type="number"],
+      .add-hostel-form textarea,
+      .add-hostel-form select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
         margin-bottom: 1rem;
       }
 
-      .profile-form input[type="text"] {
-        width: calc(100% - 20px); /* Adjust width with padding */
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+      .add-hostel-form textarea {
+        min-height: 100px;
       }
 
-      .profile-form button[type="submit"] {
-        padding: 10px 20px;
-        background-color: green;
+      .add-hostel-form button {
+        padding: 0.7rem 1.5rem;
+        background-color: #178733;
         color: #fff;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        display: block;
-        width: 100%; /* Button width */
-        margin-top: 1rem; /* Adjust margin if needed */
+        transition: background-color 0.3s ease;
       }
 
-      /* Responsive styles for the tenant profile form */
-      @media (max-width: 768px) {
-        .profile-form {
-          width: 90%;
-        }
-      }
-      /* Responsive styles */
-      @media (max-width: 768px) {
-        .profile {
-          width: 90%;
-        }
+      .add-hostel-form button:hover {
+        background-color: #147026;
       }
 
-      /* Additional styles for profile pic */
-      .profile-pic {
-        margin-bottom: 20px;
-        text-align: center;
+      .input-group {
+        display: flex;
       }
 
-      .rounded-pic {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        object-fit: cover;
+      .input-group-addon {
+        padding: 0.5rem;
+
+        border-right: none;
+        border-radius: 5px 0 0 5px;
+      }
+
+      .input-group input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0 5px 5px 0;
       }
     </style>
   </head>
   <body>
-    <%- include("./partials/tenant_header") %> <%
+    <%- include("./partials/landlord_header")%> <%-
     include("./partials/progress-bar") %>
-    <div class="profile-pic">
-      <img
-        src="/images/profile.jpeg"
-        alt="Profile Picture"
-        class="rounded-pic"
-      />
-    </div>
-    <div
-      style="
-        text-align: center;
-        color: aliceblue;
-        font-size: xx-large;
-        font-weight: bolder;
-      "
-      class="username"
-    >
-      <% if (username) { %> Username: <%= username %> <% } %>
-    </div>
-    <h1 style="color: chartreuse; text-align: center">User Profile</h1>
-    <form action="/tenant/tenant_profile" method="POST" class="profile-form">
-      <div>
-        <label for="fname">First Name</label>
-        <input
-          type="text"
-          id="fname"
-          name="fname"
-          value="<%= profile ? profile.fname : '' %>"
-        />
-      </div>
-      <div>
-        <label for="lname">Last Name</label>
-        <input
-          type="text"
-          id="lname"
-          name="lname"
-          value="<%= profile ? profile.lname : '' %>"
-        />
-      </div>
-      <div>
-        <label for="gender">Gender</label>
-        <input
-          type="text"
-          id="gender"
-          name="gender"
-          value="<%= profile ? profile.gender : '' %>"
-        />
-      </div>
-      <div>
-        <label for="phone">Phone</label>
-        <input
-          type="text"
-          id="phone"
-          name="phone"
-          value="<%= profile ? profile.phone : '' %>"
-        />
-      </div>
-      <div>
-        <label for="university">University</label>
-        <input
-          type="text"
-          id="university"
-          name="university"
-          value="<%= profile ? profile.university : '' %>"
-        />
-      </div>
-      <button type="submit">Update Profile</button>
-    </form>
-    <%- include("./partials/footer") %>
+
+    <!-- Main content area -->
+    <main class="container">
+      <section class="search-section">
+        <!-- Improved form for adding hostels -->
+
+        <form
+          class="add-hostel-form"
+          method="POST"
+          action="/landlord/add_hostel"
+          enctype="multipart/form-data"
+        >
+          <h2 class="h2style">Add New Hostel</h2>
+          <label for="name">Hostel Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter hostel name"
+            required
+          />
+
+          <label for="location">Location:</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            placeholder="Hostel address e.g Chitawira"
+            required
+          />
+
+          <label for="price">Price per Month:</label>
+          <div class="input-group">
+            <span class="input-group-addon">MK</span>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              placeholder="Enter price"
+              required
+            />
+          </div>
+
+          <label for="availability">Availability:</label>
+          <select id="availability" name="availability" required>
+            <option value="Available">Available</option>
+            <option value="Booked">Not Available</option>
+          </select>
+
+          <label for="gender">Hostel Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="mixed">Mixed</option>
+            <option value="family">Family</option>
+          </select>
+
+          <label for="location">Contact:</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            placeholder="Phone"
+            required
+          />
+
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter hostel description"
+          ></textarea>
+
+          <label for="images">Hostel Image(s):</label>
+          <input
+            type="file"
+            id="images"
+            name="images"
+            accept="image/*"
+            multiple
+            required
+          />
+
+          <button type="submit">Add Hostel</button>
+        </form>
+      </section>
+    </main>
+
+    <%- include("./partials/footer")%>
   </body>
 </html>

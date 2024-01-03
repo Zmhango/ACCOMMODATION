@@ -34,6 +34,21 @@ app.use(
   })
 );
 
+// Multer configuration for handling file uploads (images)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads"); // Set your images directory
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
+
 // Loging in
 
 // ...
@@ -59,6 +74,7 @@ app.post("/login", async (req, res) => {
 
     req.session.userId = user.userId;
     req.session.username = user.username;
+    req.session.landlordId = user.landlordId;
 
     req.session.save((err) => {
       if (err) {
@@ -349,6 +365,60 @@ app.post("/admin/delete_user", async (req, res) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     res.status(500).send("Error deleting user");
+  }
+});
+
+app.get("/landlord/add_hostel", (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    console.error("User ID not found");
+    return res.status(403).send("Unauthorized");
+  }
+  res.render("add_hostel", { error: null });
+});
+
+// GET route to render the form
+app.get('/landlord/add_hostel', (req, res) => {
+  // Render your form here
+  res.render('add_hostel', { error: null });
+});
+
+// POST route to add the hostel to the database
+app.post('/landlord/add_hostel', upload.array('images', 5), async (req, res) => {
+  try {
+    const {
+      name,
+      location,
+      price,
+      availability,
+      gender,
+      phone,
+      description,
+    } = req.body;
+
+    // Assuming you have a userId in the session
+    const userId = req.session.userId;
+
+    // Add your validation and processing logic here
+
+    // Example SQL query to insert the hostel into the database
+    const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const [results, fields] = await pool.execute(insertQuery, [
+      userId,
+      name,
+      location,
+      price,
+      availability,
+      gender,
+      phone,
+      description,
+    ]);
+
+    res.redirect("/landlord/add_hostel")
+  } catch (error) {
+    console.error('An error occurred:', error);
+    return res.status(500).send('Server error');
   }
 });
 

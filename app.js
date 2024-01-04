@@ -378,49 +378,70 @@ app.get("/landlord/add_hostel", (req, res) => {
 });
 
 // GET route to render the form
-app.get('/landlord/add_hostel', (req, res) => {
+app.get("/landlord/add_hostel", (req, res) => {
   // Render your form here
-  res.render('add_hostel', { error: null });
+  res.render("add_hostel", { error: null });
 });
 
-// POST route to add the hostel to the database
-app.post('/landlord/add_hostel', upload.array('images', 5), async (req, res) => {
-  try {
-    const {
-      name,
-      location,
-      price,
-      availability,
-      gender,
-      phone,
-      description,
-    } = req.body;
+app.post(
+  "/landlord/add_hostel",
+  upload.array("images", 5),
+  async (req, res) => {
+    try {
+      const {
+        name,
+        location,
+        price,
+        availability,
+        gender,
+        phone,
+        description,
+      } = req.body;
 
-    // Assuming you have a userId in the session
-    const userId = req.session.userId;
+      const userId = req.session.userId;
+      if (!userId) {
+        console.error("User ID not found");
+        return res.status(403).send("Unauthorized");
+      }
 
-    // Add your validation and processing logic here
+      const images = req.files;
+      const imageFilenames = images.map((image) => image.filename).join(", ");
 
-    // Example SQL query to insert the hostel into the database
-    const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const [results, fields] = await pool.execute(insertQuery, [
-      userId,
-      name,
-      location,
-      price,
-      availability,
-      gender,
-      phone,
-      description,
-    ]);
+      if (
+        !name ||
+        !location ||
+        !price ||
+        !availability ||
+        !gender ||
+        !phone ||
+        !imageFilenames
+      ) {
+        console.error("Some form data is missing or undefined");
+        return res
+          .status(400)
+          .render("add_hostel", { error: "Incomplete form data" });
+      }
 
-    res.redirect("/landlord/add_hostel")
-  } catch (error) {
-    console.error('An error occurred:', error);
-    return res.status(500).send('Server error');
+      const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+      const [results, fields] = await pool.execute(insertQuery, [
+        userId,
+        name,
+        location,
+        price,
+        availability,
+        gender,
+        phone,
+        description,
+        imageFilenames,
+      ]);
+      return res.redirect("/landlord/add_hostel");
+    } catch (error) {
+      console.error("An error occurred:", error);
+      return res.status(500).render("add_hostel", { error: "Server error" });
+    }
   }
-});
+);
 
 // Logout route
 

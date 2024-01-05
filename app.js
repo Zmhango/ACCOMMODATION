@@ -377,12 +377,6 @@ app.get("/landlord/add_hostel", (req, res) => {
   res.render("add_hostel", { error: null });
 });
 
-// GET route to render the form
-app.get("/landlord/add_hostel", (req, res) => {
-  // Render your form here
-  res.render("add_hostel", { error: null });
-});
-
 app.post(
   "/landlord/add_hostel",
   upload.array("images", 5),
@@ -435,7 +429,7 @@ app.post(
         description,
         imageFilenames,
       ]);
-      return res.redirect("/landlord/add_hostel");
+      return res.redirect("/landlord/hostel_added");
     } catch (error) {
       console.error("An error occurred:", error);
       return res.status(500).render("add_hostel", { error: "Server error" });
@@ -443,6 +437,9 @@ app.post(
   }
 );
 
+app.get("/landlord/hostel_added", (req, res) => {
+  res.render("hostel_added");
+});
 // Logout route
 
 app.get("/logout", (req, res) => {

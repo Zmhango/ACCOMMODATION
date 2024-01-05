@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/beauty3.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+      }
+
+      main {
+        flex-grow: 1;
+      }
+      header {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-right: auto;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .search-input {
+        margin-right: 1rem;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        display: block;
+      }
+
+      .menu-icon {
+        display: none;
+        cursor: pointer;
+      }
+      #menu-toggle {
+        display: none;
+      }
+
+      /* Basic styles */
+      .nav-links {
+        list-style: none;
+        display: flex;
+      }
+
+      .nav-links li {
+        margin-left: 1rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      /* Glowing effect */
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Main content styles */
+      .container {
+        width: 80%;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .active {
+        background-color: #347935;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 600px) {
+        ul.navbar {
+          flex-direction: column;
+        }
+      }
+
+      @media screen and (max-width: 720px) {
+        .navbar {
+          flex-wrap: nowrap;
+        }
+        body {
+          background-size: cover;
+        }
+        nav {
+          flex-wrap: nowrap;
+        }
+
+        .menu-icon {
+          display: block;
+        }
+        #menu-toggle {
+          display: none;
+        }
+
+        ul {
+          position: fixed;
+          width: 100%;
+          height: 100vh;
+          background-color: #0180ff;
+          top: 60px;
+          left: -100%;
+          text-align: center;
+          transition: all 0.9s;
+        }
+
+        nav ul li a {
+          display: block;
+        }
+
+        a:hover,
+        a.active {
+          background: none;
+        }
+
+        #menu-toggle:checked ~ ul {
+          left: 0;
+          z-index: 1;
+        }
+      }
+      footer {
+        background-color: #00022e;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      /* Styles for the progress bar container */
+
+      .progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px; /* Adjust the height of the progress bar */
+        background-color: #f0f0f0; /* Background color of the progress container */
+      }
+
+      /* Styles for the progress bar */
+      .progress-bar {
+        height: 100%;
+        background-color: green; /* Color of the progress bar */
+        width: 0; /* Initially, the progress bar is empty */
+        transition: width 0.2s ease-out; /* Animation for the progress bar */
+      }
+
+      .success-message {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .success-message h2 {
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+        flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+      }
+
+      .buttons a {
+        text-decoration: none;
+        padding: 1.2rem 2.5rem;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0.5rem; /* Adjust the margin for spacing */
+        font-size: 1.1rem;
+        background-color: #178733;
+        border: 2px solid transparent;
+        flex: 1; /* Allows buttons to occupy available space */
+        max-width: 200px; /* Set a max-width for the buttons */
+        text-align: center;
+      }
+
+      .buttons a:hover {
+        background-color: #147026;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("./partials/landlord_header")%> <%-
+    include("./partials/progress-bar") %>
+
+    <!-- Main content area -->
+    <main class="container">
+      <div class="success-message">
+        <h2>Hostel Added Successfully!</h2>
+        <div class="buttons">
+          <a href="/landlord/add_hostel">Add Another Hostel</a>
+          <a href="/" style="background-color: #0056b3; border-color: #0056b3"
+            >Go Back to Homepage</a
+          >
+        </div>
+      </div>
+    </main>
+
+    <%- include("./partials/footer")%>
+  </body>
+</html>

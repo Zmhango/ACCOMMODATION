@@ -13,61 +13,29 @@
       </section>
       <!-- Cards Section -->
       <section class="card-section">
-        <!-- Card 1 -->
+        <!-- Loop through hostels and display each as a card -->
+        <% hostels.forEach((hostel) => { %>
         <div class="card">
-          <img src="/images/M1.jpg" alt="Image 1" />
+          <% if (hostel.images) { %> <% const imageUrls =
+          hostel.images.split(','); %>
+          <!-- Display the first image for each hostel -->
+          <img
+            src="/uploads/<%= imageUrls[0] %>"
+            alt="<%= hostel.name %> Image"
+          />
+          <% } else { %>
+          <!-- Display a placeholder image or handle empty image case -->
+          <img src="/images/M1.jpg" alt="Placeholder Image" />
+          <% } %>
           <div class="card-info">
-            <h2>Item 1</h2>
-            <p>Description of item 1.</p>
-            <p>$49.99</p>
-            <a href="#">View Details</a>
+            <h2><%= hostel.name %></h2>
+            <p>Gender : <%= hostel.gender %></p>
+            <p>Location: <%= hostel.location %></p>
+            <p>MK<%= hostel.price %></p>
+            <a href="/<%= hostel.hostelId %>">View Details</a>
           </div>
         </div>
-
-        <!-- Card 2 -->
-        <div class="card">
-          <img src="/images/M2.jpg" alt="Image 2" />
-          <div class="card-info">
-            <h2>Item 2</h2>
-            <p>Description of item 2.</p>
-            <p>$29.99</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <img src="/images/M1.jpg" alt="Image 2" />
-          <div class="card-info">
-            <h2>Item 2</h2>
-            <p>Description of item 2.</p>
-            <p>$29.99</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <img src="/images/odl.jpg" alt="Image 2" />
-          <div class="card-info">
-            <h2>Item 2</h2>
-            <p>Description of item 2.</p>
-            <p>$29.99</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <img src="/images/M1.jpg" alt="Image 2" />
-          <div class="card-info">
-            <h2>Item 2</h2>
-            <p>Description of item 2.</p>
-            <p>$29.99</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="/images/M1.jpg" alt="Image 2" />
-          <div class="card-info">
-            <h2>Item 2</h2>
-            <p>Description of item 2.</p>
-            <p>$29.99</p>
-          </div>
-        </div>
+        <% }); %>
       </section>
     </main>
 

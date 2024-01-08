@@ -123,13 +123,24 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  const data = {
-    title: "home",
-    active: "home",
-  };
-  res.render("index", data);
+
+app.get("/", async (req, res) => {
+  try {
+  
+    const hostels = await pool.query(
+      "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels"
+    );
+
+    // Ensure you're getting the array of objects for hostels
+    const hostelData = Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
+    res.render("index", { hostels: hostelData });
+  } catch (err) {
+    console.error("Error fetching hostels:", err);
+    res.status(500).send("Server Error");
+  }
 });
+
+
 
 app.get("/about", (req, res) => {
   res.render("about");
@@ -377,65 +388,55 @@ app.get("/landlord/add_hostel", (req, res) => {
   res.render("add_hostel", { error: null });
 });
 
-app.post(
-  "/landlord/add_hostel",
-  upload.array("images", 5),
-  async (req, res) => {
-    try {
-      const {
-        name,
-        location,
-        price,
-        availability,
-        gender,
-        phone,
-        description,
-      } = req.body;
+app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
+  try {
+    const { name, location, price, availability, gender, phone, description } =
+      req.body;
 
-      const userId = req.session.userId;
-      if (!userId) {
-        console.error("User ID not found");
-        return res.status(403).send("Unauthorized");
-      }
-
-      const images = req.files;
-      const imageFilenames = images.map((image) => image.filename).join(", ");
-
-      if (
-        !name ||
-        !location ||
-        !price ||
-        !availability ||
-        !gender ||
-        !phone ||
-        !imageFilenames
-      ) {
-        console.error("Some form data is missing or undefined");
-        return res
-          .status(400)
-          .render("add_hostel", { error: "Incomplete form data" });
-      }
-
-      const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-      const [results, fields] = await pool.execute(insertQuery, [
-        userId,
-        name,
-        location,
-        price,
-        availability,
-        gender,
-        phone,
-        description,
-        imageFilenames,
-      ]);
-      return res.redirect("/landlord/hostel_added");
-    } catch (error) {
-      console.error("An error occurred:", error);
-      return res.status(500).render("add_hostel", { error: "Server error" });
+    const userId = req.session.userId;
+    if (!userId) {
+      console.error("User ID not found");
+      return res.status(403).send("Unauthorized");
     }
+
+    const image = req.file;
+    const imageFilename = image ? image.filename : "";
+
+    if (
+      !name ||
+      !location ||
+      !price ||
+      !availability ||
+      !gender ||
+      !phone ||
+      !imageFilename
+    ) {
+      console.error("Some form data is missing or undefined");
+      return res
+        .status(400)
+        .render("add_hostel", { error: "Incomplete form data" });
+    }
+
+    const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const [results, fields] = await pool.execute(insertQuery, [
+      userId,
+      name,
+      location,
+      price,
+      availability,
+      gender,
+      phone,
+      description,
+      imageFilename,
+    ]);
+
+    return res.redirect("/landlord/hostel_added");
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return res.status(500).render("add_hostel", { error: "Server error" });
   }
-);
+});
 
 app.get("/landlord/hostel_added", (req, res) => {
   res.render("hostel_added");

@@ -123,16 +123,16 @@ app.post("/register", async (req, res) => {
   }
 });
 
-
+// INDEX ROUTE
 app.get("/", async (req, res) => {
   try {
-  
     const hostels = await pool.query(
       "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels"
     );
 
     // Ensure you're getting the array of objects for hostels
-    const hostelData = Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
+    const hostelData =
+      Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
     res.render("index", { hostels: hostelData });
   } catch (err) {
     console.error("Error fetching hostels:", err);
@@ -140,7 +140,23 @@ app.get("/", async (req, res) => {
   }
 });
 
+// TENANT ROUTE
 
+app.get("/tenant", async (req, res) => {
+  try {
+    const hostels = await pool.query(
+      "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels"
+    );
+
+    // Ensure you're getting the array of objects for hostels
+    const hostelData =
+      Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
+    res.render("tenant", { hostels: hostelData });
+  } catch (err) {
+    console.error("Error fetching hostels:", err);
+    res.status(500).send("Server Error");
+  }
+});
 
 app.get("/about", (req, res) => {
   res.render("about");
@@ -156,10 +172,6 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("login");
-});
-
-app.get("/tenant", (req, res) => {
-  res.render("tenant");
 });
 
 app.get("/landlord", (req, res) => {
@@ -441,6 +453,44 @@ app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
 app.get("/landlord/hostel_added", (req, res) => {
   res.render("hostel_added");
 });
+
+// DELETE_HOSTEL ROUTE
+app.get("/landlord/delete_hostel", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const hostels = await pool.query(
+      "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels WHERE userId = ?",
+      [userId] // Assuming you have authentication middleware setting req.user.id
+    );
+
+    // Ensure you're getting the array of objects for hostels
+    const hostelData =
+      Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
+
+    res.render("delete_hostel", { hostels: hostelData });
+  } catch (err) {
+    console.error("Error fetching hostels:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// POST request to delete a hostel
+// DELETE_HOSTEL ROUTE
+app.delete("/delete_hostel/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+
+    // Logic to delete the hostel with the provided ID from the database
+    await pool.query("DELETE FROM hostels WHERE hostelId = ?", [hostelId]);
+
+    // Redirect to a different page or send a success response
+    res.send("Hostel deleted successfully");
+  } catch (err) {
+    console.error("Error deleting hostel:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Logout route
 
 app.get("/logout", (req, res) => {

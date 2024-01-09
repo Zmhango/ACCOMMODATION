@@ -92,7 +92,7 @@ header {
 
 /* Main content styles */
 .container {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -129,6 +129,13 @@ header {
   gap: 1rem;
 }
 
+/* Styling for Card Section */
+.card-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 40px;
+}
 .card {
   width: 18rem;
   margin-bottom: 1.2rem;
@@ -269,12 +276,6 @@ footer {
 
 .show-notification {
   left: 0; /* Slide into view */
-}
-
-/* Additional form styles */
-.container {
-  width: 80%;
-  margin: 0 auto;
 }
 
 h1,

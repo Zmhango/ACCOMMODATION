@@ -82,7 +82,7 @@ header {
 /*Registration Styling */
 
 .register-page {
-  background-image: url("/images/login.jpg");
+  background-image: url("/images/b3.jpg");
   display: flex;
   background-size: cover;
   height: 100vh;
@@ -161,7 +161,7 @@ form button:hover {
 @media screen and (max-width: 720px) {
   form {
     width: 90%;
-    height: 50%;
+    height: auto;
     flex-wrap: nowrap;
   }
   .input {

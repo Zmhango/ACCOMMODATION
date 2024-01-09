@@ -92,7 +92,7 @@ header {
 
 /* Main content styles */
 .container {
-  width: 80%;
+  width: 95%;
   margin: 0 auto;
 }
 
@@ -129,6 +129,13 @@ header {
   gap: 1rem;
 }
 
+/* Styling for Card Section */
+.card-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 40px;
+}
 .card {
   width: 18rem;
   margin-bottom: 1.2rem;
@@ -163,8 +170,8 @@ header {
 }
 .card-info a {
   text-decoration: none;
-  color: green;
-  background-color: #f4f4f4;
+  color: aliceblue;
+  background-color: red;
   padding: 8px 12px;
   border-radius: 5px;
   transition: background-color 0.3s ease;
@@ -273,4 +280,20 @@ footer {
 
 .show-notification {
   left: 0; /* Slide into view */
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #cc0000;
 }

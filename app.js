@@ -474,8 +474,8 @@ app.get("/landlord/delete_hostel", async (req, res) => {
   }
 });
 
-// POST request to delete a hostel
 // DELETE_HOSTEL ROUTE
+
 app.delete("/delete_hostel/:hostelId", async (req, res) => {
   try {
     const hostelId = req.params.hostelId;
@@ -484,6 +484,38 @@ app.delete("/delete_hostel/:hostelId", async (req, res) => {
     await pool.query("DELETE FROM hostels WHERE hostelId = ?", [hostelId]);
 
     // Redirect to a different page or send a success response
+    res.send("Hostel deleted successfully");
+  } catch (err) {
+    console.error("Error deleting hostel:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Admin view to fetch all hostels and delete any hostel
+
+// GET route to render admin's delete hostel page
+app.get("/admin/admin_delete_hostel", async (req, res) => {
+  try {
+    // Fetch all hostels
+    const hostels = await pool.query("SELECT * FROM hostels");
+
+    // Render the admin_delete_hostel page and pass the hostels data
+    res.render("admin_delete_hostel", { hostels: hostels[0] });
+  } catch (err) {
+    console.error("Error fetching hostels:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// DELETE route to delete a specific hostel by ID
+app.delete("/admin/admin_delete_hostel/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+
+    // Logic to delete the hostel with the provided ID from the database
+    await pool.query("DELETE FROM hostels WHERE hostelId = ?", [hostelId]);
+
+    // Send a success response
     res.send("Hostel deleted successfully");
   } catch (err) {
     console.error("Error deleting hostel:", err);

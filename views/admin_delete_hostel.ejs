@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./partials/admin_head") %>
+  </head>
+  <body>
+    <%- include("./partials/admin_header") %>
+    <div class="container">
+      <h1 class="page-title">All Hostels</h1>
+      <section class="card-section">
+        <% if (hostels.length > 0) { %> <% hostels.forEach((hostel) => { %>
+        <div class="card">
+          <img
+            src="/uploads/<%= hostel.images %>"
+            alt="<%= hostel.name %> Image"
+          />
+          <div class="card-info">
+            <h2><%= hostel.name %></h2>
+            <p>Gender: <%= hostel.gender %></p>
+            <p>Location: <%= hostel.location %></p>
+            <p>MK<%= hostel.price %></p>
+            <a
+              href="#"
+              class="delete-btn"
+              data-hostel-id="<%= hostel.hostelId %>"
+              >Delete</a
+            >
+          </div>
+        </div>
+        <% }); %> <% } else { %>
+        <p>No hostels available.</p>
+        <% } %>
+      </section>
+    </div>
+    <%- include("./partials/footer") %>
+    <script>
+      const deleteButtons = document.querySelectorAll(".delete-btn");
+
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", async (event) => {
+          event.preventDefault();
+          const hostelId = button.getAttribute("data-hostel-id");
+
+          try {
+            const response = await fetch(
+              `/admin/admin_delete_hostel/${hostelId}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            if (response.ok) {
+              console.log("Hostel deleted successfully");
+              window.location.reload(); // Refresh the page after successful deletion
+            } else {
+              console.error("Failed to delete hostel");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

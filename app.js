@@ -11,6 +11,8 @@ const multer = require("multer");
 const pool = require("./db");
 const crypto = require("crypto");
 const { body, validationResult } = require("express-validator");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
@@ -133,7 +135,10 @@ app.get("/", async (req, res) => {
     // Ensure you're getting the array of objects for hostels
     const hostelData =
       Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
-    res.render("index", { hostels: hostelData });
+
+    const userIsAuthenticated = req.session.userId ? true : false;
+
+    res.render("index", { hostels: hostelData, userIsAuthenticated });
   } catch (err) {
     console.error("Error fetching hostels:", err);
     res.status(500).send("Server Error");
@@ -147,11 +152,11 @@ app.get("/tenant", async (req, res) => {
     const hostels = await pool.query(
       "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels"
     );
-
+    const userIsAuthenticated = req.session.userId ? true : false;
     // Ensure you're getting the array of objects for hostels
     const hostelData =
       Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
-    res.render("tenant", { hostels: hostelData });
+    res.render("tenant", { hostels: hostelData, userIsAuthenticated });
   } catch (err) {
     console.error("Error fetching hostels:", err);
     res.status(500).send("Server Error");
@@ -519,6 +524,60 @@ app.delete("/admin/admin_delete_hostel/:hostelId", async (req, res) => {
     res.send("Hostel deleted successfully");
   } catch (err) {
     console.error("Error deleting hostel:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Hostel Details
+
+app.get("/hostel_details/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userIsAuthenticated = req.query.auth === "true";
+
+    // Fetch hostel details from the database
+    const [hostelDetails] = await pool.execute(
+      "SELECT * FROM hostels WHERE hostelId = ?",
+      [hostelId]
+    );
+
+    if (hostelDetails.length === 0) {
+      // Hostel not found
+      return res.status(404).send("Hostel not found");
+    }
+
+    const hostel = hostelDetails[0];
+
+    // Render the hostel_details page with user authentication status
+    res.render("hostel_details", { hostel, userIsAuthenticated });
+  } catch (error) {
+    console.error("Error fetching hostel details:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userIsAuthenticated = req.query.auth === "true";
+
+    // Fetch hostel details from the database
+    const [hostelDetails] = await pool.execute(
+      "SELECT * FROM hostels WHERE hostelId = ?",
+      [hostelId]
+    );
+
+    if (hostelDetails.length === 0) {
+      // Hostel not found
+      return res.status(404).send("Hostel not found");
+    }
+
+    const hostel = hostelDetails[0];
+
+    // Render the hostel_details page with user authentication status
+    res.render("hostel_details", { hostel, userIsAuthenticated });
+  } catch (error) {
+    console.error("Error fetching hostel details:", error);
     res.status(500).send("Server Error");
   }
 });

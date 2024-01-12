@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/tenant_head") %>
+  <body>
+    <%- include("./partials/tenant_header") %> <%
+    include("./partials/progress-bar") %>
+
+    <div class="container1">
+      <% if (userIsAuthenticated) { %>
+      <!-- Show full details only for authenticated users -->
+      <h1 class="hostel-title"><%= hostel.name %></h1>
+
+      <!-- Hostel Image -->
+      <div class="hostel-image">
+        <img
+          src="/uploads/<%= hostel.images %>"
+          alt="<%= hostel.name %> Image"
+        />
+      </div>
+
+      <!-- Hostel Details Form -->
+      <div class="detail">
+        <label>Gender:</label>
+        <p><%= hostel.gender %></p>
+
+        <label>Location:</label>
+        <p><%= hostel.location %></p>
+
+        <label>Price:</label>
+        <p>MK<%= hostel.price %></p>
+
+        <label>Phone:</label>
+        <p><%= hostel.phone %></p>
+
+        <label>Availability:</label>
+        <p><%= hostel.availability %></p>
+
+        <label>Description:</label>
+        <p><%= hostel.description %></p>
+
+        <!-- Add other details as needed -->
+
+        <a href="/book_hostel/<%= hostel.hostelId %>" class="book-btn"
+          >Book Now</a
+        >
+      </div>
+      <% } else { %>
+
+      <p class="auth-message">
+        Please <a href="/login">login</a> or <a href="/register">register</a> to
+        view full hostel details and book.
+      </p>
+      <!-- Message for unauthenticated users -->
+      <div class="hostel-image">
+        <!-- Display a placeholder image or handle empty image case -->
+        <img src="/images/beauty3.jpg" alt="Placeholder Image" />
+      </div>
+      <% } %>
+    </div>
+
+    <%- include("./partials/footer") %>
+  </body>
+</html>

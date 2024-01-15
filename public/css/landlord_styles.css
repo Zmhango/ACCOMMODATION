@@ -10,9 +10,8 @@
 body {
   font-size: 16px;
   line-height: 1.6;
-  background-color: #f7f7f7;
+  background-color: rgb(248, 248, 208);
   color: #333;
-  background-image: url("/images/b2.jpg");
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -296,4 +295,68 @@ footer {
 
 .delete-btn:hover {
   background-color: #cc0000;
+}
+
+/* Add this to your general styles or create a new file for this specific page */
+
+.container.confirm-booking-landlord {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #007bff; /* Blue color for the title */
+  text-align: center;
+}
+
+.card-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+}
+
+.card-info {
+  padding: 15px;
+  background-color: #fff;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #333; /* Dark text color for headings */
+}
+
+p {
+  font-size: 1.2rem;
+  color: #555; /* Slightly darker text color for paragraphs */
+  margin-bottom: 8px;
+}
+
+.booking-status {
+  background-color: #28a745;
+  color: #fff;
+  padding: 8px;
+  text-align: center;
+  border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
 }

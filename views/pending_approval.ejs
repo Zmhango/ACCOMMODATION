@@ -510,6 +510,10 @@
         font-size: 1.2rem;
         color: #178733;
       }
+      .cancel-booking-btn:hover {
+        background-color: #555;
+        transition: all 0.6s ease-in-out;
+      }
     </style>
   </head>
   <body>
@@ -535,7 +539,13 @@
             <h2><%= hostel.name %></h2>
             <p>Location: <%= hostel.location %></p>
             <p>Price: MK<%= hostel.price %></p>
-            <!-- Add more details as needed -->
+
+            <!-- Add a cancel button with a form -->
+            <form action="/cancel_booking/<%= hostel.hostelId %>" method="post">
+              <button class="cancel-booking-btn" type="submit">
+                Cancel Booking
+              </button>
+            </form>
           </div>
           <div class="pending-status">Pending...</div>
         </div>

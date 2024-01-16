@@ -42,6 +42,7 @@ CREATE TABLE hostels (
     price DECIMAL(10, 2),
     availability VARCHAR(100),
     gender ENUM('male', 'female', 'mixed', 'Family'),
+    email VARCHAR (100),
     phone VARCHAR (15),
     description TEXT,
     images TEXT,

@@ -10,7 +10,7 @@
 body {
   font-size: 16px;
   line-height: 1.6;
-  background-color: rgb(248, 248, 208);
+  background-image: url("/images/b2.jpg");
   color: #333;
   background-size: cover;
   background-attachment: fixed;
@@ -359,4 +359,62 @@ p {
   padding: 8px;
   text-align: center;
   border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
+}
+
+/* Add these styles to your CSS file */
+
+/* Apply border-radius to the title container */
+.landlord-booking-history .booking-history-title-container {
+  border-radius: 3px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+/* Style the form for no bookings */
+.confirm-booking-landlord .no-bookings-form {
+  background-color: #fff; /* White background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+  text-align: center;
+}
+
+/* Style the paragraph for no bookings */
+.confirm-booking-landlord .no-bookings-message {
+  font-size: 18px;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Style the confirm button */
+.confirm-booking-landlord .confirm-button {
+  background-color: #4caf50; /* Green color */
+  color: #fff; /* White text */
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-booking-landlord .confirm-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Style the form for no confirmed bookings */
+.landlord-booking-history .no-confirmed-bookings-form {
+  background-color: #fff; /* White background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+  text-align: center;
+}
+
+/* Style the paragraph for no confirmed bookings */
+.landlord-booking-history .no-confirmed-bookings-message {
+  font-size: 18px;
+  color: #555;
+  margin-top: 10px;
 }

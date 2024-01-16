@@ -409,3 +409,25 @@ button {
   background-color: #0056b3;
   border-color: #0056b3;
 }
+
+/* tenant_bookings.ejs */
+.container.tenant-bookings {
+  margin: 20px;
+}
+
+.page-title {
+  color: #3498db;
+  text-align: center;
+  border-radius: 3px;
+  background-color: #f0f0f0; /* Optionally set a background color */
+  padding: 10px; /* Optionally add padding */
+  margin-bottom: 20px; /* Optionally add margin */
+}
+
+.booking-status {
+  background-color: #15c42c;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  margin-top: 5px;
+}

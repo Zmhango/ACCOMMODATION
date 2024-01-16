@@ -13,7 +13,7 @@ const crypto = require("crypto");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
@@ -131,7 +131,7 @@ app.post("/register", async (req, res) => {
 app.get("/", async (req, res) => {
   try {
     const hostels = await pool.query(`
-      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.phone, hostels.description, hostels.images
+      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.email, hostels.phone, hostels.description, hostels.images
       FROM hostels
       LEFT JOIN bookings ON hostels.hostelId = bookings.hostelId
       WHERE bookings.status IS NULL
@@ -150,14 +150,13 @@ app.get("/", async (req, res) => {
   }
 });
 
-
 // TENANT ROUTE
 
 // TENANT ROUTE
 app.get("/tenant", async (req, res) => {
   try {
     const hostels = await pool.query(`
-      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.phone, hostels.description, hostels.images
+      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.email, hostels.phone, hostels.description, hostels.images
       FROM hostels
       LEFT JOIN bookings ON hostels.hostelId = bookings.hostelId
       WHERE bookings.status IS NULL
@@ -175,7 +174,6 @@ app.get("/tenant", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
 
 app.get("/about", (req, res) => {
   res.render("about");
@@ -421,8 +419,16 @@ app.get("/landlord/add_hostel", (req, res) => {
 
 app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
   try {
-    const { name, location, price, availability, gender, phone, description } =
-      req.body;
+    const {
+      name,
+      location,
+      price,
+      availability,
+      gender,
+      email,
+      phone,
+      description,
+    } = req.body;
 
     const userId = req.session.userId;
     if (!userId) {
@@ -439,6 +445,7 @@ app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
       !price ||
       !availability ||
       !gender ||
+      !email ||
       !phone ||
       !imageFilename
     ) {
@@ -448,7 +455,7 @@ app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
         .render("add_hostel", { error: "Incomplete form data" });
     }
 
-    const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, phone, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const insertQuery = `INSERT INTO hostels (userId, name, location, price, availability, gender, email, phone, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const [results, fields] = await pool.execute(insertQuery, [
       userId,
@@ -457,6 +464,7 @@ app.post("/landlord/add_hostel", upload.single("image"), async (req, res) => {
       price,
       availability,
       gender,
+      email,
       phone,
       description,
       imageFilename,
@@ -478,7 +486,7 @@ app.get("/landlord/delete_hostel", async (req, res) => {
   try {
     const userId = req.session.userId;
     const hostels = await pool.query(
-      "SELECT hostelId, userId, name, location, price, availability, gender, phone, description, images FROM hostels WHERE userId = ?",
+      "SELECT hostelId, userId, name, location, price, availability, gender, email, phone, description, images FROM hostels WHERE userId = ?",
       [userId] // Assuming you have authentication middleware setting req.user.id
     );
 
@@ -607,12 +615,12 @@ app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
 app.post("/confirm_booking/:hostelId", async (req, res) => {
   try {
     const { checkInDate, phone } = req.body;
-    const hostelId = req.params.hostelId; // Retrieve hostelId from URL parameters
+    const hostelId = req.params.hostelId;
     const userId = req.session.userId;
 
     // Insert the booking into the database
     const result = await pool.query(
-      "INSERT INTO bookings (hostelId, userId,checkInDate, phone) VALUES (?, ?,?, ?)",
+      "INSERT INTO bookings (hostelId, userId, checkInDate, phone) VALUES (?, ?, ?, ?)",
       [hostelId, userId, checkInDate, phone]
     );
 
@@ -620,6 +628,49 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     res.redirect("/tenant/pending_approval");
   } catch (error) {
     console.error("Error confirming booking:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Handle POST request for cancelling a booking
+app.post("/cancel_booking/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userId = req.session.userId;
+
+    // Delete the booking from the database
+    await pool.query("DELETE FROM bookings WHERE hostelId = ? AND userId = ?", [
+      hostelId,
+      userId,
+    ]);
+
+    // Redirect to the tenant's Pending Approval page
+    res.redirect("/tenant/pending_approval");
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/tenant/pending_approval", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    // Fetch distinct hostels with pending bookings for the specific user
+    const [pendingBookingsData] = await pool.query(
+      `
+      SELECT DISTINCT hostels.hostelId, hostels.name, hostels.location, hostels.price, hostels.images, bookings.status
+      FROM hostels
+      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
+      WHERE bookings.status = 'pending' AND bookings.userId = ?
+    `,
+      [userId]
+    );
+
+    // Render the pending_approval page with the list of pending bookings
+    res.render("pending_approval", { pendingBookings: pendingBookingsData });
+  } catch (error) {
+    console.error("Error fetching pending bookings:", error);
     res.status(500).send("Server Error");
   }
 });
@@ -670,8 +721,6 @@ app.get("/landlord/confirm_booking_landlord", async (req, res) => {
       [userId]
     );
 
-    console.log("Pending Bookings for Landlord:", pendingBookingsData);
-
     // Render the confirm_booking_landlord page with the list of pending bookings
     res.render("confirm_booking_landlord", {
       pendingBookings: pendingBookingsData,
@@ -682,6 +731,77 @@ app.get("/landlord/confirm_booking_landlord", async (req, res) => {
   }
 });
 
+// Update booked hostel status to booked
+
+app.post("/confirm_booking_landlord/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+
+    // Update the status of the booking to 'booked'
+    await pool.query(
+      "UPDATE bookings SET status = 'booked' WHERE hostelId = ?",
+      [hostelId]
+    );
+
+    // Redirect to tenant_bookings page
+    res.redirect("/landlord/confirm_booking_landlord");
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+    res.status(500).send("Error confirming booking");
+  }
+});
+
+// Route to render tenant_bookings.ejs
+app.get("/tenant_bookings", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    // Fetch confirmed hostels for the specific user
+    const [bookedHostelsData] = await pool.query(
+      `
+      SELECT DISTINCT hostels.hostelId, hostels.name, hostels.location, hostels.price, hostels.images
+      FROM hostels
+      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
+      WHERE bookings.status = 'booked' AND bookings.userId = ?
+    `,
+      [userId]
+    );
+
+    console.log("Booked Hostels for Tenant:", bookedHostelsData);
+
+    // Render the tenant_bookings page with the list of confirmed bookings
+    res.render("tenant_bookings", { bookedHostels: bookedHostelsData });
+  } catch (error) {
+    console.error("Error fetching confirmed bookings:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Define a route for landlord_booking_history
+app.get("/landlord/booking_history", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    // Fetch confirmed hostels for the specific landlord
+    const [confirmedHostelsData] = await pool.query(
+      `
+      SELECT hostels.name, hostels.location, hostels.price, hostels.phone, hostels.images
+      FROM hostels
+      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
+      WHERE bookings.status = 'booked' AND hostels.userId = ?
+    `,
+      [userId]
+    );
+
+    // Render the landlord_booking_history page with the list of confirmed bookings
+    res.render("landlord_booking_history", {
+      confirmedHostels: confirmedHostelsData,
+    });
+  } catch (error) {
+    console.error("Error fetching confirmed bookings for landlord:", error);
+    res.status(500).send("Server Error");
+  }
+});
 // Logout route
 
 app.get("/logout", (req, res) => {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/tenant_head") %>
+  <body class="tenant-bookings-body">
+    <%- include("./partials/tenant_header") %> <%
+    include("./partials/progress-bar") %>
+
+    <div class="container tenant-bookings-container">
+      <div class="tenant-bookings-title-container">
+        <h1 class="page-title tenant-page-title">Your Bookings</h1>
+      </div>
+
+      <!-- Display a list of confirmed hostels as cards -->
+      <form action="/modify_booking" method="post" class="tenant-booking-form">
+        <div class="card-section tenant-card-section">
+          <% if (Array.isArray(bookedHostels) && bookedHostels.length > 0) { %>
+          <% bookedHostels.forEach((hostel) => { %>
+          <div class="card tenant-card">
+            <!-- Display hostel image if available -->
+            <% if (hostel.images) { %>
+            <img
+              src="/uploads/<%= hostel.images %>"
+              alt="<%= hostel.name %> Image"
+              class="card-image tenant-card-image"
+            />
+            <% } else { %>
+            <!-- Display a placeholder image or handle an empty image case -->
+            <img
+              src="/images/placeholder.jpg"
+              alt="Placeholder Image"
+              class="card-image tenant-card-image"
+            />
+            <% } %>
+
+            <div class="card-info tenant-card-info">
+              <h2><%= hostel.name %></h2>
+              <p>Location: <%= hostel.location %></p>
+              <p>Price: MK<%= hostel.price %></p>
+              <!-- Add more details as needed -->
+            </div>
+
+            <div class="booking-status tenant-booking-status">Booked</div>
+          </div>
+          <% }); %> <% } else { %>
+          <p>No confirmed bookings</p>
+          <% } %>
+        </div>
+      </form>
+    </div>
+
+    <%- include("./partials/footer") %>
+  </body>
+</html>

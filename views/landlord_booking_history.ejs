@@ -2,28 +2,32 @@
 <html lang="en">
   <%- include("./partials/landlord_head") %>
   <body>
-    <%- include("./partials/landlord_header") %>
+    <%- include("./partials/landlord_header") %> <%
+    include("./partials/progress-bar") %>
 
-    <div class="container confirm-booking-landlord">
-      <h1 class="page-title">Confirm Booking</h1>
-      <!-- Display a list of hostels awaiting confirmation as cards -->
+    <div class="container landlord-booking-history">
+      <div class="booking-history-title-container">
+        <h1 class="page-title">Booking History</h1>
+      </div>
+
+      <!-- Display a list of confirmed hostels as cards -->
       <div class="card-section">
-        <% if (Array.isArray(pendingBookings) && pendingBookings.length > 0) {
-        %> <% pendingBookings.forEach((hostel) => { %>
+        <% if (Array.isArray(confirmedHostels) && confirmedHostels.length > 0) {
+        %> <% confirmedHostels.forEach((hostel) => { %>
         <div class="card">
           <!-- Display hostel image if available -->
           <% if (hostel.images) { %>
           <img
             src="/uploads/<%= hostel.images %>"
             alt="<%= hostel.name %> Image"
-            class="card-image"
+            class="landlord-card-image"
           />
           <% } else { %>
           <!-- Display a placeholder image or handle empty image case -->
           <img
             src="/images/placeholder.jpg"
             alt="Placeholder Image"
-            class="card-image"
+            class="landlord-card-image"
           />
           <% } %>
           <div class="card-info">
@@ -32,21 +36,14 @@
             <p>Phone: <%= hostel.phone %></p>
             <p>Price: MK<%= hostel.price %></p>
             <!-- Add more details as needed -->
-
-            <!-- Replace the "Confirm" text with a button -->
-            <form
-              action="/confirm_booking_landlord/<%= hostel.hostelId %>"
-              method="post"
-            >
-              <button type="submit" class="confirm-button">Confirm</button>
-            </form>
           </div>
+          <div class="booking-status">Booked</div>
         </div>
         <% }); %> <% } else { %>
-        <form class="no-bookings-form">
-          <div class="no-bookings-message">
-            <p>No bookings awaiting confirmation at the moment.</p>
-            <p>Explore more hostels to confirm bookings.</p>
+        <form class="no-confirmed-bookings-form">
+          <div class="no-confirmed-bookings-message">
+            <p>No confirmed bookings in your history at the moment.</p>
+            <p>Explore more hostels to build your booking history.</p>
           </div>
         </form>
         <% } %>

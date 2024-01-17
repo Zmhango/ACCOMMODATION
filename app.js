@@ -611,11 +611,12 @@ app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
 //
 //
 //
+
 // Handle POST request from booking_form.ejs
 app.post("/confirm_booking/:hostelId", async (req, res) => {
   try {
     const { checkInDate, phone } = req.body;
-    const hostelId = req.params.hostelId;
+    const hostelId = req.params.hostelId; // Retrieve hostelId from URL parameters
     const userId = req.session.userId;
 
     // Insert the booking into the database
@@ -624,6 +625,78 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
       [hostelId, userId, checkInDate, phone]
     );
 
+    // Fetch user email
+    const [user] = await pool.query(
+      "SELECT email FROM users WHERE userId = ?",
+      [userId]
+    );
+    const userEmail = user[0]?.email;
+
+    // Fetch hostel details
+    const [hostelDetails] = await pool.query(
+      "SELECT name, location, userId FROM hostels WHERE hostelId = ?",
+      [hostelId]
+    );
+
+    // Check if hostelDetails is not undefined
+    if (hostelDetails && hostelDetails.length > 0) {
+      const { name, location, userId: landlordUserId } = hostelDetails[0];
+
+      // Fetch landlord email
+      const [landlord] = await pool.query(
+        "SELECT email FROM users WHERE userId = ?",
+        [landlordUserId]
+      );
+      const landlordEmail = landlord[0]?.email;
+
+      // Check if emails exist before attempting to send
+      if (userEmail && landlordEmail) {
+        // Configure tenant transporter
+        const tenantTransporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.TENANT_EMAIL_USER,
+            pass: process.env.TENANT_EMAIL_PASS,
+          },
+        });
+
+        // Create tenant email options
+        const tenantMailOptions = {
+          from: process.env.TENANT_EMAIL_USER,
+          to: userEmail,
+          subject: "Booking Confirmation",
+          text: `Dear Tenant, you have successfully booked ${name} located at ${location}.`,
+        };
+
+        // Send email to tenant
+        await tenantTransporter.sendMail(tenantMailOptions);
+
+        // Configure landlord transporter
+        const landlordTransporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.LANDLORD_EMAIL_USER,
+            pass: process.env.LANDLORD_EMAIL_PASS,
+          },
+        });
+
+        // Create landlord email options
+        const landlordMailOptions = {
+          from: process.env.LANDLORD_EMAIL_USER,
+          to: landlordEmail,
+          subject: "New Booking",
+          text: `Dear Landlord, your hostel ${name} located at ${location} has been booked.`,
+        };
+
+        // Send email to landlord
+        await landlordTransporter.sendMail(landlordMailOptions);
+      }
+    } else {
+      console.error("Error fetching hostel details");
+      res.status(500).send("Server Error");
+      return;
+    }
+
     // Redirect to the tenant's Pending Approval page
     res.redirect("/tenant/pending_approval");
   } catch (error) {
@@ -631,6 +704,8 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+
 
 // Handle POST request for cancelling a booking
 app.post("/cancel_booking/:hostelId", async (req, res) => {

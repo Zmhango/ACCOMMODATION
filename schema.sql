@@ -64,18 +64,6 @@ CREATE TABLE bookings (
     FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
-
-can you please change the where clause WHERE bookings.booking_date IS NULL;  -- Assuming booking_date is null for pending approval. this is my table schema for bookings(CREATE TABLE bookings (
-    bookingId INT AUTO_INCREMENT PRIMARY KEY,
-    hostelId INT NOT NULL,
-    userId INT NOT NULL,
-    booking_date DATE,
-    checkInDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    phone VARCHAR(15),
-    FOREIGN KEY (hostelId) REFERENCES hostels(hostelId),
-    FOREIGN KEY (userId) REFERENCES users(userId)
-);). 
-
  
 -- FEEDBACK TABLE --
 
@@ -90,3 +78,20 @@ CREATE TABLE feedbacks (
     FOREIGN KEY (tenantId) REFERENCES users(userId)
 );
 
+
+CREATE TABLE help_desk (
+    entry_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+// Insert data into the 'help_desk' table
+    const result = await pool.query(
+      "INSERT INTO help_desk (full_name, email, subject, message) VALUES (?, ?, ?, ?)",
+      [fullName, email, subject, message]
+    );

@@ -127,7 +127,6 @@ app.post("/register", async (req, res) => {
 });
 
 // INDEX ROUTE
-// INDEX ROUTE
 app.get("/", async (req, res) => {
   try {
     const hostels = await pool.query(`
@@ -179,8 +178,112 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
+// Assuming you fetch help desk messages from the database
+app.get("/admin/help_desk", async (req, res) => {
+  try {
+    // Fetch help desk messages from the database
+    const [helpDeskMessages] = await pool.query("SELECT * FROM help_desk");
+
+    // Render the help_desk view and pass the helpDeskMessages data
+    res.render("help_desk", { helpDeskMessages });
+  } catch (error) {
+    console.error("Error fetching help desk messages:", error);
+    res.status(500).send("Error fetching help desk messages");
+  }
+});
+
+app.post(
+  "/admin/help_desk/reply",
+  upload.single("attachment"),
+  async (req, res) => {
+    try {
+      const recipientEmail = req.body.recipientEmail;
+      const originalSubject = req.body.originalSubject;
+      const replyMessage = req.body.replyMessage;
+      const attachment = req.file; // Access the uploaded file details
+
+      // Closing message
+      const closingMessage = "\nRegards,\nSupport Team,\nEasyHouse";
+
+      // Nodemailer setup (update with your email configuration)
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "zondiwemhango215@gmail.com",
+          pass: "bgff ruzn lpch pijp",
+        },
+      });
+
+      // Email options
+      const mailOptions = {
+        from: "zondiwemhango215@gmail.com",
+        to: recipientEmail,
+        subject: originalSubject, // Use the original subject
+        text: `${replyMessage}\n${closingMessage}`, // Add the closing message
+        attachments: attachment ? [{ path: attachment.path }] : [], // Attach the file if provided
+      };
+
+      // Send the reply email
+      await transporter.sendMail(mailOptions);
+
+      // Redirect back to the help_desk page after sending the reply
+      res.redirect("/admin/help_desk");
+    } catch (error) {
+      console.error("Error replying to query:", error);
+      res.status(500).send("Error replying to query");
+    }
+  }
+);
+
+// Handle GET request for the thank you page
+app.get("/thankyou", (req, res) => {
+  res.render("thankyou");
+});
+
+// Route to render the contact form
 app.get("/contact", (req, res) => {
   res.render("contact");
+});
+
+// Assuming you have a route for handling contact form submissions
+app.post("/contact", async (req, res) => {
+  try {
+    const name = req.body.name;
+    const email = req.body.email;
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    // Insert data into the 'help_desk' table
+    const result = await pool.query(
+      "INSERT INTO help_desk (full_name, email, subject, message) VALUES (?, ?, ?, ?)",
+      [name, email, subject, message]
+    );
+
+    // Notify admin via email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "zondiwemhango215@gmail.com", 
+        pass: "bgff ruzn lpch pijp", 
+      },
+    });
+
+    const mailOptions = {
+      from: email,
+      to: "zondiwemhango215@gmail.com", // replace with your admin email
+      subject: `New Query Submission - ${subject}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Optionally, you can send a confirmation email to the user
+
+    res.redirect("/thankyou"); // Redirect to the thank you page
+  } catch (error) {
+    console.error("Error submitting contact form:", error);
+    res.status(500).send("Error submitting contact form");
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -362,7 +465,7 @@ app.post("/add_landlord", async (req, res) => {
       );
     }
 
-    res.status(200).send("User registered successfully");
+    res.redirect("/admin");
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).send("Error registering user");
@@ -390,15 +493,26 @@ app.get("/admin/delete_user", async (req, res) => {
 
 // Endpoint to handle user deletion
 app.post("/admin/delete_user", async (req, res) => {
-  try {
-    const userIdToDelete = req.body.userId;
+  const userIdToDelete = req.body.userId;
 
+  try {
     // Check if the user ID exists
     if (!userIdToDelete) {
       return res.status(400).send("Invalid user ID");
     }
 
-    // Delete the user from the database
+    // Delete records from tenants table (or other related tables) first
+    await pool.query("DELETE FROM tenants WHERE userId = ?", [userIdToDelete]);
+
+    // Delete records from landlords table (or other related tables) first
+    await pool.query("DELETE FROM landlords WHERE userId = ?", [
+      userIdToDelete,
+    ]);
+
+    // Delete records from hostels table (or other related tables) first
+    await pool.query("DELETE FROM hostels WHERE userId = ?", [userIdToDelete]);
+
+    // Now, delete the user from the users table
     await pool.query("DELETE FROM users WHERE userId = ?", [userIdToDelete]);
 
     res.redirect("/admin/delete_user");
@@ -611,7 +725,6 @@ app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
 //
 //
 //
-
 // Handle POST request from booking_form.ejs
 app.post("/confirm_booking/:hostelId", async (req, res) => {
   try {
@@ -625,13 +738,6 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
       [hostelId, userId, checkInDate, phone]
     );
 
-    // Fetch user email
-    const [user] = await pool.query(
-      "SELECT email FROM users WHERE userId = ?",
-      [userId]
-    );
-    const userEmail = user[0]?.email;
-
     // Fetch hostel details
     const [hostelDetails] = await pool.query(
       "SELECT name, location, userId FROM hostels WHERE hostelId = ?",
@@ -642,21 +748,38 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     if (hostelDetails && hostelDetails.length > 0) {
       const { name, location, userId: landlordUserId } = hostelDetails[0];
 
+      // Fetch user email
+      const [user] = await pool.query(
+        "SELECT email FROM users WHERE userId = ?",
+        [userId]
+      );
+      const userEmail = user[0].email;
+
       // Fetch landlord email
       const [landlord] = await pool.query(
         "SELECT email FROM users WHERE userId = ?",
         [landlordUserId]
       );
-      const landlordEmail = landlord[0]?.email;
 
-      // Check if emails exist before attempting to send
-      if (userEmail && landlordEmail) {
+      // Check if emails exist
+      if (userEmail && landlord[0].email) {
+        const landlordEmail = landlord[0].email;
+
         // Configure tenant transporter
         const tenantTransporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
             user: process.env.TENANT_EMAIL_USER,
             pass: process.env.TENANT_EMAIL_PASS,
+          },
+        });
+
+        // Configure landlord transporter
+        const landlordTransporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.LANDLORD_EMAIL_USER,
+            pass: process.env.LANDLORD_EMAIL_PASS,
           },
         });
 
@@ -668,28 +791,26 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
           text: `Dear Tenant, you have successfully booked ${name} located at ${location}.`,
         };
 
-        // Send email to tenant
-        await tenantTransporter.sendMail(tenantMailOptions);
-
-        // Configure landlord transporter
-        const landlordTransporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.LANDLORD_EMAIL_USER,
-            pass: process.env.LANDLORD_EMAIL_PASS,
-          },
-        });
-
         // Create landlord email options
+        const confirmBookingLink = `http://your-website.com/login`; // Update with your actual login URL
         const landlordMailOptions = {
           from: process.env.LANDLORD_EMAIL_USER,
           to: landlordEmail,
           subject: "New Booking",
-          text: `Dear Landlord, your hostel ${name} located at ${location} has been booked.`,
+          html: `
+    <p>Dear Landlord, your hostel ${name} located at ${location} has been booked.</p>
+    <p>Please confirm the booking by logging in:</p>
+    <div class="button-container center-button">
+      <a href="${confirmBookingLink}" style="display: inline-block; background-color: #007BFF; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Confirm Booking</a>
+    </div>
+  `,
         };
 
-        // Send email to landlord
+        // Send emails
+        await tenantTransporter.sendMail(tenantMailOptions);
         await landlordTransporter.sendMail(landlordMailOptions);
+      } else {
+        console.log("Emails do not exist. Skipping email sending.");
       }
     } else {
       console.error("Error fetching hostel details");
@@ -704,8 +825,6 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
-
 
 // Handle POST request for cancelling a booking
 app.post("/cancel_booking/:hostelId", async (req, res) => {

@@ -418,3 +418,26 @@ p {
   color: #555;
   margin-top: 10px;
 }
+
+/* Add these styles to your CSS file */
+.notification1 {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px; /* Adjust the margin as needed */
+}
+
+.notification-count {
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* Optional: Add some styles for better visibility */
+.notification-count:hover {
+  background-color: darkred;
+}

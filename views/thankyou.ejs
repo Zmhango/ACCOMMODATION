@@ -1,0 +1,378 @@
+<!-- thankyou.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Header and Navigation */
+      header {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-right: auto;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .search-input {
+        margin-right: 1rem;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        display: block;
+      }
+
+      .menu-icon {
+        display: none;
+        cursor: pointer;
+      }
+      #menu-toggle {
+        display: none;
+      }
+
+      /* Basic styles */
+      .nav-links {
+        list-style: none;
+        display: flex;
+      }
+
+      .nav-links li {
+        margin-left: 1rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      /* Glowing effect */
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /*Registration Styling */
+
+      .register-page {
+        background-image: url("/images/b3.jpg");
+        display: flex;
+        background-size: cover;
+        height: 100vh;
+        background-color: aliceblue;
+        align-items: center;
+        justify-content: center;
+      }
+      form {
+        border: 1px solid;
+        width: 30vw;
+        height: auto;
+        padding: 0.3rem;
+        flex-direction: column;
+        border-radius: 4px;
+        background: transparent;
+        backdrop-filter: blur(50px);
+      }
+      .input {
+        width: 29vw;
+        height: 5vh;
+        border-color: #4090db;
+        border-radius: 7px;
+      }
+      .button {
+        margin-top: 8px;
+        width: 29vw;
+        height: 5vh;
+        background-color: green;
+        font-size: larger;
+        font-weight: bolder;
+        transition: 0.6s;
+        border-radius: 7px;
+      }
+      .create {
+        text-decoration: none;
+        color: rgb(5, 146, 247);
+      }
+      .label {
+        width: 29vw;
+        height: 5vh;
+        margin-bottom: 0px;
+        font-weight: bolder;
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+
+      .active {
+        background-color: #347935;
+      }
+      .user-login {
+        font-weight: bolder;
+        font-size: large;
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgb(5, 146, 247);
+        text-align: center;
+      }
+
+      form button:hover {
+        color: rgb(5, 146, 247);
+      }
+      #errorMessage {
+        color: red;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 600px) {
+        ul.navbar {
+          flex-direction: column;
+        }
+
+        .search-input {
+          width: auto;
+          margin: 10px auto;
+        }
+      }
+
+      @media screen and (max-width: 720px) {
+        form {
+          width: 90%;
+          height: auto;
+          flex-wrap: nowrap;
+        }
+        .input {
+          width: 99%;
+          height: auto;
+          padding-top: 1.5%;
+          padding-bottom: 1.5%;
+          margin-bottom: 3%;
+          border-color: #4090db;
+          border-radius: 7px;
+        }
+        .button {
+          margin-top: 8px;
+          width: 99%;
+          height: 5vh;
+          background-color: green;
+          font-size: larger;
+          font-weight: bolder;
+          transition: 0.6s;
+          border-radius: 7px;
+        }
+        .navbar {
+          flex-wrap: nowrap;
+        }
+
+        nav {
+          flex-wrap: nowrap;
+        }
+
+        .menu-icon {
+          display: block;
+        }
+        #menu-toggle {
+          display: none;
+        }
+
+        ul {
+          position: fixed;
+          width: 100%;
+          height: 100vh;
+          background-color: #0180ff;
+          top: 60px;
+          left: -100%;
+          text-align: center;
+          transition: all 0.9s;
+        }
+
+        nav ul li a {
+          display: block;
+        }
+
+        a:hover,
+        a.active {
+          background: none;
+        }
+
+        #menu-toggle:checked ~ ul {
+          left: 0;
+          z-index: 1;
+        }
+
+        .search-input {
+          display: none;
+        }
+      }
+      /* Additional styling for content and footer can be added below */
+      .container {
+        padding: 0rem;
+      }
+
+      footer {
+        background-color: #00022e;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .welcome {
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 30rem;
+        text-align: center;
+        background-image: url(/images/b3.jpg);
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+      }
+      .welcome-info {
+        padding-top: 14rem; /* Or use padding-top: 10%; */
+        font-size: 7vw;
+        color: aliceblue;
+        font-weight: bolder;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      /* Styling for Card Section */
+      .card-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 40px;
+      }
+
+      .card {
+        width: 18rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        border-radius: 0.8rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-0.5rem);
+      }
+
+      .card img {
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+      }
+
+      .card-info {
+        padding: 1.2rem;
+      }
+
+      .card-info h2 {
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info p {
+        font-size: 0.875rem;
+        margin-bottom: 0.8rem;
+      }
+      .card-info a {
+        text-decoration: none;
+        color: green;
+        background-color: #f4f4f4;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        float: right;
+        margin-bottom: 2px;
+      }
+
+      .card-info a:hover {
+        color: aliceblue;
+        background-color: rgb(51, 145, 51);
+      }
+
+      /* Styles for the progress bar container */
+
+      .progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px; /* Adjust the height of the progress bar */
+        background-color: #f0f0f0; /* Background color of the progress container */
+      }
+
+      /* Styles for the progress bar */
+      .progress-bar {
+        height: 100%;
+        background-color: #007bff; /* Color of the progress bar */
+        width: 0; /* Initially, the progress bar is empty */
+        transition: width 0.2s ease-out; /* Animation for the progress bar */
+      }
+
+      /* Styles for Thank You Section */
+      .thankyou-section {
+        text-align: center;
+        padding: 50px 0;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .section-description {
+        font-size: 1.2rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body class="body1">
+    <!-- Header -->
+    <%- include("./partials/header") %>
+
+    <!-- Progress Bar -->
+    <%- include("./partials/progress-bar") %>
+
+    <!-- Thank You Section -->
+    <section class="thankyou-section">
+      <div class="container3">
+        <h1 class="section-title">Thank You!</h1>
+        <p class="section-description">
+          Your message has been received. We will get back to you soon.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include("./partials/footer") %>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head") %>
+  <body>
+    <!-- Header -->
+    <%- include("./partials/admin_header") %> <%-
+    include("./partials/progress-bar") %>
+
+    <section class="help-desk-page">
+      <h1 class="help-desk-title">Help Desk</h1>
+
+      <!-- Display messages from help_desk table -->
+      <div class="help-desk-messages-container">
+        <!-- Loop through messages and display each -->
+        <% helpDeskMessages.forEach((message) => { %>
+        <div class="help-desk-message-container">
+          <p><strong>Name:</strong> <%= message.full_name %></p>
+          <p><strong>Email:</strong> <%= message.email %></p>
+          <p><strong>Subject:</strong> <%= message.subject %></p>
+          <p class="help-desk-message-text">
+            <strong>Message:</strong> <%= message.message %>
+          </p>
+          <p>
+            <strong>Submission Date:</strong> <%= message.submission_date %>
+          </p>
+
+          <!-- Button to reply -->
+          <form
+            action="/admin/help_desk/reply"
+            method="POST"
+            class="reply-form"
+            enctype="multipart/form-data"
+          >
+            <input
+              type="hidden"
+              name="recipientEmail"
+              value="<%= message.email %>"
+            />
+            <input
+              type="hidden"
+              name="originalSubject"
+              value="<%= message.subject %>"
+            />
+            <textarea
+              name="replyMessage"
+              placeholder="Your reply message..."
+              required
+            ></textarea>
+            <!-- File input for attachment -->
+            <input
+              type="file"
+              name="attachment"
+              accept=".pdf, .doc, .docx, .txt, .jpg, .jpeg, .png"
+            />
+            <button type="submit">Reply</button>
+          </form>
+        </div>
+        <% }); %>
+      </div>
+    </section>
+
+    <%- include("./partials/footer") %>
+  </body>
+</html>

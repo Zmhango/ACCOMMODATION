@@ -207,15 +207,23 @@ form button:hover {
     left: -100%;
     text-align: center;
     transition: all 0.9s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul li {
+    margin-top: 20px; /* Adjust spacing between each nav item */
   }
 
   nav ul li a {
     display: block;
+    color: #fff; /* Ensure link text color is visible against the background */
   }
 
   a:hover,
   a.active {
-    background: none;
+    background: gray;
   }
 
   #menu-toggle:checked ~ ul {
@@ -371,7 +379,7 @@ footer {
 }
 
 .contact-section {
-  background-image: url("/images/wow2.jpg");
+  background-color: aliceblue;
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -436,16 +444,16 @@ textarea {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #fff;
+  background-color: aliceblue;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 10);
   margin-top: 20px;
 }
 
 .help-desk-title {
   font-size: 2.5rem;
   margin-bottom: 20px;
-  color: #333;
+  color: rgb(5, 146, 247);
   text-align: center;
 }
 
@@ -482,7 +490,7 @@ textarea {
 
 .reply-form button {
   padding: 15px 20px;
-  background-color: #007bff;
+  background-color: green;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -492,4 +500,58 @@ textarea {
 
 .reply-form button:hover {
   background-color: #0056b3;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+  .help-desk-page {
+    padding: 10px;
+  }
+
+  .help-desk-title {
+    font-size: 2rem;
+  }
+
+  .help-desk-message-container {
+    padding: 10px;
+  }
+
+  .reply-form textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .reply-form button {
+    padding: 10px 15px;
+  }
+}
+
+.replied-queries-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: aliceblue;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 10);
+  margin-top: 20px;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: rgb(5, 146, 247);
+  text-align: center;
+}
+
+.replied-queries-container {
+  margin-top: 20px;
+}
+
+.replied-query {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

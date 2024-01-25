@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head") %>
+  <body>
+    <!-- Header -->
+    <%- include("./partials/admin_header") %>
+
+    <section class="replied-queries-page">
+      <h1 class="page-title">Replied Queries</h1>
+
+      <!-- Display replied queries -->
+      <div class="replied-queries-container">
+        <% repliedQueries.forEach((query) => { %>
+        <div class="replied-query">
+          <!-- Display query details -->
+          <p><strong>Name:</strong> <%= query.full_name %></p>
+          <p><strong>Email:</strong> <%= query.email %></p>
+          <p><strong>Subject:</strong> <%= query.subject %></p>
+          <!-- Add more query details as needed -->
+        </div>
+        <% }); %>
+      </div>
+    </section>
+
+    <%- include("./partials/footer") %>
+  </body>
+</html>

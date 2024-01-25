@@ -217,10 +217,18 @@ header {
     left: -100%;
     text-align: center;
     transition: all 0.9s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul li {
+    margin-top: 20px; /* Adjust spacing between each nav item */
   }
 
   nav ul li a {
     display: block;
+    color: #fff; /* Ensure link text color is visible against the background */
   }
 
   a:hover,

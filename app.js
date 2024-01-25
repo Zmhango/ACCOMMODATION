@@ -178,62 +178,78 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
-// Assuming you fetch help desk messages from the database
-app.get("/admin/help_desk", async (req, res) => {
-  try {
-    // Fetch help desk messages from the database
-    const [helpDeskMessages] = await pool.query("SELECT * FROM help_desk");
 
-    // Render the help_desk view and pass the helpDeskMessages data
-    res.render("help_desk", { helpDeskMessages });
+// Route to handle replying to a query and updating database
+app.post("/admin/help_desk/reply", upload.single("attachment"), async (req, res) => {
+  try {
+    const recipientEmail = req.body.recipientEmail;
+    const originalSubject = req.body.originalSubject;
+    const replyMessage = req.body.replyMessage;
+    const attachment = req.file; // Access the uploaded file details
+
+    // Closing message
+    const closingMessage = "\nRegards,\nSupport Team,\nEasyHouse";
+
+    // Nodemailer setup (update with your email configuration)
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "zondiwemhango215@gmail.com",
+        pass: "bgff ruzn lpch pijp",
+      },
+    });
+
+    // Email options
+    const mailOptions = {
+      from: "zondiwemhango215@gmail.com",
+      to: recipientEmail,
+      subject: originalSubject, // Use the original subject
+      text: `${replyMessage}\n${closingMessage}`, // Add the closing message
+      attachments: attachment ? [{ path: attachment.path }] : [], // Attach the file if provided
+    };
+
+    // Send the reply email
+    await transporter.sendMail(mailOptions);
+
+    // Update the corresponding row in the database to mark it as replied
+    await pool.query("UPDATE help_desk SET replied = TRUE WHERE email = ?", [recipientEmail]);
+
+    // Redirect back to the help_desk page after sending the reply
+    res.redirect("/admin/help_desk");
   } catch (error) {
-    console.error("Error fetching help desk messages:", error);
-    res.status(500).send("Error fetching help desk messages");
+    console.error("Error replying to query:", error);
+    res.status(500).send("Error replying to query");
   }
 });
 
-app.post(
-  "/admin/help_desk/reply",
-  upload.single("attachment"),
-  async (req, res) => {
-    try {
-      const recipientEmail = req.body.recipientEmail;
-      const originalSubject = req.body.originalSubject;
-      const replyMessage = req.body.replyMessage;
-      const attachment = req.file; // Access the uploaded file details
+// Route to fetch unreplied queries and render help_desk view
+app.get("/admin/help_desk", async (req, res) => {
+  try {
+    // Fetch unreplied queries from the database
+    const [unrepliedQueries] = await pool.query("SELECT * FROM help_desk WHERE replied = FALSE");
 
-      // Closing message
-      const closingMessage = "\nRegards,\nSupport Team,\nEasyHouse";
-
-      // Nodemailer setup (update with your email configuration)
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "zondiwemhango215@gmail.com",
-          pass: "bgff ruzn lpch pijp",
-        },
-      });
-
-      // Email options
-      const mailOptions = {
-        from: "zondiwemhango215@gmail.com",
-        to: recipientEmail,
-        subject: originalSubject, // Use the original subject
-        text: `${replyMessage}\n${closingMessage}`, // Add the closing message
-        attachments: attachment ? [{ path: attachment.path }] : [], // Attach the file if provided
-      };
-
-      // Send the reply email
-      await transporter.sendMail(mailOptions);
-
-      // Redirect back to the help_desk page after sending the reply
-      res.redirect("/admin/help_desk");
-    } catch (error) {
-      console.error("Error replying to query:", error);
-      res.status(500).send("Error replying to query");
-    }
+    // Render the help_desk view and pass the unrepliedQueries data
+    res.render("help_desk", { helpDeskMessages: unrepliedQueries });
+  } catch (error) {
+    console.error("Error fetching unreplied queries:", error);
+    res.status(500).send("Error fetching unreplied queries");
   }
-);
+});
+
+// Route to fetch replied queries and render replied_queries view
+app.get("/admin/replied_queries", async (req, res) => {
+  try {
+    // Fetch replied queries from the database
+    const [repliedQueries] = await pool.query("SELECT * FROM help_desk WHERE replied = TRUE");
+
+    // Render the replied_queries view and pass the repliedQueries data
+    res.render("replied_queries", { repliedQueries });
+  } catch (error) {
+    console.error("Error fetching replied queries:", error);
+    res.status(500).send("Error fetching replied queries");
+  }
+});
+
 
 // Handle GET request for the thank you page
 app.get("/thankyou", (req, res) => {
@@ -263,8 +279,8 @@ app.post("/contact", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "zondiwemhango215@gmail.com", 
-        pass: "bgff ruzn lpch pijp", 
+        user: "zondiwemhango215@gmail.com",
+        pass: "bgff ruzn lpch pijp",
       },
     });
 

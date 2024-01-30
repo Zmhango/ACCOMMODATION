@@ -977,8 +977,6 @@ app.get("/tenant_bookings", async (req, res) => {
       [userId]
     );
 
-    console.log("Booked Hostels for Tenant:", bookedHostelsData);
-
     // Render the tenant_bookings page with the list of confirmed bookings
     res.render("tenant_bookings", { bookedHostels: bookedHostelsData });
   } catch (error) {

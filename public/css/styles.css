@@ -198,7 +198,7 @@ form button:hover {
     display: none;
   }
 
-  ul {
+  nav ul {
     position: fixed;
     width: 100%;
     height: 100vh;
@@ -238,13 +238,6 @@ form button:hover {
 /* Additional styling for content and footer can be added below */
 .container {
   padding: 0rem;
-}
-
-footer {
-  background-color: #00022e;
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
 }
 
 .welcome {
@@ -347,14 +340,8 @@ footer {
   text-align: center;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Shadow effect */
-  background: linear-gradient(
-    to right,
-    green,
-    #1abc9c
-  ); /* Gradient background */
-  -webkit-background-clip: text; /* Text fill color as gradient */
+  background: linear-gradient(to right, green, #1abc9c);
 }
-
 .delete-btn[data-hostel-id] {
   padding: 8px 16px;
   background-color: #ff0000;
@@ -554,4 +541,95 @@ textarea {
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/*ABOUT CSS*/
+
+.container3 {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.section-title1 {
+  text-align: center;
+  color: #333;
+}
+
+.section-description1 {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Team Section Styles */
+.team-members {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.team-member {
+  text-align: center;
+  margin: 0 20px;
+}
+
+.team-member-img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.team-member-name {
+  margin: 0;
+  color: #333;
+}
+
+.team-member-role {
+  margin: 0;
+  color: #666;
+}
+
+.flip-card {
+  background-color: transparent;
+  width: 200px;
+  height: 200px;
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.flip-card-front {
+  background-color: #f7f7f7;
+}
+
+.flip-card-back {
+  background-color: #008000;
+  color: white;
+  transform: rotateY(180deg);
+  display: flex;
+  border-radius: 80px;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-content {
+  font-size: 20px;
+  font-weight: bold;
 }

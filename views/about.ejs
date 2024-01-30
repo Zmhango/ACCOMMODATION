@@ -1,10 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/head") %>
+  <head>
+    <%- include("./partials/head") %>
+    <link rel="stylesheet" href="about_us.css" />
+  </head>
   <body>
     <!-- Header -->
-    <%- include("./partials/header")%><%- include("./partials/progress-bar") %>
-    <main></main>
+    <%- include("./partials/header")%> <%- include("./partials/progress-bar") %>
+
+    <main>
+      <!-- About Section -->
+      <section class="about-section">
+        <div class="container3">
+          <h1 class="section-title1">About Us</h1>
+          <p class="section-description">
+            At OurCompany, we are passionate about providing high-quality
+            products and exceptional services to our customers. With years of
+            experience in the industry, we strive to innovate and deliver
+            solutions that meet the evolving needs of our clients.
+          </p>
+          <p class="section-description">
+            Our team is dedicated to excellence and works tirelessly to ensure
+            customer satisfaction. We believe in building long-lasting
+            relationships based on trust, integrity, and transparency.
+          </p>
+        </div>
+      </section>
+
+      <!-- Team Section -->
+      <section class="team-section">
+        <div class="container">
+          <h2 class="section-title1">Meet Our Team</h2>
+          <div class="team-members">
+            <!-- Team member cards go here -->
+            <div class="team-member">
+              <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img
+                      src="/images/about-pic1.jpg"
+                      alt="Team Member 1"
+                      class="team-member-img"
+                    />
+                  </div>
+                  <div class="flip-card-back">
+                    <p class="back-content">Developer</p>
+                  </div>
+                </div>
+              </div>
+              <h3 class="team-member-name">Zondiwe Mhango</h3>
+              <p class="team-member-role">CEO</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
     <%- include("./partials/footer") %>
   </body>
 </html>

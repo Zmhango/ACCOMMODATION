@@ -1,3 +1,119 @@
 <footer>
-  <p>&copy; 2023 Only_Believe</p>
+  <div class="footer-container">
+    <!-- Services -->
+    <div class="footer-section">
+      <h2>Services</h2>
+      <ul class="footer-list">
+        <li>Web Development</li>
+        <li>Rental Advertisement</li>
+        <li>House Agent Recognition</li>
+      </ul>
+    </div>
+
+    <!-- Company -->
+    <div class="footer-section">
+      <h2>Company</h2>
+      <ul class="footer-list">
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Legal -->
+    <div class="footer-section">
+      <h2>Legal</h2>
+      <ul class="footer-list">
+        <li>Terms and Conditions</li>
+      </ul>
+    </div>
+
+    <!-- Get in Touch -->
+    <div class="footer-section">
+      <h2>Get in Touch</h2>
+      <ul class="footer-list">
+        <li>+265 996 883 007</li>
+        <li>zondiwemhango215@gmail.com</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer Divider -->
+  <div class="footer-divider"></div>
+
+  <!-- Copyright Notice -->
+  <p>&copy; 2024 EasyHouse. All rights reserved.</p>
 </footer>
+
+<style>
+  /* Footer styles */
+  footer {
+    clear: both;
+    background-color: #00022e;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .footer-section {
+    flex: 1;
+    margin: 0 10px;
+  }
+
+  .footer-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: aliceblue;
+  }
+
+  .footer-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-list li {
+    margin-bottom: 5px;
+    color: #ccc;
+  }
+
+  .footer-divider {
+    margin: 20px auto;
+    width: 80%;
+    border-bottom: 0.1px solid aliceblue;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  footer p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: aliceblue;
+  }
+
+  /* Media queries for smaller screens */
+  @media screen and (max-width: 768px) {
+    .footer-container {
+      text-align: left;
+    }
+
+    .footer-section {
+      flex: 0 0 100%; /* Each section takes full width on smaller screens */
+      margin: 10px 0;
+    }
+
+    .footer-list {
+      text-align: left;
+      display: block;
+    }
+
+    .footer-list li {
+      margin-bottom: 5px;
+      color: #ccc;
+    }
+  }
+</style>

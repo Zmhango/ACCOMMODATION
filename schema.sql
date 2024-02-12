@@ -78,15 +78,16 @@ CREATE TABLE feedbacks (
     FOREIGN KEY (tenantId) REFERENCES users(userId)
 );
 
-
 CREATE TABLE help_desk (
     entry_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     subject VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
+    replied BOOLEAN DEFAULT FALSE, -- Adding the replied column with default value
     submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 <footer>

@@ -7,6 +7,25 @@
     <!-- Main Content -->
     <main class="container">
       <section class="welcome">
+        <div class="search-container">
+          <input
+            class="search-input1"
+            type="text"
+            id="searchInput"
+            placeholder="Search..."
+          />
+          <button id="searchButton">Search</button>
+          <i id="filterIcon" class="fa fa-filter"></i>
+          <!-- Font Awesome filter icon -->
+          <div id="filterDropdown" class="filter-dropdown">
+            <select id="filterOption">
+              <option value="location">Location</option>
+              <option value="price">Price</option>
+              <option value="gender">Gender</option>
+            </select>
+          </div>
+        </div>
+
         <h1 class="welcome-info">
           WE HAVE <span style="color: chartreuse">PERFECT</span> RENTAL FOR YOU
         </h1>
@@ -44,5 +63,101 @@
     </main>
 
     <%- include("./partials/footer") %>
+    <script>
+      // Get the search input element and search button
+      const searchInput = document.getElementById("searchInput");
+      const searchButton = document.getElementById("searchButton");
+
+      // Get all card elements
+      const cards = document.querySelectorAll(".card");
+
+      // Add event listener for button click
+      searchButton.addEventListener("click", function () {
+        performSearch();
+      });
+
+      // Add event listener for pressing Enter key in the search input
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          performSearch();
+        }
+      });
+
+      // Function to perform search
+      function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        // Loop through each card and check if it matches the search term
+        cards.forEach((card) => {
+          const hostelName = card.querySelector("h2").textContent.toLowerCase();
+          const hostelLocation = card
+            .querySelector(".card-info p:nth-child(3)")
+            .textContent.toLowerCase();
+          const hostelPrice = card
+            .querySelector(".card-info p:nth-child(4)")
+            .textContent.toLowerCase();
+          const hostelGender = card
+            .querySelector(".card-info p:nth-child(2)")
+            .textContent.toLowerCase(); // Added line for gender
+
+          // Show or hide the card based on the search term
+          if (
+            hostelName.includes(searchTerm) ||
+            hostelLocation.includes(searchTerm) ||
+            hostelPrice.includes(searchTerm) ||
+            hostelGender.includes(searchTerm)
+          ) {
+            // Modified line to include gender
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+    </script>
+
+    <script>
+      // Get filter elements
+      const filterIcon = document.getElementById("filterIcon");
+      const filterDropdown = document.getElementById("filterDropdown");
+      const filterOption = document.getElementById("filterOption");
+
+      // Add click event listener to filter icon
+      filterIcon.addEventListener("click", () => {
+        filterDropdown.classList.toggle("active");
+      });
+
+      // Add event listener for input changes
+      searchInput.addEventListener("input", function () {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const selectedFilter = filterOption.value;
+
+        // Loop through each card and check if it matches the search term
+        cards.forEach((card) => {
+          const hostelName = card.querySelector("h2").textContent.toLowerCase();
+          const hostelLocation = card
+            .querySelector(".card-info p:nth-child(3)")
+            .textContent.toLowerCase();
+          const hostelPrice = card
+            .querySelector(".card-info p:nth-child(4)")
+            .textContent.toLowerCase();
+          const hostelGender = card
+            .querySelector(".card-info p:nth-child(2)")
+            .textContent.toLowerCase();
+
+          // Show or hide the card based on the search term and selected filter
+          if (
+            (selectedFilter === "location" &&
+              hostelLocation.includes(searchTerm)) ||
+            (selectedFilter === "price" && hostelPrice.includes(searchTerm)) ||
+            (selectedFilter === "gender" && hostelGender.includes(searchTerm))
+          ) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    </script>
   </body>
 </html>

@@ -1,63 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/tenant_head") %>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/b2.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+        width: 20vw; /* 20% of viewport width */
+        height: 100vh;
+        flex: 0 0 auto; /* Do not grow or shrink */
+        position: fixed; /* Fixed position */
+        top: 0; /* Stick to top */
+        left: 0; /* Initially show the sidebar on larger screens */
+        overflow-y: auto; /* Allow vertical scrolling */
+        transition: left 0.3s ease; /* Add smooth transition */
+      }
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links li {
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem; /* Position on the right side */
+        cursor: pointer;
+        z-index: 999; /* Ensure it's above other content */
+        display: none; /* Initially hide on larger screens */
+      }
+
+      .menu-icon i {
+        font-size: 1.5rem;
+        color: #02a0f6;
+      }
+
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
+        width: 80vw; /* Adjusted to accommodate the sidebar width */
+        min-height: 100vh; /* Ensure the content fills the viewport height */
+      }
+
+      .container1 {
+        background-color: #fff;
+        padding: 2rem;
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        border-radius: 0.8rem;
+      }
+
+      .hostel-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .hostel-image {
+        margin-bottom: 1rem;
+      }
+
+      .hostel-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 0.8rem;
+      }
+
+      .detail {
+        margin-top: 1rem;
+      }
+
+      .detail label {
+        font-weight: bold;
+      }
+
+      .detail p {
+        margin-bottom: 1rem;
+      }
+
+      .auth-message {
+        margin-top: 1rem;
+        color: #555;
+      }
+
+      .book-btn {
+        display: inline-block;
+        background-color: #178733;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+      }
+
+      .book-btn:hover {
+        background-color: #147026;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          left: -20vw; /* Hide sidebar by default on smaller screens */
+        }
+
+        .menu-icon {
+          display: block; /* Show the hamburger menu icon */
+        }
+
+        .main-content {
+          margin-left: 0; /* Remove margin to make content full-width */
+          width: 100%; /* Make content full-width */
+        }
+      }
+    </style>
+  </head>
   <body>
-    <%- include("./partials/tenant_header") %> <%
-    include("./partials/progress-bar") %>
-
-    <div class="container1">
-      <% if (userIsAuthenticated) { %>
-      <!-- Show full details only for authenticated users -->
-      <h1 class="hostel-title"><%= hostel.name %></h1>
-
-      <!-- Hostel Image -->
-      <div class="hostel-image">
-        <img
-          src="/uploads/<%= hostel.images %>"
-          alt="<%= hostel.name %> Image"
-        />
-      </div>
-
-      <!-- Hostel Details Form -->
-      <div class="detail">
-        <label>Gender:</label>
-        <p><%= hostel.gender %></p>
-
-        <label>Location:</label>
-        <p><%= hostel.location %></p>
-
-        <label>Price:</label>
-        <p>MK<%= hostel.price %></p>
-
-        <label>Phone:</label>
-        <p><%= hostel.phone %></p>
-
-        <label>Availability:</label>
-        <p><%= hostel.availability %></p>
-
-        <label>Description:</label>
-        <p><%= hostel.description %></p>
-
-        <!-- Add other details as needed -->
-
-        <a href="/booking_form/<%= hostel.hostelId %>" class="book-btn"
-          >Book Now</a
-        >
-      </div>
-      <% } else { %>
-
-      <p class="auth-message">
-        Please <a href="/login">login</a> or <a href="/register">register</a> to
-        view full hostel details and book.
-      </p>
-      <!-- Message for unauthenticated users -->
-      <div class="hostel-image">
-        <!-- Display a placeholder image or handle empty image case -->
-        <img src="/images/beauty3.jpg" alt="Placeholder Image" />
-      </div>
-      <% } %>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <li><a href="/tenant">Home</a></li>
+        <li><a href="/tenant/tenant_profile">Profile</a></li>
+        <li><a href="/tenant/pending_approval">Pending Approval</a></li>
+        <li><a href="/tenant_bookings">Bookings</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+      <!-- Progress bar -->
+      <% include("./partials/progress-bar") %>
     </div>
 
-    <%- include("./partials/footer") %>
+    <!-- Hamburger menu icon -->
+    <div class="menu-icon" id="menu-icon">
+      <i class="fa fa-bars"></i>
+    </div>
+
+    <!-- Page content -->
+    <div class="main-content">
+      <div class="container1">
+        <% if (userIsAuthenticated) { %>
+        <!-- Show full details only for authenticated users -->
+        <h1 class="hostel-title"><%= hostel.name %></h1>
+
+        <!-- Hostel Image -->
+        <div class="hostel-image">
+          <img
+            src="/uploads/<%= hostel.images %>"
+            alt="<%= hostel.name %> Image"
+          />
+        </div>
+
+        <!-- Hostel Details Form -->
+        <div class="detail">
+          <label>Gender:</label>
+          <p><%= hostel.gender %></p>
+
+          <label>Location:</label>
+          <p><%= hostel.location %></p>
+
+          <label>Price:</label>
+          <p>MK<%= hostel.price %></p>
+
+          <label>Phone:</label>
+          <p><%= hostel.phone %></p>
+
+          <label>Availability:</label>
+          <p><%= hostel.availability %></p>
+
+          <label>Description:</label>
+          <p><%= hostel.description %></p>
+
+          <!-- Add other details as needed -->
+
+          <a href="/booking_form/<%= hostel.hostelId %>" class="book-btn"
+            >Book Now</a
+          >
+        </div>
+        <% } else { %>
+        <!-- Message for unauthenticated users -->
+        <p class="auth-message">
+          Please <a href="/login">login</a> or
+          <a href="/register">register</a> to view full hostel details and book.
+        </p>
+        <div class="hostel-image">
+          <!-- Display a placeholder image or handle empty image case -->
+          <img src="/images/beauty3.jpg" alt="Placeholder Image" />
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      // Get the sidebar and menu icon elements
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
+
+      // Toggle sidebar visibility when menu icon is clicked
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+      });
+
+      // Handle screen resize
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0"; // Ensure sidebar is visible
+        } else {
+          sidebar.style.left = "-20vw"; // Ensure sidebar is hidden
+        }
+      }
+
+      // Attach the resize event listener
+      window.addEventListener("resize", handleResize);
+
+      // Initial call to handle the current screen size
+      handleResize();
+    </script>
   </body>
 </html>

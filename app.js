@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 app.use(
   session({
@@ -178,55 +178,62 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
-
 // Route to handle replying to a query and updating database
-app.post("/admin/help_desk/reply", upload.single("attachment"), async (req, res) => {
-  try {
-    const recipientEmail = req.body.recipientEmail;
-    const originalSubject = req.body.originalSubject;
-    const replyMessage = req.body.replyMessage;
-    const attachment = req.file; // Access the uploaded file details
+app.post(
+  "/admin/help_desk/reply",
+  upload.single("attachment"),
+  async (req, res) => {
+    try {
+      const recipientEmail = req.body.recipientEmail;
+      const originalSubject = req.body.originalSubject;
+      const replyMessage = req.body.replyMessage;
+      const attachment = req.file; // Access the uploaded file details
 
-    // Closing message
-    const closingMessage = "\nRegards,\nSupport Team,\nEasyHouse";
+      // Closing message
+      const closingMessage = "\nRegards,\nSupport Team,\nEasyHouse";
 
-    // Nodemailer setup (update with your email configuration)
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "zondiwemhango215@gmail.com",
-        pass: "bgff ruzn lpch pijp",
-      },
-    });
+      // Nodemailer setup (update with your email configuration)
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "zondiwemhango215@gmail.com",
+          pass: "bgff ruzn lpch pijp",
+        },
+      });
 
-    // Email options
-    const mailOptions = {
-      from: "zondiwemhango215@gmail.com",
-      to: recipientEmail,
-      subject: originalSubject, // Use the original subject
-      text: `${replyMessage}\n${closingMessage}`, // Add the closing message
-      attachments: attachment ? [{ path: attachment.path }] : [], // Attach the file if provided
-    };
+      // Email options
+      const mailOptions = {
+        from: "zondiwemhango215@gmail.com",
+        to: recipientEmail,
+        subject: originalSubject, // Use the original subject
+        text: `${replyMessage}\n${closingMessage}`, // Add the closing message
+        attachments: attachment ? [{ path: attachment.path }] : [], // Attach the file if provided
+      };
 
-    // Send the reply email
-    await transporter.sendMail(mailOptions);
+      // Send the reply email
+      await transporter.sendMail(mailOptions);
 
-    // Update the corresponding row in the database to mark it as replied
-    await pool.query("UPDATE help_desk SET replied = TRUE WHERE email = ?", [recipientEmail]);
+      // Update the corresponding row in the database to mark it as replied
+      await pool.query("UPDATE help_desk SET replied = TRUE WHERE email = ?", [
+        recipientEmail,
+      ]);
 
-    // Redirect back to the help_desk page after sending the reply
-    res.redirect("/admin/help_desk");
-  } catch (error) {
-    console.error("Error replying to query:", error);
-    res.status(500).send("Error replying to query");
+      // Redirect back to the help_desk page after sending the reply
+      res.redirect("/admin/help_desk");
+    } catch (error) {
+      console.error("Error replying to query:", error);
+      res.status(500).send("Error replying to query");
+    }
   }
-});
+);
 
 // Route to fetch unreplied queries and render help_desk view
 app.get("/admin/help_desk", async (req, res) => {
   try {
     // Fetch unreplied queries from the database
-    const [unrepliedQueries] = await pool.query("SELECT * FROM help_desk WHERE replied = FALSE");
+    const [unrepliedQueries] = await pool.query(
+      "SELECT * FROM help_desk WHERE replied = FALSE"
+    );
 
     // Render the help_desk view and pass the unrepliedQueries data
     res.render("help_desk", { helpDeskMessages: unrepliedQueries });
@@ -240,7 +247,9 @@ app.get("/admin/help_desk", async (req, res) => {
 app.get("/admin/replied_queries", async (req, res) => {
   try {
     // Fetch replied queries from the database
-    const [repliedQueries] = await pool.query("SELECT * FROM help_desk WHERE replied = TRUE");
+    const [repliedQueries] = await pool.query(
+      "SELECT * FROM help_desk WHERE replied = TRUE"
+    );
 
     // Render the replied_queries view and pass the repliedQueries data
     res.render("replied_queries", { repliedQueries });
@@ -249,7 +258,6 @@ app.get("/admin/replied_queries", async (req, res) => {
     res.status(500).send("Error fetching replied queries");
   }
 });
-
 
 // Handle GET request for the thank you page
 app.get("/thankyou", (req, res) => {
@@ -685,22 +693,23 @@ app.delete("/admin/admin_delete_hostel/:hostelId", async (req, res) => {
 app.get("/hostel_details/:hostelId", async (req, res) => {
   try {
     const hostelId = req.params.hostelId;
-    const userIsAuthenticated = req.query.auth === "true";
+    const userIsAuthenticated = req.session.userId ? true : false;
 
-    // Fetch hostel details from the database
+    if (!userIsAuthenticated) {
+      return res.render("unauthenticated");
+    }
+
     const [hostelDetails] = await pool.execute(
       "SELECT * FROM hostels WHERE hostelId = ?",
       [hostelId]
     );
 
     if (hostelDetails.length === 0) {
-      // Hostel not found
       return res.status(404).send("Hostel not found");
     }
 
     const hostel = hostelDetails[0];
 
-    // Render the hostel_details page with user authentication status
     res.render("hostel_details", { hostel, userIsAuthenticated });
   } catch (error) {
     console.error("Error fetching hostel details:", error);
@@ -711,28 +720,30 @@ app.get("/hostel_details/:hostelId", async (req, res) => {
 app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
   try {
     const hostelId = req.params.hostelId;
-    const userIsAuthenticated = req.query.auth === "true";
+    const userIsAuthenticated = req.session.userId ? true : false;
 
-    // Fetch hostel details from the database
+    if (!userIsAuthenticated) {
+      return res.render("unauthenticated");
+    }
+
     const [hostelDetails] = await pool.execute(
       "SELECT * FROM hostels WHERE hostelId = ?",
       [hostelId]
     );
 
     if (hostelDetails.length === 0) {
-      // Hostel not found
       return res.status(404).send("Hostel not found");
     }
 
     const hostel = hostelDetails[0];
 
-    // Render the hostel_details page with user authentication status
     res.render("hostel_details", { hostel, userIsAuthenticated });
   } catch (error) {
     console.error("Error fetching hostel details:", error);
     res.status(500).send("Server Error");
   }
 });
+
 //
 //
 //

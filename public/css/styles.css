@@ -35,6 +35,39 @@ header {
   display: block;
 }
 
+.search-input1 {
+  margin-right: 1rem;
+  padding: 0.8rem;
+  border-radius: 5px;
+  border: 1px solid #07f9f5;
+  width: 48%;
+  margin-top: 80px;
+}
+
+/* Center the search container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px; /* Add margin if needed */
+}
+
+/* Style the search button */
+#searchButton {
+  background-color: #178733; /* Green color */
+  color: #fff; /* Text color */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 80px;
+}
+
+#searchButton:hover {
+  background-color: #147026; /* Darker green color on hover */
+}
+
 .menu-icon {
   display: none;
   cursor: pointer;
@@ -252,7 +285,7 @@ form button:hover {
   background-repeat: no-repeat;
 }
 .welcome-info {
-  padding-top: 14rem; /* Or use padding-top: 10%; */
+  padding-top: 4rem; /* Or use padding-top: 10%; */
   font-size: 7vw;
   color: aliceblue;
   font-weight: bolder;
@@ -632,4 +665,25 @@ textarea {
 .back-content {
   font-size: 20px;
   font-weight: bold;
+}
+
+/* Position the filter icon */
+#filterIcon {
+  margin-left: -30px; /* Adjust as needed */
+  cursor: pointer;
+}
+
+/* Style the filter dropdown */
+.filter-dropdown {
+  position: absolute;
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* Show the filter dropdown when active */
+.filter-dropdown.active {
+  display: block;
 }

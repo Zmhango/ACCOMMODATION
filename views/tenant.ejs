@@ -1,22 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/tenant_head")%>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/b2.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        margin: solid 5px aliceblue;
+        color: #fff;
+        padding: 1rem;
+        width: 20vw; /* 20% of viewport width */
+        height: 100vh;
+        flex: 0 0 auto; /* Do not grow or shrink */
+        position: fixed; /* Fixed position */
+        top: 0; /* Stick to top */
+        left: 0; /* Initially show the sidebar on larger screens */
+        overflow-y: auto; /* Allow vertical scrolling */
+        transition: left 0.3s ease; /* Add smooth transition */
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      /* Basic styles */
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links li {
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      /* Glowing effect */
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: calc(100% - 2rem);
+        height: 2px;
+        bottom: -5px;
+        left: 1rem;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem; /* Position on the right side */
+        cursor: pointer;
+        z-index: 999; /* Ensure it's above other content */
+        display: none; /* Initially hide on larger screens */
+      }
+
+      .menu-icon i {
+        font-size: 1.5rem;
+        color: #02a0f6;
+      }
+
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
+        width: 80vw; /* Adjusted to accommodate the sidebar width */
+        min-height: 100vh; /* Ensure the content fills the viewport height */
+      }
+
+      .search-section {
+        margin-bottom: 2rem;
+      }
+
+      .search-input1 {
+        margin-right: 1rem;
+        padding: 0.8rem;
+        border-radius: 5px;
+        border: 1px solid #07f9f5;
+        width: 48%;
+        margin-top: 5px;
+      }
+
+      /* Center the search container */
+      .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px; /* Add margin if needed */
+      }
+
+      /* Style the search button */
+      #searchButton {
+        background-color: #178733; /* Green color */
+        color: #fff; /* Text color */
+        padding: 10px 20px; /* Adjust padding as needed */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+      }
+
+      #searchButton:hover {
+        background-color: #147026; /* Darker green color on hover */
+      }
+
+      .card-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+      }
+
+      .card {
+        width: calc(33.333% - 1rem); /* 1rem gap between cards */
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        border-radius: 0.8rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background-color: #fff;
+      }
+
+      .card:hover {
+        transform: translateY(-0.5rem);
+      }
+
+      .card img {
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+      }
+
+      .card-info {
+        padding: 1.2rem;
+      }
+
+      .card-info h2 {
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info p {
+        font-size: 0.875rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info a {
+        text-decoration: none;
+        color: green;
+        background-color: #f4f4f4;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        float: right;
+      }
+
+      .card-info a:hover {
+        background-color: #ddd;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          left: -20vw; /* Hide sidebar by default on smaller screens */
+        }
+
+        .menu-icon {
+          display: block; /* Show the hamburger menu icon */
+        }
+
+        .main-content {
+          margin-left: 0; /* Remove margin to make content full-width */
+          width: 100%; /* Make content full-width */
+        }
+
+        .card {
+          width: calc(50% - 1rem); /* Adjust card width for smaller screens */
+        }
+      }
+    </style>
+  </head>
   <body>
-    <%- include("./partials/tenant_header")%> <%-
-    include("./partials/progress-bar") %>
-    <div class="notification" id="notification">
-      Congratulations! Successfully Logged In
+    <div class="sidebar" id="sidebar">
+      <!-- Header -->
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <li><a href="/tenant">Home</a></li>
+        <li><a href="/tenant/tenant_profile">Profile</a></li>
+        <li><a href="/tenant/pending_approval">Pending Approval</a></li>
+        <li><a href="/tenant_bookings">Bookings</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
     </div>
-    <!-- Main content area -->
-    <main class="container">
-      <section class="search-section">
-        <!-- Search bar and options -->
-        <form class="search-form">
-          <input type="text" placeholder="Search for hostels..." />
-          <!-- Additional search filters/buttons if needed -->
-          <button type="submit">Search</button>
-        </form>
-      </section>
+    <!-- Hamburger menu icon -->
+    <div class="menu-icon" id="menu-icon">
+      <i class="fa fa-bars"></i>
+    </div>
+    <div class="main-content">
+      <!-- Main content area -->
+      <div class="search-container">
+        <input
+          class="search-input1"
+          type="text"
+          id="searchInput"
+          placeholder="Search..."
+        />
+        <button id="searchButton">Search</button>
+      </div>
       <!-- Cards Section -->
       <section class="card-section">
         <!-- Loop through hostels and display each as a card -->
@@ -38,7 +271,6 @@
             <p>Gender : <%= hostel.gender %></p>
             <p>Location: <%= hostel.location %></p>
             <p>MK<%= hostel.price %></p>
-
             <% if (userIsAuthenticated) { %>
             <!-- Show full details only for authenticated users -->
             <a href="/tenant/hostel_details/<%= hostel.hostelId %>?auth=true"
@@ -55,23 +287,87 @@
         </div>
         <% }); %>
       </section>
-
       <!-- Additional sections: Profile, Feedback, etc. -->
-    </main>
+    </div>
     <script>
-      // jQuery to show the notification and then hide it after 3 seconds
-      $(document).ready(function () {
-        var notification = $("#notification");
+      // Get the sidebar and menu icon elements
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
 
-        // Show the notification
-        notification.addClass("show-notification");
-
-        // Hide the notification after 3 seconds
-        setTimeout(function () {
-          notification.removeClass("show-notification");
-        }, 3000); // 3000 milliseconds = 3 seconds
+      // Toggle sidebar visibility when menu icon is clicked
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
       });
+
+      // Handle screen resize
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0"; // Ensure sidebar is visible
+          menuIcon.style.display = "none"; // Hide the menu icon
+        } else {
+          sidebar.style.left = "-20vw"; // Ensure sidebar is hidden
+          menuIcon.style.display = "block"; // Show the menu icon
+        }
+      }
+
+      // Attach the resize event listener
+      window.addEventListener("resize", handleResize);
+
+      // Initial call to handle the current screen size
+      handleResize();
     </script>
-    <%- include("./partials/footer")%>
+
+    <script>
+      // Get the search input element and search button
+      const searchInput = document.getElementById("searchInput");
+      const searchButton = document.getElementById("searchButton");
+
+      // Get all card elements
+      const cards = document.querySelectorAll(".card");
+
+      // Add event listener for button click
+      searchButton.addEventListener("click", function () {
+        performSearch();
+      });
+
+      // Add event listener for pressing Enter key in the search input
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          performSearch();
+        }
+      });
+
+      // Function to perform search
+      function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        // Loop through each card and check if it matches the search term
+        cards.forEach((card) => {
+          const hostelName = card.querySelector("h2").textContent.toLowerCase();
+          const hostelLocation = card
+            .querySelector(".card-info p:nth-child(3)")
+            .textContent.toLowerCase();
+          const hostelPrice = card
+            .querySelector(".card-info p:nth-child(4)")
+            .textContent.toLowerCase();
+          const hostelGender = card
+            .querySelector(".card-info p:nth-child(2)")
+            .textContent.toLowerCase(); // Added line for gender
+
+          // Show or hide the card based on the search term
+          if (
+            hostelName.includes(searchTerm) ||
+            hostelLocation.includes(searchTerm) ||
+            hostelPrice.includes(searchTerm) ||
+            hostelGender.includes(searchTerm)
+          ) {
+            // Modified line to include gender
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+    </script>
   </body>
 </html>

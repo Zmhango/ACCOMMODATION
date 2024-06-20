@@ -1,14 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/landlord_head")%>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/b2.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+        width: 20vw;
+        height: 100vh;
+        flex: 0 0 auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links li {
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: calc(100% - 2rem);
+        height: 2px;
+        bottom: -5px;
+        left: 1rem;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        z-index: 999;
+        display: none;
+      }
+
+      .menu-icon i {
+        font-size: 1.5rem;
+        color: #02a0f6;
+      }
+
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+      }
+
+      .search-section {
+        margin-bottom: 2rem;
+      }
+
+      .search-input1 {
+        margin-right: 1rem;
+        padding: 0.8rem;
+        border-radius: 5px;
+        border: 1px solid #07f9f5;
+        width: 48%;
+        margin-top: 5px;
+      }
+
+      .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      #searchButton {
+        background-color: #178733;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+      }
+
+      #searchButton:hover {
+        background-color: #147026;
+      }
+
+      .card-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+      }
+
+      .card {
+        width: calc(33.333% - 1rem);
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        border-radius: 0.8rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background-color: #fff;
+      }
+
+      .card:hover {
+        transform: translateY(-0.5rem);
+      }
+
+      .card img {
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+      }
+
+      .card-info {
+        padding: 1.2rem;
+      }
+
+      .card-info h2 {
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info p {
+        font-size: 0.875rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info a {
+        text-decoration: none;
+        color: green;
+        background-color: #f4f4f4;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        float: right;
+      }
+
+      .card-info a:hover {
+        background-color: #ddd;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          left: -20vw;
+        }
+
+        .menu-icon {
+          display: block;
+        }
+
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .card {
+          width: calc(50% - 1rem);
+        }
+      }
+    </style>
+  </head>
+
   <body>
-    <%- include("./partials/landlord_header")%> <%-
-    include("./partials/progress-bar") %>
-    <div class="notification" id="notification">
-      Congratulations! Successfully Logged In
+    <div class="sidebar" id="sidebar">
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <li><a href="/landlord">Home</a></li>
+        <li><a href="/landlord/add_hostel">List Hostel</a></li>
+        <li><a href="/landlord/delete_hostel">Delete Hostel</a></li>
+        <li>
+          <a href="/landlord/confirm_booking_landlord">Confirm Booked Hostel</a>
+        </li>
+        <li><a href="/landlord/booking_history">Booking History</a></li>
+        <li><a href="/landlord/landlord_profile">Profile</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
     </div>
-    <!-- Main content area -->
-    <main class="container">
+    <div class="menu-icon" id="menu-icon">
+      <i class="fa fa-bars"></i>
+    </div>
+    <div class="main-content">
+      <div class="search-container">
+        <input
+          class="search-input1"
+          type="text"
+          id="searchInput"
+          placeholder="Search..."
+        />
+        <button id="searchButton">Search</button>
+      </div>
       <section class="booking-section">
         <!-- Display booked hostels or bookings history -->
         <!-- Example: Cards displaying booked hostels -->
@@ -22,23 +260,70 @@
         </div>
         <!-- More booking cards or booking history -->
       </section>
-
-      <!-- Additional sections: Profile, Feedback, etc. -->
-    </main>
+    </div>
     <script>
-      // jQuery to show the notification and then hide it after 3 seconds
-      $(document).ready(function () {
-        var notification = $("#notification");
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
 
-        // Show the notification
-        notification.addClass("show-notification");
-
-        // Hide the notification after 3 seconds
-        setTimeout(function () {
-          notification.removeClass("show-notification");
-        }, 3000); // 3000 milliseconds = 3 seconds
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
       });
+
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0";
+          menuIcon.style.display = "none";
+        } else {
+          sidebar.style.left = "-20vw";
+          menuIcon.style.display = "block";
+        }
+      }
+
+      window.addEventListener("resize", handleResize);
+      handleResize();
     </script>
-    <%- include("./partials/footer")%>
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const searchButton = document.getElementById("searchButton");
+      const cards = document.querySelectorAll(".card");
+
+      searchButton.addEventListener("click", function () {
+        performSearch();
+      });
+
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          performSearch();
+        }
+      });
+
+      function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        cards.forEach((card) => {
+          const hostelName = card.querySelector("h2").textContent.toLowerCase();
+          const hostelLocation = card
+            .querySelector(".card-info p:nth-child(3)")
+            .textContent.toLowerCase();
+          const hostelPrice = card
+            .querySelector(".card-info p:nth-child(4)")
+            .textContent.toLowerCase();
+          const hostelGender = card
+            .querySelector(".card-info p:nth-child(2)")
+            .textContent.toLowerCase();
+
+          if (
+            hostelName.includes(searchTerm) ||
+            hostelLocation.includes(searchTerm) ||
+            hostelPrice.includes(searchTerm) ||
+            hostelGender.includes(searchTerm)
+          ) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+    </script>
   </body>
 </html>

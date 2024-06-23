@@ -90,37 +90,3 @@ CREATE TABLE help_desk (
 
 
 
-<footer>
-  <div class="footer-container">
-    <div class="footer-section">
-      <h2>Services</h2>
-      <ul class="footer-list">
-        <li>Web Development</li>
-        <li>Rental Advertisement</li>
-        <li>House Agent Recognition</li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h2>Company</h2>
-      <ul class="footer-list">
-        <li><a href="#about">About Us</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h2>Legal</h2>
-      <ul class="footer-list">
-        <li>Terms and Conditions</li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h2>Get in Touch</h2>
-      <ul class="footer-list">
-        <li>+265 996 883 007</li>
-        <li>zondiwemhango215@gmail.com</li>
-      </ul>
-    </div>
-  </div>
-  <hr class="footer-divider" />
-  <p>&copy; 2024 EasyHouse. All rights reserved.</p>
-</footer>

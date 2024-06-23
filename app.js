@@ -318,8 +318,66 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-app.get("/landlord", (req, res) => {
-  res.render("landlord");
+app.get("/landlord", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(403).send("Unauthorized");
+    }
+
+    // Query to fetch hostels for the logged-in landlord that are not booked
+    const query = `
+      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.email, hostels.phone, hostels.description, hostels.images
+      FROM hostels
+      LEFT JOIN bookings ON hostels.hostelId = bookings.hostelId AND bookings.status = 'booked'
+      WHERE hostels.userId = ? AND bookings.hostelId IS NULL
+    `;
+
+    const [hostels] = await pool.query(query, [userId]);
+
+    // Calculate the number of active listings
+    const activeListings = hostels.length;
+
+    // Query to fetch the count of pending bookings for the specific landlord
+    const [pendingBookingsCountData] = await pool.query(
+      `
+      SELECT COUNT(DISTINCT hostels.hostelId) AS pendingBookingsCount
+      FROM hostels
+      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
+      WHERE bookings.status = 'pending' AND hostels.userId = ?
+    `,
+      [userId]
+    );
+
+    const pendingBookingsCount =
+      pendingBookingsCountData[0].pendingBookingsCount || 0;
+
+    // Query to fetch the total number of bookings for the specific landlord
+    const [totalBookingsCountData] = await pool.query(
+      `
+      SELECT COUNT(*) AS totalBookingsCount
+      FROM hostels
+      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
+      WHERE hostels.userId = ?
+    `,
+      [userId]
+    );
+
+    const totalBookingsCount =
+      totalBookingsCountData[0].totalBookingsCount || 0;
+
+    // Render the My Listings page and pass the hostels data, active listings count, pending bookings count, and total bookings count
+    res.render("landlord", {
+      hostels,
+      activeListings,
+      pendingBookingsCount,
+      totalBookingsCount,
+    });
+  } catch (error) {
+    console.error("Error fetching landlord's data:", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 app.get("/landlord/landlord_profile", async (req, res) => {
@@ -387,6 +445,94 @@ app.post(
       res
         .status(500)
         .send("Error updating/inserting landlord profile. Please try again.");
+    }
+  }
+);
+
+app.get("/landlord/edit_hostel/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userId = req.session.userId;
+
+    // Ensure the user is authenticated and owns the hostel
+    if (!userId) {
+      return res.status(403).send("Unauthorized");
+    }
+
+    const [hostelDetails] = await pool.query(
+      "SELECT * FROM hostels WHERE hostelId = ? AND userId = ?",
+      [hostelId, userId]
+    );
+
+    if (hostelDetails.length === 0) {
+      return res
+        .status(404)
+        .send(
+          "Hostel not found or you do not have permission to edit this hostel"
+        );
+    }
+
+    const hostel = hostelDetails[0];
+    res.render("edit_hostel", { hostel });
+  } catch (error) {
+    console.error("Error fetching hostel details:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.post(
+  "/landlord/edit_hostel/:hostelId",
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const hostelId = req.params.hostelId;
+      const userId = req.session.userId;
+      const {
+        name,
+        location,
+        price,
+        availability,
+        gender,
+        email,
+        phone,
+        description,
+      } = req.body;
+
+      if (!userId) {
+        return res.status(403).send("Unauthorized");
+      }
+
+      const image = req.file;
+      const imageFilename = image ? image.filename : null;
+
+      const updateFields = {
+        name,
+        location,
+        price,
+        availability,
+        gender,
+        email,
+        phone,
+        description,
+      };
+
+      if (imageFilename) {
+        updateFields.images = imageFilename;
+      }
+
+      const fields = Object.keys(updateFields)
+        .map((field) => `${field} = ?`)
+        .join(", ");
+      const values = Object.values(updateFields);
+
+      const updateQuery = `UPDATE hostels SET ${fields} WHERE hostelId = ? AND userId = ?`;
+
+      await pool.execute(updateQuery, [...values, hostelId, userId]);
+
+      res.redirect("/landlord");
+    } catch (error) {
+      console.error("Error updating hostel details:", error);
+      res.status(500).send("Server Error");
     }
   }
 );
@@ -1021,6 +1167,7 @@ app.get("/landlord/booking_history", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 // Logout route
 
 app.get("/logout", (req, res) => {

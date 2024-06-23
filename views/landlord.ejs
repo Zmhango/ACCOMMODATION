@@ -5,7 +5,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+
     <style>
+      /* Include your existing styles here */
       /* Reset default margin and padding */
       * {
         margin: 0;
@@ -216,6 +218,123 @@
           width: calc(50% - 1rem);
         }
       }
+
+      /* Dashboard specific styles */
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .dashboard-header h1 {
+        font-size: 2rem;
+      }
+
+      .btn-primary {
+        background-color: #178733;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #004494;
+      }
+
+      .overview {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+      }
+
+      .overview .card {
+        flex: 1;
+        text-align: center;
+        padding: 2rem;
+        background-color: aliceblue;
+        color: black;
+        margin-right: 1rem;
+      }
+
+      .overview .card:last-child {
+        margin-right: 0;
+      }
+
+      .listings {
+        background-color: aliceblue;
+        padding: 1rem;
+        border-radius: 0.8rem;
+        overflow-x: auto;
+      }
+
+      .listings table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+      }
+
+      .listings th,
+      .listings td {
+        padding: 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        color: black;
+      }
+
+      .listings th {
+        background-color: #00022e;
+        color: aliceblue;
+      }
+
+      .listings tbody tr:hover {
+        background-color: #f4f4f4;
+      }
+
+      .listings a {
+        color: #00022e;
+        text-decoration: none;
+      }
+
+      .listings a:hover {
+        color: #0056b3;
+      }
+
+      .listings .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .listings .delete-btn {
+        background-color: rgb(164, 2, 2);
+        color: aliceblue;
+        text-decoration: none;
+      }
+
+      .listings .delete-btn:hover {
+        background-color: #333;
+      }
+
+      .listings .edit-btn {
+        margin-top: 2px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: aliceblue;
+        background-color: green;
+        text-decoration: none;
+      }
+
+      .listings .edit-btn:hover {
+        background-color: #333;
+      }
     </style>
   </head>
 
@@ -223,44 +342,176 @@
     <div class="sidebar" id="sidebar">
       <img class="logo" src="/images/logo.jpeg" alt="Logo" />
       <ul class="nav-links">
-        <li><a href="/landlord">Home</a></li>
-        <li><a href="/landlord/add_hostel">List Hostel</a></li>
-        <li><a href="/landlord/delete_hostel">Delete Hostel</a></li>
         <li>
-          <a href="/landlord/confirm_booking_landlord">Confirm Booked Hostel</a>
+          <a href="/landlord">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-dashboard"
+                aria-hidden="true"
+                style="color: #c68417; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Home
+          </a>
         </li>
-        <li><a href="/landlord/booking_history">Booking History</a></li>
-        <li><a href="/landlord/landlord_profile">Profile</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li>
+          <a href="/landlord/add_hostel">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-plus-square"
+                aria-hidden="true"
+                style="color: #0da2f1; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Add Hostel
+          </a>
+        </li>
+        <li>
+          <a href="/landlord/delete_hostel">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-trash-o"
+                aria-hidden="true"
+                style="color: #eb0c0c; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Delete Hostel
+          </a>
+        </li>
+        <li>
+          <a href="/landlord/confirm_booking_landlord">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-check-square"
+                aria-hidden="true"
+                style="color: #048e04; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Approve Booking
+          </a>
+        </li>
+        <li>
+          <a href="/landlord/booking_history">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-history"
+                aria-hidden="true"
+                style="color: burlywood; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Bookings History
+          </a>
+        </li>
+        <li>
+          <a href="/landlord/landlord_profile">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-user"
+                aria-hidden="true"
+                style="color: gold; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a href="/logout">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-sign-out"
+                aria-hidden="true"
+                style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Sign-Out
+          </a>
+        </li>
       </ul>
     </div>
     <div class="menu-icon" id="menu-icon">
       <i class="fa fa-bars"></i>
     </div>
     <div class="main-content">
-      <div class="search-container">
-        <input
-          class="search-input1"
-          type="text"
-          id="searchInput"
-          placeholder="Search..."
-        />
-        <button id="searchButton">Search</button>
+      <div class="dashboard-header">
+        <h1 style="color: aliceblue">Landlord Dashboard</h1>
+        <a href="/landlord/add_hostel">
+          <button class="btn-primary">Add New Hostel</button>
+        </a>
       </div>
-      <section class="booking-section">
-        <!-- Display booked hostels or bookings history -->
-        <!-- Example: Cards displaying booked hostels -->
+
+      <div class="overview">
         <div class="card">
-          <img src="/images/M1.jpg" alt="Hostel Image" />
-          <div class="card-info">
-            <h2>Hostel Name</h2>
-            <p>Booking Date: DD/MM/YYYY</p>
-            <p>Status: Confirmed</p>
-          </div>
+          <h3>Active Listings</h3>
+          <p><%= activeListings %></p>
         </div>
-        <!-- More booking cards or booking history -->
-      </section>
+        <div class="card">
+          <h3>New Booking Requests</h3>
+          <p><%= pendingBookingsCount %></p>
+        </div>
+        <div class="card">
+          <h3>Total Bookings</h3>
+          <p><%= totalBookingsCount %></p>
+        </div>
+      </div>
+
+      <div class="listings">
+        <h2 style="color: black">My Listings</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Price</th>
+              <th>Gender</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% hostels.forEach(hostel => { %>
+            <tr>
+              <td><%= hostel.name %></td>
+              <td><%= hostel.location %></td>
+              <td><%= hostel.price %></td>
+              <td><%= hostel.gender %></td>
+              <td>
+                <a
+                  href="#"
+                  class="btn delete-btn"
+                  data-hostel-id="<%= hostel.hostelId %>"
+                  >Delete</a
+                >
+                <a href="/landlord/edit_hostel/<%= hostel.hostelId %>">
+                  <button class="edit-btn">Edit</button>
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
+
     <script>
       const sidebar = document.getElementById("sidebar");
       const menuIcon = document.getElementById("menu-icon");
@@ -281,49 +532,31 @@
 
       window.addEventListener("resize", handleResize);
       handleResize();
-    </script>
-    <script>
-      const searchInput = document.getElementById("searchInput");
-      const searchButton = document.getElementById("searchButton");
-      const cards = document.querySelectorAll(".card");
 
-      searchButton.addEventListener("click", function () {
-        performSearch();
-      });
+      // Event listener for delete buttons
+      const deleteButtons = document.querySelectorAll(".delete-btn");
 
-      searchInput.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") {
-          performSearch();
-        }
-      });
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", async (event) => {
+          event.preventDefault();
 
-      function performSearch() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
+          const hostelId = button.getAttribute("data-hostel-id");
+          try {
+            const response = await fetch(`/delete_hostel/${hostelId}`, {
+              method: "DELETE",
+            });
 
-        cards.forEach((card) => {
-          const hostelName = card.querySelector("h2").textContent.toLowerCase();
-          const hostelLocation = card
-            .querySelector(".card-info p:nth-child(3)")
-            .textContent.toLowerCase();
-          const hostelPrice = card
-            .querySelector(".card-info p:nth-child(4)")
-            .textContent.toLowerCase();
-          const hostelGender = card
-            .querySelector(".card-info p:nth-child(2)")
-            .textContent.toLowerCase();
-
-          if (
-            hostelName.includes(searchTerm) ||
-            hostelLocation.includes(searchTerm) ||
-            hostelPrice.includes(searchTerm) ||
-            hostelGender.includes(searchTerm)
-          ) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
+            if (response.ok) {
+              console.log("Hostel deleted successfully");
+              window.location.reload(); // Refresh the page after successful deletion
+            } else {
+              console.error("Failed to delete hostel");
+            }
+          } catch (error) {
+            console.error("Error:", error);
           }
         });
-      }
+      });
     </script>
   </body>
 </html>

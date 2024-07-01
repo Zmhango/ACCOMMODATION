@@ -176,7 +176,7 @@ form button:hover {
   color: rgb(5, 146, 247);
 }
 #errorMessage {
-  color: red;
+  color: rgb(192, 5, 5);
 }
 
 /* Media Queries */

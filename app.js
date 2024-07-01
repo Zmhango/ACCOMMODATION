@@ -84,12 +84,10 @@ app.post("/login", async (req, res) => {
 
     // Check if the authenticated user is active
     if (!authenticatedUser.isActive) {
-      return res
-        .status(403)
-        .json({
-          message:
-            "Your account has been disabled. Please contact the administrator.",
-        });
+      return res.status(403).json({
+        message:
+          "Your account has been disabled. Please contact the administrator.",
+      });
     }
 
     // Save session details
@@ -890,6 +888,36 @@ app.post("/admin/edit_tenant/:id", async (req, res) => {
       [username, email, status === "true", tenantId]
     );
     res.redirect("/admin/tenant_management");
+  } catch (error) {
+    console.error("Error updating tenant:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Fetch landlords for landlord management
+app.get("/admin/landlord_management", async (req, res) => {
+  try {
+    const [landlords] = await pool.query(
+      "SELECT * FROM users WHERE role = 'landlord'"
+    );
+    res.render("landlord_management", { landlords });
+  } catch (error) {
+    console.error("Error fetching tenants:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Edit tenant details
+app.post("/admin/edit_landlord/:id", async (req, res) => {
+  const landlordId = req.params.id;
+  const { username, email, status } = req.body;
+
+  try {
+    await pool.query(
+      "UPDATE users SET username = ?, email = ?, isActive = ? WHERE userId = ?",
+      [username, email, status === "true", landlordId]
+    );
+    res.redirect("/admin/landlord_management");
   } catch (error) {
     console.error("Error updating tenant:", error);
     res.status(500).send("Server Error");

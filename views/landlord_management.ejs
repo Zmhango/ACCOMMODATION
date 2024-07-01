@@ -97,14 +97,15 @@
 
     .search-section {
       margin-bottom: 2rem;
+      
     }
 
-    .search-input1 {
+    .search-input {
       margin-right: 1rem;
       padding: 0.8rem;
       border-radius: 5px;
       border: 1px solid #07f9f5;
-      width: 48%;
+      width: 90%;
       margin-top: 5px;
     }
 
@@ -113,6 +114,7 @@
       justify-content: center;
       align-items: center;
       margin-bottom: 10px;
+     
     }
 
     #searchButton {
@@ -261,18 +263,19 @@
     input[type="text"], select{
         padding: 0.5rem;
       border-radius: 0.5rem;
-      border: 1px solid #ccc;
+      border: 1px solid #cccccc;
       width: 5.5rem;
 
     }
-
     input[type="search"], select{
         padding: 0.5rem;
       border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      width: 90%;
+      border: 1px solid #cccccc;
+      width:90%;
 
     }
+
+    
     button[type="submit"] {
       padding: 0.5rem 1rem;
       border: none;
@@ -393,17 +396,17 @@
   <!-- Main content area -->
   <div class="main-content">
     <section class="search-section">
-      <!-- Search bar and options -->
-      <form class="search-form">
-        <input type="search" placeholder="Search for tenants..." />
-        <!-- Additional search filters/buttons if needed -->
-        <button type="submit">Search</button>
-      </form>
-    </section>
+        <!-- Search bar and options -->
+        <form class="search-form">
+          <input type="search" class="search-input" placeholder="Search for landlord..." />
+          <!-- Additional search filters/buttons if needed -->
+          <button type="submit">Search</button>
+        </form>
+      </section>
 
-    <!-- Tenant Management Section -->
-    <section class="tenant-section">
-      <h2>Tenant Management</h2>
+    <!-- Landlord Management Section -->
+    <section class="landlord">
+      <h2>Landlord Management</h2>
       <table>
         <thead>
           <tr>
@@ -414,18 +417,18 @@
           </tr>
         </thead>
         <tbody>
-          <% tenants.forEach(tenant => { %>
+          <% landlords.forEach(landlord => { %>
             <tr>
-              <td><%= tenant.username %></td>
-              <td><%= tenant.email %></td>
-              <td><%= tenant.isActive ? 'Active' : 'Disabled' %></td>
+              <td><%= landlord.username %></td>
+              <td><%= landlord.email %></td>
+              <td><%= landlord.isActive ? 'Active' : 'Disabled' %></td>
               <td>
-                <form action="/admin/edit_tenant/<%= tenant.userId %>" method="POST">
-                  <input type="text" name="username" value="<%= tenant.username %>" required>
-                  <input type="email" name="email" value="<%= tenant.email %>" required>
+                <form action="/admin/edit_landlord/<%= landlord.userId %>" method="POST">
+                  <input type="text" name="username" value="<%= landlord.username %>" required>
+                  <input type="email" name="email" value="<%= landlord.email %>" required>
                   <select name="status">
-                    <option value="true" <%= tenant.isActive ? 'selected' : '' %>>Active</option>
-                    <option value="false" <%= !tenant.isActive ? 'selected' : '' %>>Disabled</option>
+                    <option value="true" <%= landlord.isActive ? 'selected' : '' %>>Active</option>
+                    <option value="false" <%= !landlord.isActive ? 'selected' : '' %>>Disabled</option>
                   </select>
                   <button type="submit">Save</button>
                 </form>

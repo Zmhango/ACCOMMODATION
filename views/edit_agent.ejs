@@ -5,12 +5,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css"
-    />
     <style>
-      /* Reset default margin and padding */
+      /* Include your existing styles here */
       * {
         margin: 0;
         padding: 0;
@@ -18,16 +14,17 @@
         font-family: Arial, sans-serif;
       }
 
-      /* Body styles */
       body {
         font-size: 16px;
         line-height: 1.6;
-        background-color: #f7f7f7;
+        background-color: white;
         color: #333;
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
         display: flex;
       }
 
-      /* Sidebar styles */
       .sidebar {
         background-color: #00022e;
         color: #fff;
@@ -39,7 +36,7 @@
         top: 0;
         left: 0;
         overflow-y: auto;
-        transition: width 0.3s ease, left 0.3s ease;
+        transition: left 0.3s ease;
       }
 
       .logo {
@@ -86,7 +83,6 @@
         transform: scaleX(1);
       }
 
-      /* Hamburger menu icon */
       .menu-icon {
         position: fixed;
         top: 1rem;
@@ -101,20 +97,73 @@
         color: #02a0f6;
       }
 
-      /* Main content styles */
       .main-content {
         padding: 2rem;
         margin-left: 20vw;
         width: 80vw;
         min-height: 100vh;
-        transition: margin-left 0.3s ease;
       }
 
-      /* Media Queries */
+      .edit-form {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .edit-form h2 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group input[type="tel"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .form-group textarea {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        resize: vertical;
+      }
+
+      .form-group button {
+        padding: 10px 20px;
+        background-color: #178733;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .form-group button:hover {
+        background-color: #147026;
+      }
+
       @media screen and (max-width: 768px) {
         .sidebar {
-          width: 25vw;
-          left: -25vw;
+          left: -20vw;
         }
 
         .menu-icon {
@@ -125,134 +174,11 @@
           margin-left: 0;
           width: 100%;
         }
-
-        .sidebar.show {
-          left: 0;
-        }
-
-        .main-content.shifted {
-          margin-left: 25vw;
-        }
-      }
-
-      /* Dashboard specific styles */
-      .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .dashboard-header h1 {
-        font-size: 2rem;
-      }
-
-      .btn-primary {
-        background-color: #178733;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-primary:hover {
-        background-color: #004494;
-      }
-
-      /* Content Container */
-      .container {
-        background-color: #f7f7f7;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      h1,
-      h2 {
-        margin-bottom: 20px;
-        color: #333;
-      }
-
-      /* User Info styles */
-      .user-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        background-color: #fff;
-        transition: box-shadow 0.3s ease;
-        flex-wrap: wrap;
-      }
-
-      .user-info:hover {
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-      }
-
-      .user-info span {
-        flex: 1 1 auto;
-        font-size: 16px;
-        color: #333;
-        margin-right: 1rem;
-      }
-
-      .user-info button {
-        flex: 0 0 auto;
-      }
-
-      /* Delete button styles */
-      button {
-        padding: 10px 1.25rem;
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      button:hover {
-        background-color: #c82333;
-      }
-
-      /* Delete button styles within media queries */
-      @media screen and (max-width: 600px) {
-        button {
-          width: 100%;
-          margin-top: 10px;
-        }
-      }
-
-      /* Media Queries for Responsive Design */
-      @media screen and (max-width: 480px) {
-        .user-info {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .user-info span {
-          width: 100%;
-          margin-bottom: 0.5rem;
-        }
-
-        span strong {
-          display: block;
-        }
-
-        button {
-          width: 100%;
-          margin-top: 1rem;
-        }
       }
     </style>
   </head>
   <body>
-    <!-- Sidebar -->
+    <%- include("./partials/progress-bar") %>
     <div class="sidebar" id="sidebar">
       <img class="logo" src="/images/logo.jpeg" alt="Logo" />
       <ul class="nav-links">
@@ -271,7 +197,6 @@
             Dashboard
           </a>
         </li>
-
         <li>
           <a href="/admin/add_landlord">
             <div
@@ -394,57 +319,95 @@
         </li>
       </ul>
     </div>
-
-    <!-- Menu icon for mobile -->
-    <label for="menu-toggle" class="menu-icon" id="menu-icon">
+    <div class="menu-icon" id="menu-icon">
       <i class="fa fa-bars"></i>
-    </label>
-    <input type="checkbox" id="menu-toggle" style="display: none" />
-
+    </div>
     <!-- Main content area -->
-    <section class="main-content" id="main-content">
-      <div class="container">
-        <h1 style="text-align: center; color: green">Delete Users</h1>
-
-        <!-- Landlords Section -->
-        <h2>Landlords</h2>
-        <form action="/admin/delete_user" method="POST" class="delete-form">
-          <% for (const landlord of landlords) { %>
-          <div class="user-info">
-            <span><strong>Username:</strong> <%= landlord.username %></span>
-            <span><strong>Email :</strong> <%= landlord.email %></span>
-            <button type="submit" name="userId" value="<%= landlord.userId %>">
-              Delete
-            </button>
+    <div class="main-content">
+      <div class="edit-form">
+        <h2>Edit Agent Information</h2>
+        <form
+          action="/admin/edit_agent/<%= agent.id %>"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <label for="profile_photo">Profile Picture</label>
+            <input
+              type="file"
+              id="profile_photo"
+              name="profile_photo"
+              accept="image/*"
+            />
           </div>
-          <% } %>
-        </form>
-
-        <!-- Tenants Section -->
-        <h2>Tenants</h2>
-        <form action="/admin/delete_user" method="POST" class="delete-form">
-          <% for (const tenant of tenants) { %>
-          <div class="user-info">
-            <span><strong>Username:</strong> <%= tenant.username %></span>
-            <span><strong>Email:</strong> <%= tenant.email %></span>
-            <button type="submit" name="userId" value="<%= tenant.userId %>">
-              Delete
-            </button>
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              value="<%= agent.first_name %>"
+              required
+            />
           </div>
-          <% } %>
+          <div class="form-group">
+            <label for="surname">Surname</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              value="<%= agent.surname %>"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="email_address">Email Address</label>
+            <input
+              type="email"
+              id="email_address"
+              name="email_address"
+              value="<%= agent.email_address %>"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input
+              type="tel"
+              id="phone_number"
+              name="phone_number"
+              value="<%= agent.phone_number %>"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <button type="submit">Save Changes</button>
+          </div>
         </form>
       </div>
-    </section>
+    </div>
 
     <script>
-      document
-        .getElementById("menu-icon")
-        .addEventListener("click", function () {
-          var sidebar = document.getElementById("sidebar");
-          var mainContent = document.getElementById("main-content");
-          sidebar.classList.toggle("show");
-          mainContent.classList.toggle("shifted");
-        });
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
+
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+      });
+
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0";
+          menuIcon.style.display = "none";
+        } else {
+          sidebar.style.left = "-20vw";
+          menuIcon.style.display = "block";
+        }
+      }
+
+      window.addEventListener("resize", handleResize);
+      handleResize();
     </script>
   </body>
 </html>

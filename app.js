@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
-
+app.use("/images", express.static(path.join(__dirname, "images")));
 const port = process.env.PORT || 8000;
 
 app.use(
@@ -55,11 +55,12 @@ const upload = multer({ storage: storage });
 // Loging in
 
 // ...
-
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const [results, fields] = await pool.execute(
+
+    // Fetch all users by username
+    const [results] = await pool.execute(
       "SELECT * FROM users WHERE username = ?",
       [username]
     );
@@ -68,27 +69,46 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password);
+    let authenticatedUser = null;
+    for (const user of results) {
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        authenticatedUser = user;
+        break;
+      }
+    }
 
-    if (!match) {
+    if (!authenticatedUser) {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    req.session.userId = user.userId;
-    req.session.username = user.username;
-    req.session.landlordId = user.landlordId;
+    // Check if the authenticated user is active
+    if (!authenticatedUser.isActive) {
+      return res
+        .status(403)
+        .json({
+          message:
+            "Your account has been disabled. Please contact the administrator.",
+        });
+    }
+
+    // Save session details
+    req.session.userId = authenticatedUser.userId;
+    req.session.username = authenticatedUser.username;
+    req.session.landlordId = authenticatedUser.landlordId;
 
     req.session.save((err) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ message: "Error saving session" });
+        return res.status(500).json({ message: "Error saving session" });
       } else {
-        let redirectURL = "/"; // Define default redirect URL
-        if (user.role === "tenant") {
+        let redirectURL = "/";
+        if (authenticatedUser.role === "tenant") {
           redirectURL = "/tenant";
-        } else if (user.role === "landlord") {
+        } else if (authenticatedUser.role === "landlord") {
           redirectURL = "/landlord";
+        } else if (authenticatedUser.role === "admin") {
+          redirectURL = "/admin";
         }
         res.status(200).json({ redirect: redirectURL });
       }
@@ -616,6 +636,145 @@ app.post(
   }
 );
 
+// Route to display all agents
+app.get("/agent", async (req, res) => {
+  try {
+    const [agents] = await pool.query("SELECT * FROM agents");
+    agents.forEach((agent) => {});
+    res.render("agent", { agents });
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/landlord/agent-landlord", async (req, res) => {
+  try {
+    const [agents] = await pool.query("SELECT * FROM agents");
+    agents.forEach((agent) => {});
+    res.render("agent-landlord", { agents });
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/admin/add_agent", (req, res) => {
+  res.render("add_agent");
+});
+
+app.post(
+  "/admin/add_agent",
+  upload.single("profile_photo"),
+  async (req, res) => {
+    try {
+      const { first_name, surname, phone_number, email_address } = req.body;
+      const userId = req.session.userId;
+
+      if (!userId) {
+        console.error("User ID not found");
+        return res.status(403).send("Unauthorized");
+      }
+
+      const profilePhoto = req.file;
+      const profilePhotoFilename = profilePhoto
+        ? profilePhoto.filename
+        : "/images/profile2.png"; // Use the placeholder image if no file is uploaded
+
+      if (!first_name || !surname || !phone_number || !email_address) {
+        console.error("Some form data is missing or undefined");
+        return res
+          .status(400)
+          .render("add_agent", { error: "Incomplete form data" });
+      }
+
+      const insertQuery = `INSERT INTO agents (profile_photo, first_name, surname, phone_number, email_address) VALUES (?, ?, ?, ?, ?)`;
+
+      const [results, fields] = await pool.execute(insertQuery, [
+        profilePhotoFilename,
+        first_name,
+        surname,
+        phone_number,
+        email_address,
+      ]);
+
+      return res.redirect("/admin/add_agent");
+    } catch (error) {
+      console.error("An error occurred:", error);
+      return res.status(500).render("add_agent", { error: "Server error" });
+    }
+  }
+);
+
+// Fetch agent details for editing
+app.get("/admin/edit_agent/:agentId", async (req, res) => {
+  try {
+    const agentId = req.params.agentId;
+
+    // Fetch agent details from the database
+    const [agentDetails] = await pool.query(
+      "SELECT * FROM agents WHERE id = ?",
+      [agentId]
+    );
+
+    if (agentDetails.length === 0) {
+      return res.status(404).send("Agent not found");
+    }
+
+    const agent = agentDetails[0];
+    res.render("edit_agent", { agent });
+  } catch (error) {
+    console.error("Error fetching agent details:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Update agent details including profile picture
+app.post(
+  "/admin/edit_agent/:agentId",
+  upload.single("profile_photo"),
+  async (req, res) => {
+    try {
+      const agentId = req.params.agentId;
+      const { first_name, surname, email_address, phone_number } = req.body;
+
+      // Handle uploaded image
+      const profilePhoto = req.file;
+      const profilePhotoFilename = profilePhoto ? profilePhoto.filename : null;
+
+      // Update fields based on form submission
+      const updateFields = {
+        first_name,
+        surname,
+        email_address,
+        phone_number,
+        // Add more fields as needed
+      };
+
+      // Include profile picture update if provided
+      if (profilePhotoFilename) {
+        updateFields.profile_photo = profilePhotoFilename; // Update to 'profile_photo'
+      }
+
+      // Construct the update query
+      const fields = Object.keys(updateFields)
+        .map((field) => `${field} = ?`)
+        .join(", ");
+      const values = Object.values(updateFields);
+
+      const updateQuery = `UPDATE agents SET ${fields} WHERE id = ?`;
+
+      // Execute the update query
+      await pool.execute(updateQuery, [...values, agentId]);
+
+      res.redirect("/admin"); // Redirect to admin panel or relevant page
+    } catch (error) {
+      console.error("Error updating agent details:", error);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
 // Adding Landlord in database
 app.post("/add_landlord", async (req, res) => {
   try {
@@ -689,6 +848,66 @@ app.post("/admin/delete_user", async (req, res) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     res.status(500).send("Error deleting user");
+  }
+});
+
+app.get("/admin/user_management", (req, res) => {
+  res.render("user_management");
+});
+
+// Route to render agent management page
+app.get("/admin/agent_management", async (req, res) => {
+  try {
+    const [agents] = await pool.query("SELECT * FROM agents");
+    res.render("agent_management", { agents });
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Fetch tenants for tenant management
+app.get("/admin/tenant_management", async (req, res) => {
+  try {
+    const [tenants] = await pool.query(
+      "SELECT * FROM users WHERE role = 'tenant'"
+    );
+    res.render("tenant_management", { tenants });
+  } catch (error) {
+    console.error("Error fetching tenants:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Edit tenant details
+app.post("/admin/edit_tenant/:id", async (req, res) => {
+  const tenantId = req.params.id;
+  const { username, email, status } = req.body;
+
+  try {
+    await pool.query(
+      "UPDATE users SET username = ?, email = ?, isActive = ? WHERE userId = ?",
+      [username, email, status === "true", tenantId]
+    );
+    res.redirect("/admin/tenant_management");
+  } catch (error) {
+    console.error("Error updating tenant:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Example DELETE route for deleting agents
+app.delete("/admin/delete_agent/:id", async (req, res) => {
+  const agentId = req.params.id;
+  try {
+    // Replace with your DELETE query logic
+    const result = await pool.query("DELETE FROM agents WHERE id = ?", [
+      agentId,
+    ]);
+    res.json({ success: true, message: "Agent deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting agent:", error);
+    res.status(500).json({ success: false, message: "Failed to delete agent" });
   }
 });
 

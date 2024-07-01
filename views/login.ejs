@@ -28,7 +28,7 @@
           class="input"
           required
         /><br />
-        <p id="errorMessage" hidden></p>
+        <p id="errorMessage" class="error-message" hidden></p>
         <button type="submit" id="submit" class="button">LOGIN</button>
         <p>
           Not Registered?
@@ -60,8 +60,8 @@
 
           const result = await response.json(); // Parse the response as JSON
 
-          if (response.status === 401) {
-            const errorMessage = document.getElementById("errorMessage");
+          const errorMessage = document.getElementById("errorMessage");
+          if (response.status === 401 || response.status === 403) {
             errorMessage.textContent = result.message; // Display the error message
             errorMessage.hidden = false; // Show the error message
           } else if (response.status === 200) {
@@ -69,5 +69,11 @@
           }
         });
     </script>
+    <style>
+      .error-message {
+        color: rgb(131, 7, 7);
+        margin-top: 10px;
+      }
+    </style>
   </body>
 </html>

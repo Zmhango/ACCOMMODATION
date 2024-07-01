@@ -5,10 +5,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css"
-    />
     <style>
       /* Reset default margin and padding */
       * {
@@ -24,12 +20,17 @@
         line-height: 1.6;
         background-color: #f7f7f7;
         color: #333;
+        background-image: url("/images/b2.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
         display: flex;
       }
 
       /* Sidebar styles */
       .sidebar {
         background-color: #00022e;
+        margin: solid 5px aliceblue;
         color: #fff;
         padding: 1rem;
         width: 20vw;
@@ -39,7 +40,7 @@
         top: 0;
         left: 0;
         overflow-y: auto;
-        transition: width 0.3s ease, left 0.3s ease;
+        transition: left 0.3s ease;
       }
 
       .logo {
@@ -50,6 +51,7 @@
         border-radius: 40px;
       }
 
+      /* Basic styles */
       .nav-links {
         list-style: none;
         margin-bottom: 1rem;
@@ -68,6 +70,7 @@
         font-weight: bold;
       }
 
+      /* Glowing effect */
       .nav-links a::before {
         content: "";
         position: absolute;
@@ -86,6 +89,65 @@
         transform: scaleX(1);
       }
 
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+      }
+
+      .form-container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 2rem auto;
+      }
+
+      .form-container h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .form-group input {
+        width: calc(100% - 1rem);
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .form-group input[type="file"] {
+        padding: 0;
+      }
+
+      .form-group button {
+        background-color: #178733;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+      }
+
+      .form-group button:hover {
+        background-color: #147026;
+      }
+
       /* Hamburger menu icon */
       .menu-icon {
         position: fixed;
@@ -101,15 +163,6 @@
         color: #02a0f6;
       }
 
-      /* Main content styles */
-      .main-content {
-        padding: 2rem;
-        margin-left: 20vw;
-        width: 80vw;
-        min-height: 100vh;
-        transition: margin-left 0.3s ease;
-      }
-
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
@@ -121,11 +174,6 @@
           display: block;
         }
 
-        .main-content {
-          margin-left: 0;
-          width: 100%;
-        }
-
         .sidebar.show {
           left: 0;
         }
@@ -133,127 +181,17 @@
         .main-content.shifted {
           margin-left: 25vw;
         }
-      }
 
-      /* Dashboard specific styles */
-      .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .dashboard-header h1 {
-        font-size: 2rem;
-      }
-
-      .btn-primary {
-        background-color: #178733;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-primary:hover {
-        background-color: #004494;
-      }
-
-      /* Content Container */
-      .container {
-        background-color: #f7f7f7;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      h1,
-      h2 {
-        margin-bottom: 20px;
-        color: #333;
-      }
-
-      /* User Info styles */
-      .user-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        background-color: #fff;
-        transition: box-shadow 0.3s ease;
-        flex-wrap: wrap;
-      }
-
-      .user-info:hover {
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-      }
-
-      .user-info span {
-        flex: 1 1 auto;
-        font-size: 16px;
-        color: #333;
-        margin-right: 1rem;
-      }
-
-      .user-info button {
-        flex: 0 0 auto;
-      }
-
-      /* Delete button styles */
-      button {
-        padding: 10px 1.25rem;
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      button:hover {
-        background-color: #c82333;
-      }
-
-      /* Delete button styles within media queries */
-      @media screen and (max-width: 600px) {
-        button {
+        .main-content {
+          margin-left: 0;
           width: 100%;
-          margin-top: 10px;
-        }
-      }
-
-      /* Media Queries for Responsive Design */
-      @media screen and (max-width: 480px) {
-        .user-info {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .user-info span {
-          width: 100%;
-          margin-bottom: 0.5rem;
-        }
-
-        span strong {
-          display: block;
-        }
-
-        button {
-          width: 100%;
-          margin-top: 1rem;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
+      <!-- Header -->
       <img class="logo" src="/images/logo.jpeg" alt="Logo" />
       <ul class="nav-links">
         <li>
@@ -401,49 +339,74 @@
     </label>
     <input type="checkbox" id="menu-toggle" style="display: none" />
 
-    <!-- Main content area -->
-    <section class="main-content" id="main-content">
-      <div class="container">
-        <h1 style="text-align: center; color: green">Delete Users</h1>
-
-        <!-- Landlords Section -->
-        <h2>Landlords</h2>
-        <form action="/admin/delete_user" method="POST" class="delete-form">
-          <% for (const landlord of landlords) { %>
-          <div class="user-info">
-            <span><strong>Username:</strong> <%= landlord.username %></span>
-            <span><strong>Email :</strong> <%= landlord.email %></span>
-            <button type="submit" name="userId" value="<%= landlord.userId %>">
-              Delete
-            </button>
+    <div class="main-content">
+      <div class="form-container">
+        <h2>Add New Agent</h2>
+        <form
+          id="addAgentForm"
+          action="/admin/add_agent"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <label for="profile_photo">Profile Photo</label>
+            <input
+              type="file"
+              id="profile_photo"
+              name="profile_photo"
+              accept="image/*"
+            />
           </div>
-          <% } %>
-        </form>
-
-        <!-- Tenants Section -->
-        <h2>Tenants</h2>
-        <form action="/admin/delete_user" method="POST" class="delete-form">
-          <% for (const tenant of tenants) { %>
-          <div class="user-info">
-            <span><strong>Username:</strong> <%= tenant.username %></span>
-            <span><strong>Email:</strong> <%= tenant.email %></span>
-            <button type="submit" name="userId" value="<%= tenant.userId %>">
-              Delete
-            </button>
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" required />
           </div>
-          <% } %>
+          <div class="form-group">
+            <label for="surname">Surname</label>
+            <input type="text" id="surname" name="surname" required />
+          </div>
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input type="tel" id="phone_number" name="phone_number" required />
+          </div>
+          <div class="form-group">
+            <label for="email_address">Email Address</label>
+            <input
+              type="email"
+              id="email_address"
+              name="email_address"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <button type="submit">Add Agent</button>
+          </div>
         </form>
       </div>
-    </section>
+    </div>
 
     <script>
       document
         .getElementById("menu-icon")
         .addEventListener("click", function () {
           var sidebar = document.getElementById("sidebar");
-          var mainContent = document.getElementById("main-content");
+          var mainContent = document.querySelector(".main-content");
           sidebar.classList.toggle("show");
           mainContent.classList.toggle("shifted");
+        });
+
+      document
+        .getElementById("addAgentForm")
+        .addEventListener("submit", function (event) {
+          var profilePhotoInput = document.getElementById("profile_photo");
+          if (!profilePhotoInput.value) {
+            var placeholderImage = "/images/profile2.png"; // Set the path to your placeholder image
+            var placeholderInput = document.createElement("input");
+            placeholderInput.type = "hidden";
+            placeholderInput.name = "profile_photo";
+            placeholderInput.value = placeholderImage;
+            this.appendChild(placeholderInput);
+          }
         });
     </script>
   </body>

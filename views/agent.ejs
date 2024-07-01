@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/b2.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center; /* Center content horizontally */
+        align-items: center; /* Center content vertically */
+        min-height: 100vh; /* Ensure full viewport height */
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+        width: 20vw; /* 20% of viewport width */
+        height: 100vh;
+        flex: 0 0 auto; /* Do not grow or shrink */
+        position: fixed; /* Fixed position */
+        top: 0; /* Stick to top */
+        left: 0; /* Initially show the sidebar on larger screens */
+        overflow-y: auto; /* Allow vertical scrolling */
+        transition: left 0.3s ease; /* Add smooth transition */
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      /* Basic styles */
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links li {
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      /* Glowing effect */
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: calc(100% - 2rem);
+        height: 2px;
+        bottom: -5px;
+        left: 1rem;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
+        width: 80vw; /* Adjusted to accommodate the sidebar width */
+        min-height: 100vh; /* Ensure the content fills the viewport height */
+        text-align: center; /* Center align content */
+      }
+
+      .search-section {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .search-input1 {
+        padding: 0.8rem;
+        border-radius: 5px;
+        border: 1px solid #07f9f5;
+        width: 48%;
+        margin-top: 5px;
+        margin-right: 1rem;
+      }
+
+      /* Style the search button */
+      #searchButton {
+        background-color: #178733; /* Green color */
+        color: #fff; /* Text color */
+        padding: 10px 20px; /* Adjust padding as needed */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+      }
+
+      #searchButton:hover {
+        background-color: #147026; /* Darker green color on hover */
+      }
+
+      .card-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+      }
+
+      .card {
+        width: calc(33.333% - 2rem); /* 2rem gap between cards */
+        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background-color: #fff;
+        text-align: center;
+      }
+
+      .card:hover {
+        transform: translateY(-0.5rem);
+      }
+
+      .card img {
+        width: 100%;
+        height: 15rem;
+        object-fit: cover;
+      }
+
+      .card-info {
+        padding: 1.5rem;
+      }
+
+      .card-info h2 {
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info p {
+        font-size: 0.875rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .card-info .copy-btn {
+        background-color: darkgray;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        margin-left: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: background-color 0.3s ease;
+      }
+
+      .card-info .copy-btn:hover {
+        background-color: #147026;
+      }
+
+      .card-info a {
+        display: inline-block;
+        text-decoration: none;
+        color: #02a0f6;
+        border: 1px solid #178733;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .card-info a:hover {
+        background-color: #178733;
+        color: #fff;
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        z-index: 999;
+        display: none;
+      }
+
+      .menu-icon i {
+        font-size: 1.5rem;
+        color: #02a0f6;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          width: 25vw;
+          left: -25vw;
+        }
+
+        .menu-icon {
+          display: block;
+        }
+
+        .sidebar.show {
+          left: 0;
+        }
+
+        .main-content.shifted {
+          margin-left: 25vw;
+        }
+
+        .main-content {
+          margin-left: 0; /* Remove margin to make content full-width */
+          width: 100%; /* Make content full-width */
+          text-align: center; /* Center align content */
+        }
+
+        .card {
+          width: calc(50% - 2rem); /* Adjust card width for smaller screens */
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .card {
+          width: calc(100% - 2rem); /* Full width for very small screens */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <!-- Sidebar content -->
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <!-- Navigation links -->
+        <li>
+          <a href="/tenant"
+            ><i
+              class="fa fa-dashboard"
+              aria-hidden="true"
+              style="color: #c68417; width: 30px; font-size: x-large"
+            ></i>
+            Home</a
+          >
+        </li>
+        <li>
+          <a href="/tenant/tenant_profile"
+            ><i
+              class="fa fa-user"
+              aria-hidden="true"
+              style="color: olivedrab; width: 30px; font-size: x-large"
+            ></i>
+            My Profile</a
+          >
+        </li>
+        <li>
+          <a href="/tenant/pending_approval"
+            ><i
+              class="fa fa-check-square"
+              aria-hidden="true"
+              style="color: #048e04; width: 30px; font-size: x-large"
+            ></i>
+            Pending Approval</a
+          >
+        </li>
+        <li>
+          <a href="/tenant_bookings"
+            ><i
+              class="fa fa-history"
+              aria-hidden="true"
+              style="color: burlywood; width: 30px; font-size: x-large"
+            ></i>
+            Bookings History</a
+          >
+        </li>
+        <li>
+          <a href="/agent"
+            ><i
+              class="fa fa-address-card"
+              aria-hidden="true"
+              style="color: #07f9f5; width: 30px; font-size: x-large"
+            ></i>
+            House Agents</a
+          >
+        </li>
+        <li>
+          <a href="/logout"
+            ><i
+              class="fa fa-sign-out"
+              aria-hidden="true"
+              style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
+            ></i>
+            Sign-Out</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Menu icon for mobile -->
+    <label for="menu-toggle" class="menu-icon" id="menu-icon">
+      <i class="fa fa-bars"></i>
+    </label>
+    <input type="checkbox" id="menu-toggle" style="display: none" />
+
+    <div class="main-content" id="main-content">
+      <!-- Main content area -->
+      <form action="" style="background-color: #00022e; border-radius: 8px">
+        <h1 style="color: #02a0f6">House Agents</h1>
+      </form>
+      <div class="search-section">
+        <input
+          type="text"
+          class="search-input1"
+          placeholder="Search by name or phone number..."
+        />
+        <button id="searchButton">Search</button>
+      </div>
+      <div class="card-section">
+        <% agents.forEach(agent => { %>
+        <div class="card">
+          <% if (agent.profile_photo &&
+          !agent.profile_photo.startsWith('/images')) { %>
+          <img src="/uploads/<%= agent.profile_photo %>" alt="Profile Photo" />
+          <% } else { %>
+          <img src="/images/profile2.png" alt="Profile Photo" />
+          <% } %>
+          <div class="card-info">
+            <h2><%= agent.first_name %> <%= agent.surname %></h2>
+            <p>
+              Phone: <%= agent.phone_number %>
+              <button class="copy-btn" data-copy="<%= agent.phone_number %>">
+                Copy
+              </button>
+            </p>
+            <p>Email: <%= agent.email_address %></p>
+            <a href="mailto:<%= agent.email_address %>">Contact</a>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("menu-icon")
+        .addEventListener("click", function () {
+          var sidebar = document.getElementById("sidebar");
+          var mainContent = document.getElementById("main-content");
+          sidebar.classList.toggle("show");
+          mainContent.classList.toggle("shifted");
+        });
+
+      // Sample filter function
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+          const searchInput = document
+            .querySelector(".search-input1")
+            .value.toLowerCase();
+          const cards = document.querySelectorAll(".card");
+
+          cards.forEach((card) => {
+            const name = card.querySelector("h2").textContent.toLowerCase();
+            const phone = card.querySelector("p").textContent.toLowerCase();
+
+            if (name.includes(searchInput) || phone.includes(searchInput)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+
+      // Copy to clipboard functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const copyButtons = document.querySelectorAll(".copy-btn");
+
+        copyButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const textToCopy = this.getAttribute("data-copy");
+            navigator.clipboard
+              .writeText(textToCopy)
+              .then(() => {
+                alert(`Copied: ${textToCopy}`);
+              })
+              .catch((err) => {
+                console.error("Failed to copy: ", err);
+              });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

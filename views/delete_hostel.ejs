@@ -185,6 +185,16 @@
         background-color: #cc0000;
       }
 
+      .no-bookings-container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 2rem auto;
+      }
+
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
@@ -281,6 +291,22 @@
             Bookings History
           </a>
         </li>
+
+        <li>
+          <a href="/landlord/agent-landlord">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-address-card"
+                aria-hidden="true"
+                style="color: #07f9f5; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            House Agents
+          </a>
+        </li>
         <li>
           <a href="/landlord/landlord_profile">
             <div
@@ -340,7 +366,9 @@
             </div>
           </div>
           <% }); %> <% } else { %>
-          <p>No hostels added yet.</p>
+          <div class="no-bookings-container">
+            <p>No hostels added yet.</p>
+          </div>
           <% } %>
         </div>
       </section>

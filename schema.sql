@@ -5,7 +5,10 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT "tenant"
+    role VARCHAR(20) DEFAULT "tenant",
+    status VARCHAR(20) DEFAULT "enable",
+    isActive BOOLEAN DEFAULT TRUE
+
 );
 
 -- TENANTS TABLE --
@@ -89,4 +92,12 @@ CREATE TABLE help_desk (
 );
 
 
+CREATE TABLE agents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    profile_photo VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    surname VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    email_address VARCHAR(100) NOT NULL
+);
 

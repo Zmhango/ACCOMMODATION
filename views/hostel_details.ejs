@@ -170,11 +170,81 @@
     <div class="sidebar" id="sidebar">
       <img class="logo" src="/images/logo.jpeg" alt="Logo" />
       <ul class="nav-links">
-        <li><a href="/tenant">Home</a></li>
-        <li><a href="/tenant/tenant_profile">Profile</a></li>
-        <li><a href="/tenant/pending_approval">Pending Approval</a></li>
-        <li><a href="/tenant_bookings">Bookings</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li>
+          <a href="/tenant">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-dashboard"
+                aria-hidden="true"
+                style="color: #c68417; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="/tenant/tenant_profile">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-user"
+                aria-hidden="true"
+                style="color: olivedrab; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a href="/tenant/pending_approval">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-check-square"
+                aria-hidden="true"
+                style="color: #048e04; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Pending Approval
+          </a>
+        </li>
+        <li>
+          <a href="/tenant_bookings">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-history"
+                aria-hidden="true"
+                style="color: burlywood; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Bookings History
+          </a>
+        </li>
+        <li>
+          <a href="/logout">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-sign-out"
+                aria-hidden="true"
+                style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Sign-Out
+          </a>
+        </li>
       </ul>
       <!-- Progress bar -->
       <% include("./partials/progress-bar") %>

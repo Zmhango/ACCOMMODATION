@@ -1,63 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/admin_head") %>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css"
+    />
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Body styles */
+      body {
+        font-size: 16px;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        background-image: url("/images/b3.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        color: #fff;
+        padding: 1rem;
+        width: 20vw;
+        height: 100vh;
+        flex: 0 0 auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+        z-index: 2;
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links li {
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+      }
+
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: calc(100% - 2rem);
+        height: 2px;
+        bottom: -5px;
+        left: 1rem;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        z-index: 999;
+        display: none;
+      }
+
+      .menu-icon i {
+        font-size: 1.5rem;
+        color: #02a0f6;
+      }
+
+      /* Main content styles */
+      .main-content {
+        padding: 2rem;
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+      }
+
+      /* Media Queries */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          left: -20vw;
+        }
+
+        .sidebar.active {
+          left: 0;
+        }
+
+        .menu-icon {
+          display: block;
+        }
+
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          width: 25vw;
+          left: -25vw;
+        }
+
+        .sidebar.active {
+          left: 0;
+        }
+
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+      }
+
+      /* Registration Styling */
+      .register-page {
+        display: flex;
+        background-size: cover;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+      }
+
+      form {
+        border: 1px solid;
+        width: 30vw;
+        height: auto;
+        padding: 0.3rem;
+        flex-direction: column;
+        border-radius: 4px;
+        background: transparent;
+        backdrop-filter: blur(50px);
+      }
+
+      .input {
+        width: 29vw;
+        height: 5vh;
+        border-color: #4090db;
+        border-radius: 7px;
+      }
+
+      .button {
+        margin-top: 8px;
+        width: 29vw;
+        height: 5vh;
+        background-color: green;
+        font-size: larger;
+        font-weight: bolder;
+        transition: 0.6s;
+        border-radius: 7px;
+      }
+
+      .label {
+        width: 29vw;
+        height: 5vh;
+        margin-bottom: 0px;
+        font-weight: bolder;
+        color: black;
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+
+      .user-login {
+        font-weight: bolder;
+        font-size: large;
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgb(5, 146, 247);
+        text-align: center;
+      }
+
+      form button:hover {
+        color: rgb(5, 146, 247);
+      }
+
+      #errorMessage {
+        color: red;
+      }
+
+      @media screen and (max-width: 720px) {
+        form {
+          width: 90%;
+          height: auto;
+          flex-wrap: nowrap;
+        }
+
+        .input {
+          width: 99%;
+          height: auto;
+          padding-top: 1.5%;
+          padding-bottom: 1.5%;
+          margin-bottom: 3%;
+          border-color: #4090db;
+          border-radius: 7px;
+        }
+
+        .button {
+          margin-top: 8px;
+          width: 99%;
+          height: 5vh;
+          background-color: green;
+          font-size: larger;
+          font-weight: bolder;
+          transition: 0.6s;
+          border-radius: 7px;
+        }
+      }
+    </style>
+  </head>
   <body>
     <!-- Header -->
-    <%- include("./partials/admin_header")%> <%-
-    include("./partials/progress-bar") %>
-    <section class="register-page">
+    <%- include("./partials/progress-bar") %>
+    <div class="sidebar" id="sidebar">
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <li>
+          <a href="/admin">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-dashboard"
+                aria-hidden="true"
+                style="color: #c68417; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Dashboard
+          </a>
+        </li>
+
+        <li>
+          <a href="/admin/add_landlord">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-user-plus"
+                aria-hidden="true"
+                style="color: #0da2f1; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Add Landlord
+          </a>
+        </li>
+        <li>
+          <a href="/admin/add_agent">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-user-plus"
+                aria-hidden="true"
+                style="color: #0da2f1; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Add Agent
+          </a>
+        </li>
+        <li>
+          <a href="/admin/user_management">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-user-md"
+                aria-hidden="true"
+                style="color: chartreuse; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            User Management
+          </a>
+        </li>
+        <li>
+          <a href="/admin/delete_user">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-trash"
+                aria-hidden="true"
+                style="color: crimson; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Delete User
+          </a>
+        </li>
+        <li>
+          <a href="/admin/admin_delete_hostel">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-trash-o"
+                aria-hidden="true"
+                style="color: crimson; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Delete Hostel
+          </a>
+        </li>
+        <li>
+          <a href="/admin/help_desk">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-cogs"
+                aria-hidden="true"
+                style="color: #06cf06; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Help Desk
+          </a>
+        </li>
+        <li>
+          <a href="/admin/replied_queries">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-history"
+                aria-hidden="true"
+                style="color: olive; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Replied Queries
+          </a>
+        </li>
+        <li>
+          <a href="/logout">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-sign-out"
+                aria-hidden="true"
+                style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            Sign-Out
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Menu icon for mobile -->
+    <label for="menu-toggle" class="menu-icon">
+      <i class="fa fa-bars"></i>
+    </label>
+
+    <!-- Main content area -->
+    <section class="main-content">
       <!-- Your HTML content -->
-
-      <form action="/add_landlord" method="POST" id="registerForm">
-        <h1 class="user-login">Sign Up</h1>
-        <br />
-        <label for="username" class="label">Username</label><br />
-        <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder="Username"
-          size="50"
-          class="input"
-          required
-          autocomplete="username"
-        /><br />
-        <label for="email" class="label">Email</label><br />
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Zondiwe@gmail.com"
-          size="50"
-          class="input"
-          required
-          autocomplete="email"
-        /><br />
-
-        <label for="password" class="label">Password</label><br />
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Password"
-          size="50"
-          class="input"
-          required
-          autocomplete="password"
-        /><br />
-        <p id="errorMessage" hidden></p>
-        <div>
-          <label for="role">Role:</label>
-          <select id="role" name="role">
-            <option value="landlord">Landlord</option>
-            <option value="tenant">Tenant</option>
-          </select>
-        </div>
-
-        <button type="submit" id="submit" class="button">Sign Up</button>
-      </form>
-      <script src="/js/index.js"></script>
+      <div class="register-page">
+        <form action="/add_landlord" method="POST" id="registerForm">
+          <h1 class="user-login">Sign Up</h1>
+          <br />
+          <label for="username" class="label">Username</label><br />
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            size="50"
+            class="input"
+            required
+            autocomplete="username"
+          /><br />
+          <label for="email" class="label">Email</label><br />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Zondiwe@gmail.com"
+            size="50"
+            class="input"
+            required
+            autocomplete="email"
+          /><br />
+          <label for="password" class="label">Password</label><br />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            size="50"
+            class="input"
+            required
+            autocomplete="password"
+          /><br />
+          <p id="errorMessage" hidden></p>
+          <div style="color: black">
+            <label for="role">Role:</label>
+            <select id="role" name="role">
+              <option value="landlord">Landlord</option>
+              <option value="tenant">Tenant</option>
+            </select>
+          </div>
+          <button type="submit" id="submit" class="button">Sign Up</button>
+        </form>
+      </div>
     </section>
-    <%- include("./partials/footer") %>
+
+    <!-- JavaScript to toggle sidebar -->
+    <script>
+      document
+        .querySelector(".menu-icon")
+        .addEventListener("click", function () {
+          document.querySelector(".sidebar").classList.toggle("active");
+        });
+    </script>
   </body>
 </html>

@@ -5,7 +5,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-
     <style>
       /* Include your existing styles here */
       /* Reset default margin and padding */
@@ -335,6 +334,41 @@
       .listings .edit-btn:hover {
         background-color: #333;
       }
+      
+
+      /* CSS for table and image styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+thead {
+  background-color: #00022e;
+  color: aliceblue;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+
+.hostel-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.image-cell {
+  text-align: center;
+}
+
+/* Hover effect for images */
+.hostel-image:hover {
+  transform: scale(1.1); /* Example: Enlarge image on hover */
+}
     </style>
   </head>
 
@@ -357,6 +391,7 @@
             Home
           </a>
         </li>
+        
         <li>
           <a href="/landlord/add_hostel">
             <div
@@ -417,6 +452,22 @@
             Bookings History
           </a>
         </li>
+        
+        <li>
+          <a href="/landlord/agent-landlord">
+            <div
+              class="icon"
+              style="display: inline-block; vertical-align: middle"
+            >
+              <i
+                class="fa fa-address-card"
+                aria-hidden="true"
+                style="color: #07f9f5; width: 30px; font-size: x-large"
+              ></i>
+            </div>
+            House Agents
+          </a>
+        </li>
         <li>
           <a href="/landlord/landlord_profile">
             <div
@@ -449,114 +500,118 @@
         </li>
       </ul>
     </div>
-    <div class="menu-icon" id="menu-icon">
-      <i class="fa fa-bars"></i>
+  </div>
+  <div class="menu-icon" id="menu-icon">
+    <i class="fa fa-bars"></i>
+  </div>
+  <div class="main-content">
+    <div class="dashboard-header">
+      <h1 style="color: aliceblue">Landlord Dashboard</h1>
+      <a href="/landlord/add_hostel">
+        <button class="btn-primary">Add New Hostel</button>
+      </a>
     </div>
-    <div class="main-content">
-      <div class="dashboard-header">
-        <h1 style="color: aliceblue">Landlord Dashboard</h1>
-        <a href="/landlord/add_hostel">
-          <button class="btn-primary">Add New Hostel</button>
-        </a>
+    <div class="overview">
+      <div class="card">
+        <h3>Active Listings</h3>
+        <p><%= activeListings %></p>
       </div>
-
-      <div class="overview">
-        <div class="card">
-          <h3>Active Listings</h3>
-          <p><%= activeListings %></p>
-        </div>
-        <div class="card">
-          <h3>New Booking Requests</h3>
-          <p><%= pendingBookingsCount %></p>
-        </div>
-        <div class="card">
-          <h3>Total Bookings</h3>
-          <p><%= totalBookingsCount %></p>
-        </div>
+      <div class="card">
+        <h3>New Booking Requests</h3>
+        <p><%= pendingBookingsCount %></p>
       </div>
-
-      <div class="listings">
-        <h2 style="color: black">My Listings</h2>
-        <table>
-          <thead>
+      <div class="card">
+        <h3>Total Bookings</h3>
+        <p><%= totalBookingsCount %></p>
+      </div>
+    </div>
+    
+    <div class="listings">
+      <h2 style="color: black">My Listings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="hostelTableBody">
+          <% hostels.forEach((hostel) => { %>
             <tr>
-              <th>Name</th>
-              <th>Location</th>
-              <th>Price</th>
-              <th>Gender</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% hostels.forEach(hostel => { %>
-            <tr>
+              <td class="image-cell">
+                <% if (hostel.images) { %>
+                  <% const imageUrls = hostel.images.split(','); %>
+                  <img src="/uploads/<%= imageUrls[0] %>" alt="<%= hostel.name %> Image" class="hostel-image" />
+                <% } else { %>
+                  <img src="/images/default.jpg" alt="Default Image" class="hostel-image" />
+                <% } %>
+              </td>
               <td><%= hostel.name %></td>
               <td><%= hostel.location %></td>
-              <td><%= hostel.price %></td>
-              <td><%= hostel.gender %></td>
+              <td><%= hostel.availability %></td>
               <td>
-                <a
-                  href="#"
-                  class="btn delete-btn"
-                  data-hostel-id="<%= hostel.hostelId %>"
-                  >Delete</a
-                >
+                <a href="#" class="btn delete-btn" data-hostel-id="<%= hostel.hostelId %>">Delete</a>
                 <a href="/landlord/edit_hostel/<%= hostel.hostelId %>">
                   <button class="edit-btn">Edit</button>
                 </a>
               </td>
             </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+          <% }); %>
+        </tbody>
+      </table>
+      
+      
     </div>
+  </div>
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const menuIcon = document.getElementById("menu-icon");
 
-    <script>
-      const sidebar = document.getElementById("sidebar");
-      const menuIcon = document.getElementById("menu-icon");
+    menuIcon.addEventListener("click", () => {
+      sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+    });
 
-      menuIcon.addEventListener("click", () => {
-        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
-      });
-
-      function handleResize() {
-        if (window.innerWidth > 768) {
-          sidebar.style.left = "0";
-          menuIcon.style.display = "none";
-        } else {
-          sidebar.style.left = "-20vw";
-          menuIcon.style.display = "block";
-        }
+    function handleResize() {
+      if (window.innerWidth > 768) {
+        sidebar.style.left = "0";
+        menuIcon.style.display = "none";
+      } else {
+        sidebar.style.left = "-20vw";
+        menuIcon.style.display = "block";
       }
+    }
 
-      window.addEventListener("resize", handleResize);
-      handleResize();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-      // Event listener for delete buttons
-      const deleteButtons = document.querySelectorAll(".delete-btn");
+    // Event listener for delete buttons
+    const deleteButtons = document.querySelectorAll(".delete-btn");
 
-      deleteButtons.forEach((button) => {
-        button.addEventListener("click", async (event) => {
-          event.preventDefault();
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
 
-          const hostelId = button.getAttribute("data-hostel-id");
-          try {
-            const response = await fetch(`/delete_hostel/${hostelId}`, {
-              method: "DELETE",
-            });
+        const hostelId = button.getAttribute("data-hostel-id");
+        try {
+          const response = await fetch(`/delete_hostel/${hostelId}`, {
+            method: "DELETE",
+          });
 
-            if (response.ok) {
-              console.log("Hostel deleted successfully");
-              window.location.reload(); // Refresh the page after successful deletion
-            } else {
-              console.error("Failed to delete hostel");
-            }
-          } catch (error) {
-            console.error("Error:", error);
+          if (response.ok) {
+            console.log("Hostel deleted successfully");
+            window.location.reload(); // Refresh the page after successful deletion
+          } else {
+            console.error("Failed to delete hostel");
           }
-        });
+        } catch (error) {
+          console.error("Error:", error);
+        }
       });
-    </script>
+    });
+  </script>
+    
   </body>
 </html>

@@ -101,3 +101,11 @@ CREATE TABLE agents (
     email_address VARCHAR(100) NOT NULL
 );
 
+
+CREATE TABLE activities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    activity VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

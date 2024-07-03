@@ -236,6 +236,11 @@ app.post(
         recipientEmail,
       ]);
 
+      // Log activity
+      await pool.query(
+        "INSERT INTO activities (activity, description) VALUES (?, ?)",
+        ["Help Desk", `Replied to ${recipientEmail} `]
+      );
       // Redirect back to the help_desk page after sending the reply
       res.redirect("/admin/help_desk");
     } catch (error) {
@@ -555,8 +560,46 @@ app.post(
   }
 );
 
-app.get("/admin", (req, res) => {
-  res.render("admin");
+app.get("/admin", async (req, res) => {
+  try {
+    // Get the number of tenants
+    const [tenants] = await pool.query(
+      "SELECT COUNT(*) AS count FROM users WHERE role = 'tenant'"
+    );
+    const tenantCount = tenants[0].count;
+
+    // Get the number of landlords
+    const [landlords] = await pool.query(
+      "SELECT COUNT(*) AS count FROM users WHERE role = 'landlord'"
+    );
+    const landlordCount = landlords[0].count;
+
+    // Get the number of properties
+    const [properties] = await pool.query(
+      "SELECT COUNT(*) AS count FROM hostels"
+    );
+    const propertyCount = properties[0].count;
+
+    // Get the number of agents
+    const [agents] = await pool.query("SELECT COUNT(*) AS count FROM agents");
+    const agentCount = agents[0].count;
+
+    // Get recent activities
+    const [activities] = await pool.query(
+      "SELECT activity, description, created_at FROM activities ORDER BY created_at DESC LIMIT 10"
+    );
+
+    res.render("admin", {
+      tenantCount,
+      landlordCount,
+      propertyCount,
+      agentCount,
+      activities,
+    });
+  } catch (error) {
+    console.error("Error fetching statistics or activities:", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 app.get("/admin/add_landlord", (req, res) => {
@@ -696,6 +739,12 @@ app.post(
         email_address,
       ]);
 
+      // Log activity
+      await pool.query(
+        "INSERT INTO activities (activity, description) VALUES (?, ?)",
+        ["Add Agent", `Agent ${first_name} added by admin`]
+      );
+
       return res.redirect("/admin/add_agent");
     } catch (error) {
       console.error("An error occurred:", error);
@@ -765,6 +814,11 @@ app.post(
       // Execute the update query
       await pool.execute(updateQuery, [...values, agentId]);
 
+      // Log activity
+      await pool.query(
+        "INSERT INTO activities (activity, description) VALUES (?, ?)",
+        ["Edit Agent", `Agent ${first_name} Updated by Admin!`]
+      );
       res.redirect("/admin"); // Redirect to admin panel or relevant page
     } catch (error) {
       console.error("Error updating agent details:", error);
@@ -792,6 +846,11 @@ app.post("/add_landlord", async (req, res) => {
       );
     }
 
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Add Landlord", `Landlord ${username} Added Successfully!`]
+    );
     res.redirect("/admin");
   } catch (error) {
     console.error("Error registering user:", error);
@@ -842,6 +901,11 @@ app.post("/admin/delete_user", async (req, res) => {
     // Now, delete the user from the users table
     await pool.query("DELETE FROM users WHERE userId = ?", [userIdToDelete]);
 
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Delete User", `User With ID: ${userIdToDelete} Deleted by Admin`]
+    );
     res.redirect("/admin/delete_user");
   } catch (error) {
     console.error("Error deleting user:", error);
@@ -877,7 +941,7 @@ app.get("/admin/tenant_management", async (req, res) => {
   }
 });
 
-// Edit tenant details
+// Edit tenant details and log activity
 app.post("/admin/edit_tenant/:id", async (req, res) => {
   const tenantId = req.params.id;
   const { username, email, status } = req.body;
@@ -887,6 +951,13 @@ app.post("/admin/edit_tenant/:id", async (req, res) => {
       "UPDATE users SET username = ?, email = ?, isActive = ? WHERE userId = ?",
       [username, email, status === "true", tenantId]
     );
+
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Edit Tenant", `Tenant ID ${tenantId} updated by admin`]
+    );
+
     res.redirect("/admin/tenant_management");
   } catch (error) {
     console.error("Error updating tenant:", error);
@@ -916,6 +987,12 @@ app.post("/admin/edit_landlord/:id", async (req, res) => {
     await pool.query(
       "UPDATE users SET username = ?, email = ?, isActive = ? WHERE userId = ?",
       [username, email, status === "true", landlordId]
+    );
+
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Edit Landlord", `Landlord ${username} Updated by Admin`]
     );
     res.redirect("/admin/landlord_management");
   } catch (error) {
@@ -1041,10 +1118,34 @@ app.delete("/delete_hostel/:hostelId", async (req, res) => {
     // Logic to delete the hostel with the provided ID from the database
     await pool.query("DELETE FROM hostels WHERE hostelId = ?", [hostelId]);
 
-    // Redirect to a different page or send a success response
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Delete Hostel", `Hostel With ID: ${hostelId} Deleted by Landlord`]
+    );
     res.send("Hostel deleted successfully");
   } catch (err) {
     console.error("Error deleting hostel:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.delete("/admin/admin_delete_hostel/:hostelId", async (req, res) => {
+  const hostelId = req.params.hostelId;
+
+  try {
+    // Delete hostel from the database
+    await pool.query("DELETE FROM hostels WHERE hostelId = ?", [hostelId]);
+
+    // Log activity
+    await pool.query(
+      "INSERT INTO activities (activity, description) VALUES (?, ?)",
+      ["Delete Hostel", `Hostel With ID: ${hostelId} Deleted by Admin`]
+    );
+
+    res.status(200).send("Hostel deleted successfully");
+  } catch (error) {
+    console.error("Error deleting hostel:", error);
     res.status(500).send("Server Error");
   }
 });

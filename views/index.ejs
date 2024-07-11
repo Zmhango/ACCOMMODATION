@@ -15,21 +15,70 @@
             placeholder="Search..."
           />
           <button id="searchButton">Search</button>
-          <i id="filterIcon" class="fa fa-filter"></i>
-          <!-- Font Awesome filter icon -->
-          <div id="filterDropdown" class="filter-dropdown">
-            <select id="filterOption">
-              <option value="location">Location</option>
-              <option value="price">Price</option>
-              <option value="gender">Gender</option>
-            </select>
-          </div>
         </div>
 
         <h1 class="welcome-info">
           WE HAVE <span style="color: chartreuse">PERFECT</span> RENTAL FOR YOU
         </h1>
       </section>
+
+      <!-- Filter Icon -->
+      <section class="filter-icon-section">
+        <img
+          src="/images/filter-icon.png"
+          alt="Filter Icon"
+          id="filterIcon"
+          class="filter-icon"
+        />
+      </section>
+
+      <!-- Filter Section -->
+      <section class="filter-section" id="filterSection" style="display: none">
+        <div class="filter-group">
+          <label for="genderFilter">Gender</label>
+          <select id="genderFilter">
+            <option value="">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="Mixed">Mixed</option>
+            <option value="Family">Family</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="priceRange">Price Range (MK)</label>
+          <input
+            type="range"
+            id="priceRange"
+            min="0"
+            max="200000"
+            step="5000"
+            value="150000"
+          />
+          <div class="range-values">
+            <span id="minPrice">0</span>
+            <span id="maxPrice">200000</span>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="locationFilter">Location</label>
+          <input
+            type="text"
+            id="locationFilter"
+            list="locationOptions"
+            placeholder="Enter location"
+          />
+          <datalist id="locationOptions">
+            <option value="Mandala"></option>
+            <option value="Chichiri"></option>
+            <option value="Chitawira"></option>
+            <option value="Manja"></option>
+            <option value="CI"></option>
+            <!-- Add more predefined locations here -->
+          </datalist>
+        </div>
+        <button id="applyFiltersButton">Apply Filters</button>
+      </section>
+
       <!-- Cards Section -->
       <section class="card-section">
         <!-- Loop through hostels and display each as a card -->
@@ -48,7 +97,7 @@
           <% } %>
           <div class="card-info">
             <h2><%= hostel.name %></h2>
-            <p>Gender : <%= hostel.gender %></p>
+            <p>Gender: <%= hostel.gender %></p>
             <p>Location: <%= hostel.location %></p>
             <p>MK<%= hostel.price %></p>
             <a
@@ -63,6 +112,7 @@
     </main>
 
     <%- include("./partials/footer") %>
+
     <script>
       // Get the search input element and search button
       const searchInput = document.getElementById("searchInput");
@@ -72,9 +122,7 @@
       const cards = document.querySelectorAll(".card");
 
       // Add event listener for button click
-      searchButton.addEventListener("click", function () {
-        performSearch();
-      });
+      searchButton.addEventListener("click", performSearch);
 
       // Add event listener for pressing Enter key in the search input
       searchInput.addEventListener("keypress", function (e) {
@@ -98,7 +146,7 @@
             .textContent.toLowerCase();
           const hostelGender = card
             .querySelector(".card-info p:nth-child(2)")
-            .textContent.toLowerCase(); // Added line for gender
+            .textContent.toLowerCase();
 
           // Show or hide the card based on the search term
           if (
@@ -107,57 +155,88 @@
             hostelPrice.includes(searchTerm) ||
             hostelGender.includes(searchTerm)
           ) {
-            // Modified line to include gender
             card.style.display = "block";
           } else {
             card.style.display = "none";
           }
         });
       }
-    </script>
 
-    <script>
       // Get filter elements
+      const genderFilter = document.getElementById("genderFilter");
+      const priceRange = document.getElementById("priceRange");
+      const locationFilter = document.getElementById("locationFilter");
+      const applyFiltersButton = document.getElementById("applyFiltersButton");
       const filterIcon = document.getElementById("filterIcon");
-      const filterDropdown = document.getElementById("filterDropdown");
-      const filterOption = document.getElementById("filterOption");
+      const filterSection = document.getElementById("filterSection");
 
-      // Add click event listener to filter icon
-      filterIcon.addEventListener("click", () => {
-        filterDropdown.classList.toggle("active");
+      // Toggle filter section display
+      filterIcon.addEventListener("click", function () {
+        filterSection.style.display =
+          filterSection.style.display === "none" ? "block" : "none";
       });
 
-      // Add event listener for input changes
-      searchInput.addEventListener("input", function () {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedFilter = filterOption.value;
+      // Add event listener for apply filters button click
+      applyFiltersButton.addEventListener("click", function () {
+        applyFilters();
+      });
 
-        // Loop through each card and check if it matches the search term
+      function applyFilters() {
+        const gender = genderFilter.value.toLowerCase();
+        const price = parseFloat(priceRange.value);
+        const location = locationFilter.value.toLowerCase().trim();
+
+        console.log(
+          `Filtering by: gender=${gender}, price=${price}, location=${location}`
+        );
+
         cards.forEach((card) => {
           const hostelName = card.querySelector("h2").textContent.toLowerCase();
-          const hostelLocation = card
-            .querySelector(".card-info p:nth-child(3)")
-            .textContent.toLowerCase();
-          const hostelPrice = card
-            .querySelector(".card-info p:nth-child(4)")
-            .textContent.toLowerCase();
           const hostelGender = card
             .querySelector(".card-info p:nth-child(2)")
-            .textContent.toLowerCase();
+            .textContent.toLowerCase()
+            .split(": ")[1];
+          const hostelLocation = card
+            .querySelector(".card-info p:nth-child(3)")
+            .textContent.toLowerCase()
+            .split(": ")[1];
+          const hostelPrice = parseFloat(
+            card
+              .querySelector(".card-info p:nth-child(4)")
+              .textContent.replace("MK", "")
+          );
 
-          // Show or hide the card based on the search term and selected filter
-          if (
-            (selectedFilter === "location" &&
-              hostelLocation.includes(searchTerm)) ||
-            (selectedFilter === "price" && hostelPrice.includes(searchTerm)) ||
-            (selectedFilter === "gender" && hostelGender.includes(searchTerm))
-          ) {
+          const matchesGender = !gender || hostelGender.includes(gender);
+          const matchesLocation =
+            !location || hostelLocation.includes(location);
+          const matchesPrice = hostelPrice <= price;
+
+          console.log(
+            `Hostel: ${hostelName}, Gender: ${hostelGender}, Location: ${hostelLocation}, Price: ${hostelPrice}`
+          );
+          console.log(
+            `matchesGender: ${matchesGender}, matchesLocation: ${matchesLocation}, matchesPrice: ${matchesPrice}`
+          );
+
+          if (matchesGender && matchesLocation && matchesPrice) {
             card.style.display = "block";
           } else {
             card.style.display = "none";
           }
         });
+      }
+
+      // Update price range display values
+      const minPrice = document.getElementById("minPrice");
+      const maxPrice = document.getElementById("maxPrice");
+
+      priceRange.addEventListener("input", () => {
+        maxPrice.textContent = priceRange.value;
       });
+
+      // Initialize range values display
+      minPrice.textContent = priceRange.min;
+      maxPrice.textContent = priceRange.value;
     </script>
   </body>
 </html>

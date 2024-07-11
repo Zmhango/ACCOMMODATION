@@ -8,6 +8,7 @@ CREATE TABLE users (
     role VARCHAR(20) DEFAULT "tenant",
     status VARCHAR(20) DEFAULT "enable",
     isActive BOOLEAN DEFAULT TRUE
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 );
 

@@ -589,12 +589,32 @@ app.get("/admin", async (req, res) => {
       "SELECT activity, description, created_at FROM activities ORDER BY created_at DESC LIMIT 10"
     );
 
+    // Get monthly registrations for tenants
+    const [tenantRegistrations] = await pool.query(`
+      SELECT DATE_FORMAT(date_created, '%Y-%m') AS month, COUNT(*) AS count
+      FROM users
+      WHERE role = 'tenant'
+      GROUP BY month
+      ORDER BY month
+    `);
+
+    // Get monthly registrations for landlords
+    const [landlordRegistrations] = await pool.query(`
+      SELECT DATE_FORMAT(date_created, '%Y-%m') AS month, COUNT(*) AS count
+      FROM users
+      WHERE role = 'landlord'
+      GROUP BY month
+      ORDER BY month
+    `);
+
     res.render("admin", {
       tenantCount,
       landlordCount,
       propertyCount,
       agentCount,
       activities,
+      tenantRegistrations,
+      landlordRegistrations,
     });
   } catch (error) {
     console.error("Error fetching statistics or activities:", error);

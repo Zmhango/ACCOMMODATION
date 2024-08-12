@@ -28,6 +28,7 @@ header {
 }
 
 .search-input {
+  width: 48%;
   margin-right: 1rem;
   padding: 0.5rem;
   border-radius: 5px;
@@ -36,15 +37,13 @@ header {
 }
 
 .search-input1 {
-  margin-right: 1rem;
+  width: 48%;
   padding: 0.8rem;
   border-radius: 20px;
   border: 1px solid black;
-  width: 48%;
   margin-top: 80px;
 }
 
-/* Center the search container */
 .search-container {
   display: flex;
   justify-content: center;
@@ -52,7 +51,6 @@ header {
   margin-bottom: 10px; /* Add margin if needed */
 }
 
-/* Style the search button */
 #searchButton {
   background-color: #178733; /* Green color */
   color: #fff; /* Text color */
@@ -61,6 +59,7 @@ header {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-left: 10px; /* Adjust margin-left to control the space between the input and the button */
   margin-top: 80px;
 }
 
@@ -188,6 +187,13 @@ form button:hover {
   .search-input {
     width: auto;
     margin: 10px auto;
+  }
+  .search-input1 {
+    width: 90%;
+    padding: 0.8rem;
+    border-radius: 20px;
+    border: 1px solid black;
+    margin-top: 80px;
   }
 }
 
@@ -723,11 +729,11 @@ textarea {
   margin-bottom: 20px;
 }
 
-.search-input1 {
+/* .search-input1 {
   padding: 10px;
   width: calc(100% - 100px);
   box-sizing: border-box;
-}
+} */
 
 #searchButton {
   padding: 10px;

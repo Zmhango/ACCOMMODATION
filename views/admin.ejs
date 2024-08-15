@@ -5,6 +5,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+
     <style>
       * {
         margin: 0;
@@ -424,6 +425,8 @@
               <th>Activity</th>
               <th>Description</th>
               <th>Date</th>
+              <th>Time</th>
+              <!-- Added column header -->
             </tr>
           </thead>
           <tbody>
@@ -432,11 +435,35 @@
               <td><%= activity.activity %></td>
               <td><%= activity.description %></td>
               <td><%= new Date(activity.created_at).toLocaleDateString() %></td>
+              <td><%= new Date(activity.created_at).toLocaleTimeString() %></td>
+              <!-- Added time display -->
             </tr>
             <% }) %>
           </tbody>
         </table>
       </section>
+
+      <!-- Date Range Form for Downloading/Printing Activity Logs -->
+      <section class="reports">
+        <h2>Download Activity Logs</h2>
+        <form id="activity-log-form">
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate" name="startDate" required />
+
+          <label for="endDate">End Date:</label>
+          <input type="date" id="endDate" name="endDate" required />
+
+          <button type="submit" id="downloadButton">Download PDF</button>
+          <button type="button" onclick="printActivityLogs()">
+            Print Activity Logs
+          </button>
+        </form>
+      </section>
+
+      <!-- Activity Logs Container -->
+      <div id="activity-logs">
+        <!-- Activity logs will be dynamically loaded here based on date range -->
+      </div>
 
       <!-- Reports section -->
       <section class="reports">
@@ -446,6 +473,69 @@
         </div>
       </section>
     </div>
+
+    <!-- Include jsPDF library for generating PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script>
+      document
+        .getElementById("activity-log-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const startDate = document.getElementById("startDate").value;
+          const endDate = document.getElementById("endDate").value;
+
+          try {
+            const response = await fetch(
+              `/admin/activities?startDate=${startDate}&endDate=${endDate}`
+            );
+            const data = await response.json();
+
+            // Generate and download the PDF
+            generatePDF(data.activities);
+          } catch (error) {
+            console.error("Error fetching activities:", error);
+          }
+        });
+
+      function printActivityLogs() {
+        window.print();
+      }
+
+      function generatePDF(activities) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(20);
+        doc.text("Activity Logs Report", 10, 20);
+
+        doc.setFontSize(12);
+        doc.text(
+          `Date Range: ${document.getElementById("startDate").value} to ${
+            document.getElementById("endDate").value
+          }`,
+          10,
+          30
+        );
+
+        doc.setFontSize(10);
+        let y = 40;
+
+        activities.forEach((activity, index) => {
+          doc.text(
+            `${index + 1}. ${activity.activity} - ${
+              activity.description
+            } - ${new Date(activity.created_at).toLocaleString()}`,
+            10,
+            y
+          );
+          y += 10;
+        });
+
+        doc.save("activity_logs.pdf");
+      }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

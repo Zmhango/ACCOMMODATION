@@ -14,6 +14,7 @@ const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const nodemailer = require("nodemailer");
+const PDFDocument = require("pdfkit");
 
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
@@ -117,30 +118,39 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/register", async (req, res) => {
+app.post("/register", upload.none(), async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
 
-    if (!username || !email || !password) {
-      return res.status(400).send("Incomplete data");
+    if (!username || !email || !password || !confirmPassword) {
+      return res.status(400).json({ error: "Incomplete data" });
     }
 
-    const hashedPassword = await hashPassword(password);
-    pool
-      .execute(
-        "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-        [username, email, hashedPassword]
-      )
-      .then(() => {
-        res.render("login");
-      })
-      .catch((error) => {
-        console.error("Error registering user:", error);
-        res.status(500).send("Error registering user");
-      });
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    // Check if the email is already registered
+    const [existingUser] = await pool.execute(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+    if (existingUser.length > 0) {
+      return res.status(400).json({ error: "Email is already registered" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await pool.execute(
+      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+      [username, email, hashedPassword]
+    );
+
+    res
+      .status(200)
+      .json({ success: "Registered Successfully! Please log in." });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error registering user");
+    console.error("Error registering user:", error);
+    res.status(500).json({ error: "Error registering user" });
   }
 });
 
@@ -618,6 +628,22 @@ app.get("/admin", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching statistics or activities:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/admin/activities", async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  try {
+    const [activities] = await pool.query(
+      "SELECT activity, description, created_at FROM activities WHERE DATE(created_at) BETWEEN ? AND ? ORDER BY created_at DESC",
+      [startDate, endDate]
+    );
+
+    res.json({ activities });
+  } catch (error) {
+    console.error("Error fetching activities:", error);
     res.status(500).send("Server Error");
   }
 });

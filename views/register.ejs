@@ -3,10 +3,9 @@
   <%- include("./partials/head") %>
   <body>
     <!-- Header -->
-    <%- include("./partials/header")%> <%- include("./partials/progress-bar") %>
+    <%- include("./partials/header") %> <%- include("./partials/progress-bar")
+    %>
     <section class="register-page">
-      <!-- Your HTML content -->
-
       <form action="/register" method="POST" id="registerForm">
         <h1 class="user-login">Sign Up</h1>
         <br />
@@ -32,7 +31,6 @@
           required
           autocomplete="email"
         /><br />
-
         <label for="password" class="label">Password</label><br />
         <input
           type="password"
@@ -44,8 +42,20 @@
           required
           autocomplete="password"
         /><br />
+        <label for="confirmPassword" class="label">Confirm Password</label
+        ><br />
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          size="50"
+          class="input"
+          required
+          autocomplete="password"
+        /><br />
         <p id="errorMessage" hidden></p>
-
+        <p id="successMessage" hidden></p>
         <button type="submit" id="submit" class="button">Sign Up</button>
         <p>Already Have An Account? <a class="renew" href="/login">Login</a></p>
       </form>
@@ -53,10 +63,15 @@
         document.addEventListener("DOMContentLoaded", function () {
           const form = document.getElementById("registerForm");
           const username = document.getElementById("username");
+          const email = document.getElementById("email");
           const password = document.getElementById("password");
+          const confirmPassword = document.getElementById("confirmPassword");
           const errorMessage = document.getElementById("errorMessage");
+          const successMessage = document.getElementById("successMessage");
 
           form.addEventListener("submit", async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
             const errors = [];
 
             if (username.value.trim() === "") {
@@ -64,41 +79,55 @@
             }
 
             if (username.value.length < 4) {
-              errors.push("Username Can't be less than 4 Characters");
+              errors.push("Username can't be less than 4 characters");
             }
 
             if (password.value.length < 4) {
               errors.push("Password must be at least 4 characters");
             }
 
+            if (password.value !== confirmPassword.value) {
+              errors.push("Passwords do not match");
+            }
+
             if (errors.length > 0) {
               errorMessage.textContent = errors.join(", ");
               errorMessage.removeAttribute("hidden");
-              e.preventDefault(); // Prevent form submission if there are errors
+              return;
             } else {
               errorMessage.setAttribute("hidden", true);
-              // Proceed with form submission
-              submitForm();
+            }
+
+            // Proceed with form submission
+            try {
+              const formData = new FormData(form);
+              const response = await fetch("/register", {
+                method: "POST",
+                body: formData,
+              });
+
+              const result = await response.json();
+
+              if (!response.ok) {
+                throw new Error(result.error);
+              }
+
+              successMessage.textContent = result.success;
+              successMessage.removeAttribute("hidden");
+              errorMessage.setAttribute("hidden", true);
+              form.reset(); // Reset the form
+
+              // Redirect to login after 2 seconds
+              setTimeout(() => {
+                window.location.href = "/login";
+              }, 2000);
+            } catch (error) {
+              errorMessage.textContent =
+                error.message || "Error submitting form";
+              errorMessage.removeAttribute("hidden");
+              successMessage.setAttribute("hidden", true);
             }
           });
-
-          // Function to submit the form
-          function submitForm() {
-            const formData = new FormData(form);
-            fetch("/register", {
-              method: "POST",
-              body: formData,
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Error submitting form");
-                }
-                // Handle success if needed
-              })
-              .catch((error) => {
-                console.error("Form submission error:", error);
-              });
-          }
         });
       </script>
     </section>

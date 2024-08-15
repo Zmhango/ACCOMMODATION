@@ -9,6 +9,8 @@ CREATE TABLE users (
     status VARCHAR(20) DEFAULT "enable",
     isActive BOOLEAN DEFAULT TRUE
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    password_changed BOOLEAN DEFAULT FALSE;
+
 
 );
 

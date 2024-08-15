@@ -60,7 +60,7 @@ app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Fetch all users by username
+    // Fetch user by username
     const [results] = await pool.execute(
       "SELECT * FROM users WHERE username = ?",
       [username]
@@ -83,7 +83,6 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // Check if the authenticated user is active
     if (!authenticatedUser.isActive) {
       return res.status(403).json({
         message:
@@ -101,6 +100,15 @@ app.post("/login", async (req, res) => {
         console.error(err);
         return res.status(500).json({ message: "Error saving session" });
       } else {
+        // Check if the user needs to change their password
+        if (!authenticatedUser.password_changed) {
+          // Redirect landlords only to change password page
+          if (authenticatedUser.role === "landlord") {
+            return res.status(200).json({ redirect: "/change_password" });
+          }
+        }
+
+        // Redirect to appropriate dashboard based on role
         let redirectURL = "/";
         if (authenticatedUser.role === "tenant") {
           redirectURL = "/tenant";
@@ -140,9 +148,11 @@ app.post("/register", upload.none(), async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert new user with password_changed set to FALSE
     await pool.execute(
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-      [username, email, hashedPassword]
+      "INSERT INTO users (username, email, password, password_changed) VALUES (?, ?, ?, ?)",
+      [username, email, hashedPassword, false]
     );
 
     res
@@ -1562,6 +1572,65 @@ app.get("/landlord/booking_history", async (req, res) => {
   }
 });
 
+app.get("/change_password", (req, res) => {
+  res.render("change_password");
+});
+
+app.post("/change_password", async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    // Check if new passwords match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "New passwords do not match" });
+    }
+
+    // Retrieve userId from session
+    const userId = req.session.userId;
+
+    // Ensure the user is logged in
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Fetch user from database
+    const [results] = await pool.execute(
+      "SELECT * FROM users WHERE userId = ?",
+      [userId]
+    );
+
+    // Handle case where user is not found
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user = results[0];
+
+    // Verify current password
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and set password_changed to TRUE
+    await pool.execute(
+      "UPDATE users SET password = ?, password_changed = TRUE WHERE userId = ?",
+      [hashedPassword, userId]
+    );
+
+    res.redirect("/password_success");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error changing password" });
+  }
+});
+
+app.get("/password_success", (req,res)=>{
+  res.render("password_success")
+})
 // Logout route
 
 app.get("/logout", (req, res) => {

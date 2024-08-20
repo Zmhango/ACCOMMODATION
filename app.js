@@ -426,16 +426,21 @@ app.get("/landlord", async (req, res) => {
 app.get("/landlord/landlord_profile", async (req, res) => {
   try {
     const userId = req.session.userId;
+    const email = req.session.email;
     const username = req.session.username; // Assuming username is available in the session
-
     // Fetch the user's profile data from the landlords table
     const [profileData] = await pool.execute(
       "SELECT * FROM landlords WHERE userId = ?",
       [userId]
     );
 
-    // Render the tenant_profile view and pass the profile and username data
-    res.render("landlord_profile", { profile: profileData[0], username });
+    // Render the landlord_profile view and pass the profile, username, and errors (empty array) data
+    res.render("landlord_profile", {
+      profile: profileData[0],
+      username,
+      email,
+      errors: [],
+    });
   } catch (error) {
     console.error("Error fetching landlord profile:", error);
     res.status(500).send("Error fetching landlord profile");
@@ -445,49 +450,110 @@ app.get("/landlord/landlord_profile", async (req, res) => {
 app.post(
   "/landlord/landlord_profile",
   [
-    // Validation and sanitization for form fields
     body("fname").trim().escape(),
     body("lname").trim().escape(),
     body("phone").trim().escape(),
   ],
   async (req, res) => {
     try {
-      // Handle validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.render("landlord_profile", {
+          profile: req.body,
+          username: req.session.username,
+          errors: errors.array(),
+        });
       }
 
       const { fname, lname, phone } = req.body;
       const userId = req.session.userId;
 
-      // Check if the user's profile already exists in the landlords table
-      const [existingProfile] = await pool.execute(
-        "SELECT * FROM landlords WHERE userId = ?",
-        [userId]
+      await pool.execute(
+        "UPDATE landlords SET fname = ?, lname = ?, phone = ? WHERE userId = ?",
+        [fname, lname, phone, userId]
       );
 
-      if (existingProfile.length === 0) {
-        // If the profile doesn't exist, insert a new one
-        await pool.execute(
-          "INSERT INTO landlords (userId, fname, lname, phone) VALUES (?, ?, ?, ?)",
-          [userId, fname, lname, phone]
-        );
-      } else {
-        // If the profile exists, update the existing profile
-        await pool.execute(
-          "UPDATE landlords SET fname = ?, lname = ?, phone = ? WHERE userId = ?",
-          [fname, lname, phone, userId]
-        );
-      }
+      // Update the session profile data
+      req.session.profile = { fname, lname, phone };
 
-      // Return success message upon successful profile update/insert
       res.redirect("/landlord/landlord_profile");
     } catch (error) {
       console.error("Error updating/inserting landlord profile:", error);
       res
         .status(500)
         .send("Error updating/inserting landlord profile. Please try again.");
+    }
+  }
+);
+
+app.post(
+  "/landlord/change_password",
+  [
+    // Validate and sanitize input fields
+    body("currentPassword").trim().escape(),
+    body("newPassword").trim().isLength({ min: 6 }).escape(),
+    body("confirmPassword")
+      .trim()
+      .escape()
+      .custom(
+        (value, { req }) =>
+          value === req.body.newPassword || "Passwords do not match"
+      ),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      const userId = req.session.userId;
+      const username = req.session.username;
+
+      if (!errors.isEmpty()) {
+        return res.render("landlord_profile", {
+          profile: req.session.profile,
+          username,
+          errors: errors.array(), // Pass the validation errors
+        });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      // Fetch the landlord's current password from the database
+      const [landlordData] = await pool.execute(
+        "SELECT password FROM users WHERE userId = ?",
+        [userId]
+      );
+
+      if (landlordData.length === 0) {
+        return res.status(404).send("Landlord not found");
+      }
+
+      const storedPassword = landlordData[0].password;
+
+      // Compare current password with the stored password
+      const isMatch = await bcrypt.compare(currentPassword, storedPassword);
+      if (!isMatch) {
+        // If passwords don't match, add an error message to the errors array
+        return res.render("landlord_profile", {
+          profile: req.session.profile,
+          username,
+          errors: [
+            { msg: "Current password is incorrect", param: "currentPassword" },
+          ],
+        });
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update the password in the database
+      await pool.execute("UPDATE users SET password = ? WHERE userId = ?", [
+        hashedPassword,
+        userId,
+      ]);
+
+      res.redirect("/landlord/landlord_profile");
+    } catch (error) {
+      console.error("Error changing landlord password:", error);
+      res.status(500).send("Error changing password. Please try again.");
     }
   }
 );
@@ -673,8 +739,12 @@ app.get("/tenant/tenant_profile", async (req, res) => {
       [userId]
     );
 
-    // Render the tenant_profile view and pass the profile and username data
-    res.render("tenant_profile", { profile: profileData[0], username });
+    // Render the tenant_profile view and pass the profile, username, and an empty errors object
+    res.render("tenant_profile", {
+      profile: profileData[0],
+      username,
+      errors: {},
+    });
   } catch (error) {
     console.error("Error fetching tenant profile:", error);
     res.status(500).send("Error fetching tenant profile");
@@ -729,6 +799,84 @@ app.post(
       res
         .status(500)
         .send("Error updating/inserting tenant profile. Please try again.");
+    }
+  }
+);
+
+app.post(
+  "/tenant/update_password",
+  [
+    body("currentPassword").trim().escape(),
+    body("newPassword")
+      .trim()
+      .isLength({ min: 4 })
+      .withMessage("Password must be at least 4 characters long")
+      .escape(),
+    body("confirmPassword").trim().escape(),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      const errorMessages = errors.array().reduce((acc, err) => {
+        acc[err.param] = err.msg;
+        return acc;
+      }, {});
+
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+      const userId = req.session.userId;
+
+      if (!errors.isEmpty()) {
+        return res.render("tenant_profile", {
+          errors: errorMessages,
+          profile: req.body,
+          username: req.session.username,
+          successMessage: null,
+        });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.render("tenant_profile", {
+          errors: { confirmPassword: "Passwords do not match" },
+          profile: req.body,
+          username: req.session.username,
+          successMessage: null,
+        });
+      }
+
+      const [user] = await pool.execute(
+        "SELECT password FROM users WHERE userId = ?",
+        [userId]
+      );
+
+      if (user.length === 0) {
+        return res.status(404).send("User not found.");
+      }
+
+      const match = await bcrypt.compare(currentPassword, user[0].password);
+      if (!match) {
+        return res.render("tenant_profile", {
+          errors: { currentPassword: "Current password is incorrect" },
+          profile: req.body,
+          username: req.session.username,
+          successMessage: null,
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await pool.execute("UPDATE users SET password = ? WHERE userId = ?", [
+        hashedPassword,
+        userId,
+      ]);
+
+      res.render("tenant_profile", {
+        successMessage: "Password updated successfully!", // Set your success message here
+        errors: {},
+        profile: req.body,
+        username: req.session.username,
+      });
+    } catch (error) {
+      console.error("Error updating password:", error);
+      res.status(500).send("Error updating password. Please try again.");
     }
   }
 );
@@ -1302,17 +1450,17 @@ app.get("/tenant/hostel_details/:hostelId", async (req, res) => {
 //
 //
 //
-// Handle POST request from booking_form.ejs
 app.post("/confirm_booking/:hostelId", async (req, res) => {
   try {
     const { checkInDate, phone } = req.body;
-    const hostelId = req.params.hostelId; // Retrieve hostelId from URL parameters
-    const userId = req.session.userId;
+    const hostelId = req.params.hostelId;
+    const tenantUserId = req.session.userId;
+    const tenantUsername = req.session.username;
 
     // Insert the booking into the database
     const result = await pool.query(
       "INSERT INTO bookings (hostelId, userId, checkInDate, phone) VALUES (?, ?, ?, ?)",
-      [hostelId, userId, checkInDate, phone]
+      [hostelId, tenantUserId, checkInDate, phone]
     );
 
     // Fetch hostel details
@@ -1321,26 +1469,25 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
       [hostelId]
     );
 
-    // Check if hostelDetails is not undefined
     if (hostelDetails && hostelDetails.length > 0) {
       const { name, location, userId: landlordUserId } = hostelDetails[0];
 
-      // Fetch user email
-      const [user] = await pool.query(
+      // Fetch tenant email
+      const [tenant] = await pool.query(
         "SELECT email FROM users WHERE userId = ?",
-        [userId]
+        [tenantUserId]
       );
-      const userEmail = user[0].email;
+      const tenantEmail = tenant[0].email;
 
-      // Fetch landlord email
+      // Fetch landlord details (username and email)
       const [landlord] = await pool.query(
-        "SELECT email FROM users WHERE userId = ?",
+        "SELECT username, email FROM users WHERE userId = ?",
         [landlordUserId]
       );
 
-      // Check if emails exist
-      if (userEmail && landlord[0].email) {
+      if (tenantEmail && landlord[0].email) {
         const landlordEmail = landlord[0].email;
+        const landlordUsername = landlord[0].username;
 
         // Configure tenant transporter
         const tenantTransporter = nodemailer.createTransport({
@@ -1363,9 +1510,9 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
         // Create tenant email options
         const tenantMailOptions = {
           from: process.env.TENANT_EMAIL_USER,
-          to: userEmail,
-          subject: "Booking Confirmation",
-          text: `Dear Tenant, you have successfully booked ${name} located at ${location}.`,
+          to: tenantEmail,
+          subject: "Hostel Booking Confirmation",
+          text: `Dear ${tenantUsername}, you have successfully booked ${name} located at ${location}. Please wait for confirmation.`,
         };
 
         // Create landlord email options
@@ -1373,14 +1520,14 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
         const landlordMailOptions = {
           from: process.env.LANDLORD_EMAIL_USER,
           to: landlordEmail,
-          subject: "New Booking",
+          subject: "New Hostel Booking",
           html: `
-    <p>Dear Landlord, your hostel ${name} located at ${location} has been booked.</p>
-    <p>Please confirm the booking by logging in:</p>
-    <div class="button-container center-button">
-      <a href="${confirmBookingLink}" style="display: inline-block; background-color: #007BFF; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Confirm Booking</a>
-    </div>
-  `,
+            <p>Dear ${landlordUsername}, your hostel ${name} located at ${location} has been booked.</p>
+            <p>Please confirm the booking by logging in:</p>
+            <div class="button-container center-button">
+              <a href="${confirmBookingLink}" style="display: inline-block; background-color: #007BFF; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Confirm Booking</a>
+            </div>
+          `,
         };
 
         // Send emails
@@ -1402,6 +1549,7 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 // Handle POST request for cancelling a booking
 app.post("/cancel_booking/:hostelId", async (req, res) => {
@@ -1628,9 +1776,9 @@ app.post("/change_password", async (req, res) => {
   }
 });
 
-app.get("/password_success", (req,res)=>{
-  res.render("password_success")
-})
+app.get("/password_success", (req, res) => {
+  res.render("password_success");
+});
 // Logout route
 
 app.get("/logout", (req, res) => {

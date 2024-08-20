@@ -110,6 +110,12 @@
         margin-left: 20vw;
         width: 80vw;
         min-height: 100vh;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* Slightly opaque white background */
       }
 
       .profile-pic {
@@ -128,13 +134,13 @@
 
       .username {
         text-align: center;
-        color: aliceblue;
+        color: black;
         font-size: xx-large;
         font-weight: bolder;
       }
 
       .page-title {
-        color: chartreuse;
+        color: #048e04;
         text-align: center;
         margin-bottom: 2rem;
       }
@@ -160,6 +166,12 @@
         border: 1px solid #ccc;
         border-radius: 5px;
       }
+      .profile-form input[type="password"] {
+        width: calc(100% - 20px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
       .profile-form button[type="submit"] {
         padding: 10px 20px;
@@ -171,6 +183,16 @@
         display: block;
         width: 100%;
         margin-top: 1rem;
+      }
+
+      .error-message {
+        background-color: #f8d7da;
+        color: #b81f1f;
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        text-align: center;
+        width: 97%;
       }
 
       /* Media Queries */
@@ -196,126 +218,86 @@
     <div class="sidebar" id="sidebar">
       <img class="logo" src="/images/logo.jpeg" alt="Logo" />
       <ul class="nav-links">
+        <!-- Sidebar links -->
         <li>
-          <a href="/landlord">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-dashboard"
-                aria-hidden="true"
-                style="color: #c68417; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Home
-          </a>
+          <a href="/landlord"
+            ><i
+              class="fa fa-dashboard"
+              aria-hidden="true"
+              style="color: #c68417; width: 30px; font-size: x-large"
+            ></i>
+            Home</a
+          >
         </li>
         <li>
-          <a href="/landlord/add_hostel">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-plus-square"
-                aria-hidden="true"
-                style="color: #0da2f1; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Add Hostel
-          </a>
+          <a href="/landlord/add_hostel"
+            ><i
+              class="fa fa-plus-square"
+              aria-hidden="true"
+              style="color: #0da2f1; width: 30px; font-size: x-large"
+            ></i>
+            Add Hostel</a
+          >
         </li>
         <li>
-          <a href="/landlord/delete_hostel">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-trash-o"
-                aria-hidden="true"
-                style="color: #eb0c0c; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Delete Hostel
-          </a>
+          <a href="/landlord/delete_hostel"
+            ><i
+              class="fa fa-trash-o"
+              aria-hidden="true"
+              style="color: #eb0c0c; width: 30px; font-size: x-large"
+            ></i>
+            Delete Hostel</a
+          >
         </li>
         <li>
-          <a href="/landlord/confirm_booking_landlord">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-check-square"
-                aria-hidden="true"
-                style="color: #048e04; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Approve Booking
-          </a>
+          <a href="/landlord/confirm_booking_landlord"
+            ><i
+              class="fa fa-check-square"
+              aria-hidden="true"
+              style="color: #048e04; width: 30px; font-size: x-large"
+            ></i>
+            Approve Booking</a
+          >
         </li>
         <li>
-          <a href="/landlord/booking_history">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-history"
-                aria-hidden="true"
-                style="color: burlywood; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Bookings History
-          </a>
-        </li>
-
-        <li>
-          <a href="/landlord/agent-landlord">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-address-card"
-                aria-hidden="true"
-                style="color: #07f9f5; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            House Agents
-          </a>
+          <a href="/landlord/booking_history"
+            ><i
+              class="fa fa-history"
+              aria-hidden="true"
+              style="color: burlywood; width: 30px; font-size: x-large"
+            ></i>
+            Bookings History</a
+          >
         </li>
         <li>
-          <a href="/landlord/landlord_profile">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-user"
-                aria-hidden="true"
-                style="color: gold; width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            My Profile
-          </a>
+          <a href="/landlord/agent-landlord"
+            ><i
+              class="fa fa-address-card"
+              aria-hidden="true"
+              style="color: #07f9f5; width: 30px; font-size: x-large"
+            ></i>
+            House Agents</a
+          >
         </li>
         <li>
-          <a href="/logout">
-            <div
-              class="icon"
-              style="display: inline-block; vertical-align: middle"
-            >
-              <i
-                class="fa fa-sign-out"
-                aria-hidden="true"
-                style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
-              ></i>
-            </div>
-            Sign-Out
-          </a>
+          <a href="/landlord/landlord_profile"
+            ><i
+              class="fa fa-user"
+              aria-hidden="true"
+              style="color: gold; width: 30px; font-size: x-large"
+            ></i>
+            My Profile</a
+          >
+        </li>
+        <li>
+          <a href="/logout"
+            ><i
+              class="fa fa-sign-out"
+              aria-hidden="true"
+              style="color: rgb(255, 0, 93); width: 30px; font-size: x-large"
+            ></i>
+            Sign-Out</a
+          >
         </li>
       </ul>
     </div>
@@ -352,6 +334,11 @@
             name="fname"
             value="<%= profile ? profile.fname : '' %>"
           />
+          <% if (errors.find(e => e.param === 'fname')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'fname').msg %>
+          </div>
+          <% } %>
         </div>
         <div>
           <label for="lname">Last Name</label>
@@ -361,6 +348,11 @@
             name="lname"
             value="<%= profile ? profile.lname : '' %>"
           />
+          <% if (errors.find(e => e.param === 'lname')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'lname').msg %>
+          </div>
+          <% } %>
         </div>
         <div>
           <label for="phone">Phone</label>
@@ -370,32 +362,104 @@
             name="phone"
             value="<%= profile ? profile.phone : '' %>"
           />
+          <% if (errors.find(e => e.param === 'phone')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'phone').msg %>
+          </div>
+          <% } %>
+        </div>
+        <button type="submit">Update Profile</button>
+      </form>
+
+      <!-- Form for changing password -->
+      <h2 class="page-title" style="color: black">Update Password</h2>
+
+      <form
+        id="passwordForm"
+        action="/landlord/change_password"
+        method="POST"
+        class="profile-form"
+      >
+        <!-- Current Password Input -->
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input
+            type="password"
+            id="currentPassword"
+            name="currentPassword"
+            class="form-control"
+            required
+          />
+          <% if (errors.find(e => e.param === 'currentPassword')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'currentPassword').msg %>
+          </div>
+          <% } %>
         </div>
 
-        <button type="submit">Update Profile</button>
+        <!-- New Password Input -->
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            class="form-control"
+            required
+          />
+          <% if (errors.find(e => e.param === 'newPassword')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'newPassword').msg %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Confirm New Password Input -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            class="form-control"
+            required
+          />
+          <% if (errors.find(e => e.param === 'confirmPassword')) { %>
+          <div class="error-message">
+            <%= errors.find(e => e.param === 'confirmPassword').msg %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Change Password</button>
       </form>
     </div>
 
     <script>
-      const sidebar = document.getElementById("sidebar");
-      const menuIcon = document.getElementById("menu-icon");
-
-      menuIcon.addEventListener("click", () => {
-        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+      $(document).ready(function () {
+        $("#menu-icon").click(function () {
+          $("#sidebar").toggleClass("open");
+        });
       });
 
-      function handleResize() {
-        if (window.innerWidth > 768) {
-          sidebar.style.left = "0";
-          menuIcon.style.display = "none";
-        } else {
-          sidebar.style.left = "-20vw";
-          menuIcon.style.display = "block";
-        }
-      }
+      // Client-side validation for password confirmation
+      $("#passwordForm").on("submit", function (event) {
+        // Clear any existing error messages
+        $(".error-message").remove();
 
-      window.addEventListener("resize", handleResize);
-      handleResize();
+        var password = $("#newPassword").val();
+        var confirmPassword = $("#confirmPassword").val();
+
+        if (password !== confirmPassword) {
+          // Add the error message under the confirm password field
+          $("#confirmPassword").after(
+            '<div class="error-message">Passwords do not match!</div>'
+          );
+
+          event.preventDefault(); // Prevent form submission
+        }
+      });
     </script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -38,7 +39,7 @@
       .sidebar {
         background-color: #00022e;
         color: #fff;
-        padding: 1rem;
+        padding: 0.1rem;
         width: 20vw; /* 20% of viewport width */
         height: 100vh;
         flex: 0 0 auto; /* Do not grow or shrink */
@@ -97,7 +98,7 @@
 
       /* Main content styles */
       .main-content {
-        padding: 2rem;
+        padding: 0.3rem;
         margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
         width: 80vw; /* Adjusted to accommodate the sidebar width */
         min-height: 100vh; /* Ensure the content fills the viewport height */
@@ -216,15 +217,15 @@
       }
 
       .menu-icon i {
-        font-size: 1.5rem;
+        font-size: xx-large;
         color: #02a0f6;
       }
 
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
-          width: 25vw;
-          left: -25vw;
+          width: 60vw;
+          left: -60vw;
         }
 
         .menu-icon {

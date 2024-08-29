@@ -25,7 +25,7 @@
       <!-- Filter Icon -->
       <section class="filter-icon-section">
         <img
-          src="/images/filter-icon.png"
+          src="/images/filter-5.png"
           alt="Filter Icon"
           id="filterIcon"
           class="filter-icon"
@@ -35,7 +35,7 @@
       <!-- Filter Section -->
       <section class="filter-section" id="filterSection" style="display: none">
         <div class="filter-group">
-          <label for="genderFilter">Gender</label>
+          <label for="genderFilter">Accommodation Type</label>
           <select id="genderFilter">
             <option value="">All</option>
             <option value="male">Male</option>
@@ -68,14 +68,12 @@
             placeholder="Enter location"
           />
           <datalist id="locationOptions">
-            <option value="Mandala"></option>
-            <option value="Chichiri"></option>
-            <option value="Chitawira"></option>
-            <option value="Manja"></option>
-            <option value="CI"></option>
-            <!-- Add more predefined locations here -->
+            <% locations.forEach(function(location) { %>
+            <option value="<%= location.location %>"></option>
+            <% }); %>
           </datalist>
         </div>
+
         <button id="applyFiltersButton">Apply Filters</button>
       </section>
 
@@ -186,12 +184,7 @@
         const price = parseFloat(priceRange.value);
         const location = locationFilter.value.toLowerCase().trim();
 
-        console.log(
-          `Filtering by: gender=${gender}, price=${price}, location=${location}`
-        );
-
         cards.forEach((card) => {
-          const hostelName = card.querySelector("h2").textContent.toLowerCase();
           const hostelGender = card
             .querySelector(".card-info p:nth-child(2)")
             .textContent.toLowerCase()
@@ -210,13 +203,6 @@
           const matchesLocation =
             !location || hostelLocation.includes(location);
           const matchesPrice = hostelPrice <= price;
-
-          console.log(
-            `Hostel: ${hostelName}, Gender: ${hostelGender}, Location: ${hostelLocation}, Price: ${hostelPrice}`
-          );
-          console.log(
-            `matchesGender: ${matchesGender}, matchesLocation: ${matchesLocation}, matchesPrice: ${matchesPrice}`
-          );
 
           if (matchesGender && matchesLocation && matchesPrice) {
             card.style.display = "block";

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -81,7 +82,7 @@
       }
 
       .menu-icon i {
-        font-size: 1.5rem;
+        font-size: xx-large;
         color: #02a0f6;
       }
 
@@ -152,6 +153,7 @@
       @media screen and (max-width: 768px) {
         .sidebar {
           left: -20vw; /* Hide sidebar by default on smaller screens */
+          width: 30vw;
         }
 
         .menu-icon {
@@ -330,7 +332,7 @@
 
       // Toggle sidebar visibility when menu icon is clicked
       menuIcon.addEventListener("click", () => {
-        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+        sidebar.style.left = sidebar.style.left === "0px" ? "-30vw" : "0px";
       });
 
       // Handle screen resize
@@ -338,7 +340,7 @@
         if (window.innerWidth > 768) {
           sidebar.style.left = "0"; // Ensure sidebar is visible
         } else {
-          sidebar.style.left = "-20vw"; // Ensure sidebar is hidden
+          sidebar.style.left = "-30vw"; // Ensure sidebar is hidden
         }
       }
 

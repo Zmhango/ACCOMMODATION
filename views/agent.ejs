@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-      rel="stylesheet"
     />
     <style>
       /* Reset default margin and padding */
@@ -29,24 +26,24 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         display: flex;
-        justify-content: center; /* Center content horizontally */
-        align-items: center; /* Center content vertically */
-        min-height: 100vh; /* Ensure full viewport height */
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
       }
 
       /* Sidebar styles */
       .sidebar {
         background-color: #00022e;
         color: #fff;
-        padding: 1rem;
-        width: 20vw; /* 20% of viewport width */
+        padding: 0.1rem;
+        width: 20vw;
         height: 100vh;
-        flex: 0 0 auto; /* Do not grow or shrink */
-        position: fixed; /* Fixed position */
-        top: 0; /* Stick to top */
-        left: 0; /* Initially show the sidebar on larger screens */
-        overflow-y: auto; /* Allow vertical scrolling */
-        transition: left 0.3s ease; /* Add smooth transition */
+        flex: 0 0 auto;
+        position: fixed;
+        top: 0;
+        left: -60vw; /* Initially hidden on smaller screens */
+        overflow-y: auto;
+        transition: left 0.3s ease;
       }
 
       .logo {
@@ -57,7 +54,6 @@
         border-radius: 40px;
       }
 
-      /* Basic styles */
       .nav-links {
         list-style: none;
         margin-bottom: 1rem;
@@ -76,7 +72,6 @@
         font-weight: bold;
       }
 
-      /* Glowing effect */
       .nav-links a::before {
         content: "";
         position: absolute;
@@ -97,11 +92,11 @@
 
       /* Main content styles */
       .main-content {
-        padding: 2rem;
-        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
-        width: 80vw; /* Adjusted to accommodate the sidebar width */
-        min-height: 100vh; /* Ensure the content fills the viewport height */
-        text-align: center; /* Center align content */
+        padding: 0.1rem;
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+        text-align: center;
       }
 
       .search-section {
@@ -120,9 +115,9 @@
 
       /* Style the search button */
       #searchButton {
-        background-color: #178733; /* Green color */
-        color: #fff; /* Text color */
-        padding: 10px 20px; /* Adjust padding as needed */
+        background-color: #178733;
+        color: #fff;
+        padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -131,7 +126,7 @@
       }
 
       #searchButton:hover {
-        background-color: #147026; /* Darker green color on hover */
+        background-color: #147026;
       }
 
       .card-section {
@@ -142,7 +137,7 @@
       }
 
       .card {
-        width: calc(33.333% - 2rem); /* 2rem gap between cards */
+        width: calc(33.333% - 2rem);
         box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
         border-radius: 1rem;
         overflow: hidden;
@@ -216,43 +211,34 @@
       }
 
       .menu-icon i {
-        font-size: 1.5rem;
+        font-size: xx-large;
         color: #02a0f6;
       }
 
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
-          width: 25vw;
-          left: -25vw;
+          left: -20vw;
+          width: 60vw;
         }
 
         .menu-icon {
           display: block;
         }
 
-        .sidebar.show {
-          left: 0;
-        }
-
-        .main-content.shifted {
-          margin-left: 25vw;
-        }
-
         .main-content {
-          margin-left: 0; /* Remove margin to make content full-width */
-          width: 100%; /* Make content full-width */
-          text-align: center; /* Center align content */
+          margin-left: 0;
+          width: 100%;
         }
 
         .card {
-          width: calc(50% - 2rem); /* Adjust card width for smaller screens */
+          width: calc(50% - 2rem);
         }
       }
 
       @media screen and (max-width: 480px) {
         .card {
-          width: calc(100% - 2rem); /* Full width for very small screens */
+          width: calc(100% - 2rem);
         }
       }
     </style>
@@ -327,13 +313,11 @@
     </div>
 
     <!-- Menu icon for mobile -->
-    <label for="menu-toggle" class="menu-icon" id="menu-icon">
+    <div class="menu-icon" id="menu-icon">
       <i class="fa fa-bars"></i>
-    </label>
-    <input type="checkbox" id="menu-toggle" style="display: none" />
+    </div>
 
-    <div class="main-content" id="main-content">
-      <!-- Main content area -->
+    <div class="main-content">
       <form action="" style="background-color: #00022e; border-radius: 8px">
         <h1 style="color: #02a0f6">House Agents</h1>
       </form>
@@ -371,54 +355,27 @@
     </div>
 
     <script>
-      document
-        .getElementById("menu-icon")
-        .addEventListener("click", function () {
-          var sidebar = document.getElementById("sidebar");
-          var mainContent = document.getElementById("main-content");
-          sidebar.classList.toggle("show");
-          mainContent.classList.toggle("shifted");
-        });
+      // Hamburger menu icon functionality
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
 
-      // Sample filter function
-      document
-        .getElementById("searchButton")
-        .addEventListener("click", function () {
-          const searchInput = document
-            .querySelector(".search-input1")
-            .value.toLowerCase();
-          const cards = document.querySelectorAll(".card");
-
-          cards.forEach((card) => {
-            const name = card.querySelector("h2").textContent.toLowerCase();
-            const phone = card.querySelector("p").textContent.toLowerCase();
-
-            if (name.includes(searchInput) || phone.includes(searchInput)) {
-              card.style.display = "";
-            } else {
-              card.style.display = "none";
-            }
-          });
-        });
-
-      // Copy to clipboard functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const copyButtons = document.querySelectorAll(".copy-btn");
-
-        copyButtons.forEach((button) => {
-          button.addEventListener("click", function () {
-            const textToCopy = this.getAttribute("data-copy");
-            navigator.clipboard
-              .writeText(textToCopy)
-              .then(() => {
-                alert(`Copied: ${textToCopy}`);
-              })
-              .catch((err) => {
-                console.error("Failed to copy: ", err);
-              });
-          });
-        });
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-60vw" : "0px";
       });
+
+      // Event listener for sidebar toggle on window resize
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0";
+          menuIcon.style.display = "none";
+        } else {
+          sidebar.style.left = "-60vw";
+          menuIcon.style.display = "block";
+        }
+      }
+
+      window.addEventListener("resize", handleResize);
+      handleResize();
     </script>
   </body>
 </html>

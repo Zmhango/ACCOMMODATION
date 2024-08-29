@@ -70,6 +70,8 @@ header {
 .menu-icon {
   display: none;
   cursor: pointer;
+  color: #0180ff;
+  font-size: xx-large;
 }
 #menu-toggle {
   display: none;
@@ -306,7 +308,7 @@ form button:hover {
 }
 
 .card {
-  width: 18rem;
+  width: 19rem;
   margin-bottom: 1.2rem;
   box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
   border-radius: 0.8rem;
@@ -550,6 +552,9 @@ textarea {
   .reply-form button {
     padding: 10px 15px;
   }
+  .welcome {
+    height: 17rem;
+  }
 }
 
 .replied-queries-page {
@@ -757,9 +762,10 @@ textarea {
 }
 
 .filter-icon {
-  width: 300px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
+  left: 20%;
 }
 
 /* Filter Section Styles */

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -34,7 +35,7 @@
       .sidebar {
         background-color: #00022e;
         color: #fff;
-        padding: 1rem;
+        padding: 0.1rem;
         width: 20vw;
         height: 100vh;
         flex: 0 0 auto;
@@ -100,7 +101,7 @@
       }
 
       .menu-icon i {
-        font-size: 1.5rem;
+        font-size: xx-large;
         color: #02a0f6;
       }
 
@@ -146,7 +147,7 @@
       }
 
       .profile-form {
-        width: 80%;
+        width: 100%;
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
@@ -198,7 +199,8 @@
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
-          left: -20vw;
+          left: -60vw;
+          width: 60vw;
         }
 
         .menu-icon {
@@ -440,7 +442,25 @@
       $(document).ready(function () {
         $("#menu-icon").click(function () {
           $("#sidebar").toggleClass("open");
+          if ($("#sidebar").hasClass("open")) {
+            $("#sidebar").css("left", "0");
+          } else {
+            $("#sidebar").css("left", "-60vw");
+          }
         });
+
+        function handleResize() {
+          if (window.innerWidth > 768) {
+            $("#sidebar").css("left", "0");
+            $("#menu-icon").hide();
+          } else {
+            $("#sidebar").css("left", "-60vw");
+            $("#menu-icon").show();
+          }
+        }
+
+        $(window).resize(handleResize);
+        handleResize();
       });
 
       // Client-side validation for password confirmation

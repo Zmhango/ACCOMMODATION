@@ -174,15 +174,22 @@ app.get("/", async (req, res) => {
       WHERE bookings.status IS NULL
     `);
 
-    // Ensure you're getting the array of objects for hostels
+    const locations = await pool.query(`SELECT DISTINCT location FROM hostels`);
+
     const hostelData =
       Array.isArray(hostels) && hostels.length > 0 ? hostels[0] : [];
+    const locationData =
+      Array.isArray(locations) && locations.length > 0 ? locations[0] : [];
 
     const userIsAuthenticated = req.session.userId ? true : false;
 
-    res.render("index", { hostels: hostelData, userIsAuthenticated });
+    res.render("index", {
+      hostels: hostelData,
+      locations: locationData,
+      userIsAuthenticated,
+    });
   } catch (err) {
-    console.error("Error fetching hostels:", err);
+    console.error("Error fetching data:", err);
     res.status(500).send("Server Error");
   }
 });
@@ -1549,7 +1556,6 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
 
 // Handle POST request for cancelling a booking
 app.post("/cancel_booking/:hostelId", async (req, res) => {

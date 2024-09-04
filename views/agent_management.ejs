@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -28,7 +29,7 @@
       .sidebar {
         background-color: #00022e;
         color: #fff;
-        padding: 1rem;
+        padding: 0.1rem;
         width: 20vw;
         height: 100vh;
         flex: 0 0 auto;
@@ -93,7 +94,7 @@
       }
 
       .menu-icon i {
-        font-size: 1.5rem;
+        font-size: xx-large;
         color: #02a0f6;
       }
 
@@ -120,8 +121,8 @@
       .search-input {
         flex: 1;
         padding: 0.8rem;
-        border-radius: 5px;
-        border: 1px solid #07f9f5;
+        border-radius: 0.9rem;
+        border: 1px solid #0d1010;
       }
 
       .search-button {
@@ -212,6 +213,7 @@
       @media screen and (max-width: 768px) {
         .sidebar {
           left: -20vw;
+          width: 60vw;
         }
 
         .menu-icon {
@@ -436,7 +438,7 @@
       const menuIcon = document.getElementById("menu-icon");
 
       menuIcon.addEventListener("click", () => {
-        sidebar.style.left = sidebar.style.left === "0px" ? "-20vw" : "0px";
+        sidebar.style.left = sidebar.style.left === "0px" ? "-60vw" : "0px";
       });
 
       function handleResize() {
@@ -444,7 +446,7 @@
           sidebar.style.left = "0";
           menuIcon.style.display = "none";
         } else {
-          sidebar.style.left = "-20vw";
+          sidebar.style.left = "-60vw";
           menuIcon.style.display = "block";
         }
       }

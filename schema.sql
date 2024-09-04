@@ -73,7 +73,7 @@ CREATE TABLE bookings (
  
 -- FEEDBACK TABLE --
 
-CREATE TABLE feedbacks (
+CREATE TABLE feedback (
     feedbackId INT AUTO_INCREMENT PRIMARY KEY,
     bookingId INT NOT NULL,
     tenantId INT NOT NULL,

@@ -38,14 +38,14 @@
         background-color: #00022e;
         color: #fff;
         padding: 0.1rem;
-        width: 20vw; /* 20% of viewport width */
+        width: 20vw;
         height: 100vh;
-        flex: 0 0 auto; /* Do not grow or shrink */
-        position: fixed; /* Fixed position */
-        top: 0; /* Stick to top */
-        left: 0; /* Initially show the sidebar on larger screens */
-        overflow-y: auto; /* Allow vertical scrolling */
-        transition: left 0.3s ease; /* Add smooth transition */
+        flex: 0 0 auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: left 0.3s ease;
       }
 
       .logo {
@@ -98,10 +98,10 @@
       .menu-icon {
         position: fixed;
         top: 1rem;
-        right: 1rem; /* Position on the right side */
+        right: 1rem;
         cursor: pointer;
-        z-index: 999; /* Ensure it's above other content */
-        display: none; /* Initially hide on larger screens */
+        z-index: 999;
+        display: none;
       }
 
       .menu-icon i {
@@ -112,107 +112,125 @@
       /* Main content styles */
       .main-content {
         padding: 2rem;
-        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
-        width: 80vw; /* Adjusted to accommodate the sidebar width */
-        min-height: 100vh; /* Ensure the content fills the viewport height */
-        background-color: rgba(
-          255,
-          255,
-          255,
-          0.8
-        ); /* Slightly opaque white background */
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
       }
 
-      /* Centering page title */
-      .page-title {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-        color: #333;
+      .container {
+        margin-top: 2rem;
+      }
+
+      .feedback-title-container {
         text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title {
+        color: #178733;
+        font-size: 2rem;
         font-weight: bold;
       }
 
-      /* Styling for Card Section */
-      .card-section {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin-top: 40px;
+      /* Feedback form styles */
+      .feedback-form {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
       }
 
-      .card {
-        width: 18rem;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
-        border-radius: 0.8rem;
-        overflow: hidden;
-        transition: transform 0.3s ease;
-        background-color: aliceblue;
-      }
-
-      .card:hover {
-        transform: translateY(-0.5rem);
-      }
-
-      .card img {
-        width: 100%;
-        height: 12rem;
-        object-fit: cover;
-      }
-
-      .card-info {
-        padding: 1.2rem;
-      }
-
-      .card-info h2 {
-        margin-bottom: 0.8rem;
-      }
-
-      .card-info p {
-        font-size: 0.875rem;
-        margin-bottom: 0.8rem;
-      }
-      .card-info a {
-        text-decoration: none;
-        color: green;
-        background-color: #f4f4f4;
-        padding: 8px 12px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        float: right;
-        margin-bottom: 2px;
-      }
-
-      .card-info a:hover {
-        background-color: #ddd;
-      }
-
-      .pending-status {
-        text-align: right;
-        font-size: 1.2rem;
+      .feedback-form h2 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
         color: #178733;
       }
-      .cancel-booking-btn {
-        color: #02a0f6;
-      }
-      .cancel-booking-btn:hover {
-        background-color: brown;
-        transition: all 0.6s ease-in-out;
+
+      .feedback-form .form-group {
+        margin-bottom: 1rem;
       }
 
+      .feedback-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      .feedback-form input,
+      .feedback-form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .feedback-form textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .feedback-form button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .feedback-form button:hover {
+        background-color: #0056b3;
+      }
+
+      .star-rating {
+        display: flex;
+        direction: row-reverse;
+        font-size: 2rem;
+        justify-content: center;
+        margin: 1rem 0;
+      }
+
+      .star-rating input {
+        display: none;
+      }
+
+      .star-rating label {
+        cursor: pointer;
+        color: #ddd;
+        transition: color 0.3s ease;
+      }
+
+      .star-rating input:checked ~ label,
+      .star-rating input:checked ~ label ~ label {
+        color: #f39c12;
+      }
+
+      .star-rating label:hover,
+      .star-rating label:hover ~ label {
+        color: #f39c12;
+      }
+
+      /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
-          left: -20vw; /* Hide sidebar by default on smaller screens */
+          left: -60vw;
           width: 60vw;
         }
 
         .menu-icon {
-          display: block; /* Show the hamburger menu icon */
+          display: block;
         }
 
         .main-content {
-          margin-left: 0; /* Remove margin to make content full-width */
-          width: 100%; /* Make content full-width */
+          margin-left: 0;
+          width: 100%;
         }
       }
     </style>
@@ -319,70 +337,71 @@
       <i class="fa fa-bars"></i>
     </div>
     <div class="main-content">
-      <div class="container pending-approval">
-        <h1 class="page-title">Pending Approval</h1>
-        <!-- Display a list of hostels awaiting approval as cards -->
-        <div class="card-section">
-          <% if (Array.isArray(pendingBookings) && pendingBookings.length > 0) {
-          %> <% pendingBookings.forEach((hostel) => { %>
-          <div class="card">
-            <!-- Display hostel image if available -->
-            <% if (hostel.images) { %>
-            <img
-              src="/uploads/<%= hostel.images %>"
-              alt="<%= hostel.name %> Image"
-            />
-            <% } else { %>
-            <!-- Display a placeholder image or handle empty image case -->
-            <img src="/images/placeholder.jpg" alt="Placeholder Image" />
-            <% } %>
-            <div class="card-info">
-              <h2><%= hostel.name %></h2>
-              <p>Location: <%= hostel.location %></p>
-              <p>Price: MK<%= hostel.price %></p>
-              <!-- Add a cancel button with a form -->
-              <form
-                action="/cancel_booking/<%= hostel.hostelId %>"
-                method="post"
-              >
-                <button class="cancel-booking-btn" type="submit">
-                  Cancel Booking
-                </button>
-              </form>
+      <div class="container">
+        <div class="feedback-title-container">
+          <h1 class="page-title">Provide Feedback</h1>
+        </div>
+        <div class="feedback-form">
+          <h2>Feedback Form</h2>
+          <form action="/tenant/feedback" method="POST">
+            <input type="hidden" name="bookingId" value="<%= bookingId %>" />
+            <div class="form-group">
+              <label for="comment">Feedback:</label>
+              <textarea id="comment" name="comment"></textarea>
             </div>
-            <div class="pending-status">Pending...</div>
-          </div>
-          <% }); %> <% } else { %>
-          <p>No pending bookings</p>
-          <% } %>
+            <div class="form-group">
+              <label for="rating">Rating:</label>
+              <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5" />
+                <label for="star5" title="5 stars">
+                  <i class="fa fa-star"></i>
+                </label>
+                <input type="radio" id="star4" name="rating" value="4" />
+                <label for="star4" title="4 stars">
+                  <i class="fa fa-star"></i>
+                </label>
+                <input type="radio" id="star3" name="rating" value="3" />
+                <label for="star3" title="3 stars">
+                  <i class="fa fa-star"></i>
+                </label>
+                <input type="radio" id="star2" name="rating" value="2" />
+                <label for="star2" title="2 stars">
+                  <i class="fa fa-star"></i>
+                </label>
+                <input type="radio" id="star1" name="rating" value="1" />
+                <label for="star1" title="1 star">
+                  <i class="fa fa-star"></i>
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <button type="submit">
+                <i class="fa fa-paper-plane"></i> Submit Feedback
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
     <script>
-      // Get the sidebar and menu icon elements
       const sidebar = document.getElementById("sidebar");
       const menuIcon = document.getElementById("menu-icon");
 
-      // Toggle sidebar visibility when menu icon is clicked
       menuIcon.addEventListener("click", () => {
         sidebar.style.left = sidebar.style.left === "0px" ? "-60vw" : "0px";
       });
 
-      // Handle screen resize
       function handleResize() {
         if (window.innerWidth > 768) {
-          sidebar.style.left = "0"; // Ensure sidebar is visible
-          menuIcon.style.display = "none"; // Hide the menu icon
+          sidebar.style.left = "0";
+          menuIcon.style.display = "none";
         } else {
-          sidebar.style.left = "-60vw"; // Ensure sidebar is hidden
-          menuIcon.style.display = "block"; // Show the menu icon
+          sidebar.style.left = "-60vw";
+          menuIcon.style.display = "block";
         }
       }
 
-      // Attach the resize event listener
       window.addEventListener("resize", handleResize);
-
-      // Initial call to handle the current screen size
       handleResize();
     </script>
   </body>

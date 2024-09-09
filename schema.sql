@@ -79,7 +79,7 @@ CREATE TABLE feedback (
     tenantId INT NOT NULL,
     rating INT,
     comment TEXT,
-    Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_submitted TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (bookingId) REFERENCES bookings(bookingId),
     FOREIGN KEY (tenantId) REFERENCES users(userId)
 );

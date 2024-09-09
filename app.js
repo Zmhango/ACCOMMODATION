@@ -195,8 +195,6 @@ app.get("/", async (req, res) => {
 });
 
 // TENANT ROUTE
-
-// TENANT ROUTE
 app.get("/tenant", async (req, res) => {
   try {
     const hostels = await pool.query(`
@@ -215,6 +213,42 @@ app.get("/tenant", async (req, res) => {
     res.render("tenant", { hostels: hostelData, userIsAuthenticated });
   } catch (err) {
     console.error("Error fetching hostels:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// TENANT ROUTE
+
+app.get("/tenant/landlord_feedback/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const feedback = await pool.query(
+      `
+      SELECT f.comment, f.rating, u.username, h.name AS hostel_name
+      FROM feedback f
+      INNER JOIN bookings b ON f.bookingId = b.bookingId
+      INNER JOIN hostels h ON b.hostelId = h.hostelId
+      INNER JOIN users u ON f.tenantId = u.userId
+      WHERE h.userId = ?
+      ORDER BY f.date_submitted DESC
+    `,
+      [userId]
+    );
+
+    const landlord = await pool.query(
+      `
+      SELECT username FROM users WHERE userId = ?
+    `,
+      [userId]
+    );
+
+    res.render("tenant_feedback", {
+      feedback: feedback[0],
+      landlord: landlord[0][0],
+    });
+  } catch (err) {
+    console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
@@ -376,15 +410,32 @@ app.get("/landlord", async (req, res) => {
       return res.status(403).send("Unauthorized");
     }
 
-    // Query to fetch hostels for the logged-in landlord that are not booked
-    const query = `
-      SELECT hostels.hostelId, hostels.userId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.email, hostels.phone, hostels.description, hostels.images
+    // Query to fetch hostels for the logged-in landlord
+    const hostelsQuery = `
+      SELECT hostels.hostelId, hostels.name, hostels.location, hostels.price, hostels.availability, hostels.gender, hostels.email, hostels.phone, hostels.description, hostels.images
       FROM hostels
-      LEFT JOIN bookings ON hostels.hostelId = bookings.hostelId AND bookings.status = 'booked'
-      WHERE hostels.userId = ? AND bookings.hostelId IS NULL
+      WHERE hostels.userId = ?
     `;
+    const [hostels] = await pool.query(hostelsQuery, [userId]);
 
-    const [hostels] = await pool.query(query, [userId]);
+    // Query to fetch feedback for the hostels owned by the landlord
+    const feedbackQuery = `
+  SELECT 
+    feedback.feedbackId,
+    feedback.rating,
+    feedback.comment,
+    feedback.date_submitted,
+    hostels.name AS hostelName,
+    users.username AS tenantUsername
+  FROM feedback
+  INNER JOIN bookings ON feedback.bookingId = bookings.bookingId
+  INNER JOIN hostels ON bookings.hostelId = hostels.hostelId
+  INNER JOIN users ON feedback.tenantId = users.userId
+  WHERE hostels.userId = ?
+  ORDER BY feedback.date_submitted DESC
+`;
+
+    const [feedbacks] = await pool.query(feedbackQuery, [userId]);
 
     // Calculate the number of active listings
     const activeListings = hostels.length;
@@ -417,15 +468,43 @@ app.get("/landlord", async (req, res) => {
     const totalBookingsCount =
       totalBookingsCountData[0].totalBookingsCount || 0;
 
-    // Render the My Listings page and pass the hostels data, active listings count, pending bookings count, and total bookings count
+    // Render the My Listings page and pass the hostels data, active listings count, pending bookings count, total bookings count, and feedback data
     res.render("landlord", {
       hostels,
       activeListings,
       pendingBookingsCount,
       totalBookingsCount,
+      feedbacks, // Pass the feedbacks array to the template
     });
   } catch (error) {
     console.error("Error fetching landlord's data:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.post("/delete-feedback/:feedbackId", async (req, res) => {
+  try {
+    const feedbackId = req.params.feedbackId;
+    const userId = req.session.userId; // Make sure the landlord is authenticated
+
+    if (!userId) {
+      return res.status(403).send("Unauthorized");
+    }
+
+    // SQL query to delete the feedback
+    const deleteFeedbackQuery = `
+      DELETE feedback 
+      FROM feedback 
+      INNER JOIN bookings ON feedback.bookingId = bookings.bookingId
+      INNER JOIN hostels ON bookings.hostelId = hostels.hostelId
+      WHERE feedback.feedbackId = ? AND hostels.userId = ? 
+    `;
+    await pool.query(deleteFeedbackQuery, [feedbackId, userId]);
+
+    // Redirect back to the landlord page
+    res.redirect("/landlord");
+  } catch (error) {
+    console.error("Error deleting feedback:", error);
     res.status(500).send("Server Error");
   }
 });
@@ -1557,6 +1636,26 @@ app.post("/confirm_booking/:hostelId", async (req, res) => {
   }
 });
 
+// Handle POST request for cancelling a booking by landlord
+app.post("/landlord/cancel_booking/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userId = req.session.userId; // Landlord's ID
+
+    // Delete the booking from the database where the landlord owns the hostel
+    await pool.query(
+      "DELETE FROM bookings WHERE hostelId = ? AND EXISTS (SELECT 1 FROM hostels WHERE hostels.hostelId = bookings.hostelId AND hostels.userId = ?)",
+      [hostelId, userId]
+    );
+
+    // Redirect to the landlord's Confirm Booking page
+    res.redirect("/landlord/confirm_booking_landlord");
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Handle POST request for cancelling a booking
 app.post("/cancel_booking/:hostelId", async (req, res) => {
   try {
@@ -1604,31 +1703,6 @@ app.get("/booking_form/:hostelId", (req, res) => {
   const hostelId = req.params.hostelId;
   const userId = req.session.userId;
   res.render("booking_form", { hostelId, userId });
-});
-
-app.get("/tenant/pending_approval", async (req, res) => {
-  try {
-    const userId = req.session.userId;
-
-    // Fetch distinct hostels with pending bookings for the specific user
-    const [pendingBookingsData] = await pool.query(
-      `
-      SELECT DISTINCT hostels.hostelId, hostels.name, hostels.location, hostels.price, hostels.images, bookings.status
-      FROM hostels
-      INNER JOIN bookings ON hostels.hostelId = bookings.hostelId
-      WHERE bookings.status = 'pending' AND bookings.userId = ?
-    `,
-      [userId]
-    );
-
-    console.log("Pending Bookings for Tenant:", pendingBookingsData);
-
-    // Render the pending_approval page with the list of pending bookings
-    res.render("pending_approval", { pendingBookings: pendingBookingsData });
-  } catch (error) {
-    console.error("Error fetching pending bookings:", error);
-    res.status(500).send("Server Error");
-  }
 });
 
 app.get("/landlord/confirm_booking_landlord", async (req, res) => {
@@ -1696,6 +1770,67 @@ app.get("/tenant_bookings", async (req, res) => {
     res.render("tenant_bookings", { bookedHostels: bookedHostelsData });
   } catch (error) {
     console.error("Error fetching confirmed bookings:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route to render feedback form
+app.get("/tenant/feedback/:hostelId", async (req, res) => {
+  try {
+    const hostelId = req.params.hostelId;
+    const userId = req.session.userId;
+
+    // Fetch hostel and booking info
+    const [hostelData] = await pool.query(
+      "SELECT * FROM hostels WHERE hostelId = ?",
+      [hostelId]
+    );
+
+    // Check if the user has booked this hostel
+    const [bookingData] = await pool.query(
+      "SELECT bookingId FROM bookings WHERE hostelId = ? AND userId = ?",
+      [hostelId, userId]
+    );
+
+    if (bookingData.length > 0) {
+      res.render("feedback_form", {
+        hostel: hostelData[0],
+        bookingId: bookingData[0].bookingId,
+      });
+    } else {
+      res
+        .status(403)
+        .send("You cannot leave feedback for a hostel you haven't booked.");
+    }
+  } catch (error) {
+    console.error("Error loading feedback form:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route to submit feedback
+app.post("/tenant/feedback", async (req, res) => {
+  try {
+    const { bookingId, rating, comment } = req.body;
+
+    if (!bookingId) {
+      throw new Error("bookingId is missing");
+    }
+
+    // Validate bookingId is a number
+    if (isNaN(bookingId)) {
+      throw new Error("Invalid bookingId");
+    }
+
+    // Insert feedback into the feedback table
+    await pool.query(
+      "INSERT INTO feedback (bookingId, tenantId, rating, comment) VALUES (?, ?, ?, ?)",
+      [bookingId, req.session.userId, rating, comment]
+    );
+
+    res.redirect("/tenant_bookings");
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
     res.status(500).send("Server Error");
   }
 });

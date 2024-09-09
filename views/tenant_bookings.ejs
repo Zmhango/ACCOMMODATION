@@ -38,14 +38,14 @@
         background-color: #00022e;
         color: #fff;
         padding: 0.1rem;
-        width: 20vw; /* 20% of viewport width */
+        width: 20vw;
         height: 100vh;
-        flex: 0 0 auto; /* Do not grow or shrink */
-        position: fixed; /* Fixed position */
-        top: 0; /* Stick to top */
-        left: 0; /* Initially show the sidebar on larger screens */
-        overflow-y: auto; /* Allow vertical scrolling */
-        transition: left 0.3s ease; /* Add smooth transition */
+        flex: 0 0 auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: left 0.3s ease;
       }
 
       .logo {
@@ -98,10 +98,10 @@
       .menu-icon {
         position: fixed;
         top: 1rem;
-        right: 1rem; /* Position on the right side */
+        right: 1rem;
         cursor: pointer;
-        z-index: 999; /* Ensure it's above other content */
-        display: none; /* Initially hide on larger screens */
+        z-index: 999;
+        display: none;
       }
 
       .menu-icon i {
@@ -112,15 +112,10 @@
       /* Main content styles */
       .main-content {
         padding: 2rem;
-        margin-left: 20vw; /* Adjusted to accommodate the sidebar width */
-        width: 80vw; /* Adjusted to accommodate the sidebar width */
-        min-height: 100vh; /* Ensure the content fills the viewport height */
-        background-color: rgba(
-          255,
-          255,
-          255,
-          0.8
-        ); /* Slightly opaque white background */
+        margin-left: 20vw;
+        width: 80vw;
+        min-height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
       }
 
       .container {
@@ -170,20 +165,35 @@
         border-top: 1px solid #ccc;
       }
 
+      .feedback-btn {
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .feedback-btn:hover {
+        background-color: #0056b3;
+      }
+
       /* Media Queries */
       @media screen and (max-width: 768px) {
         .sidebar {
-          left: -20vw; /* Hide sidebar by default on smaller screens */
+          left: -20vw;
           width: 60vw;
         }
 
         .menu-icon {
-          display: block; /* Show the hamburger menu icon */
+          display: block;
         }
 
         .main-content {
-          margin-left: 0; /* Remove margin to make content full-width */
-          width: 100%; /* Make content full-width */
+          margin-left: 0;
+          width: 100%;
         }
       }
     </style>
@@ -295,43 +305,40 @@
           <h1 class="page-title tenant-page-title">Your Bookings</h1>
         </div>
         <!-- Display a list of confirmed hostels as cards -->
-        <form
-          action="/modify_booking"
-          method="post"
-          class="tenant-booking-form"
-        >
-          <div class="card-section tenant-card-section">
-            <% if (Array.isArray(bookedHostels) && bookedHostels.length > 0) {
-            %> <% bookedHostels.forEach((hostel) => { %>
-            <div class="card tenant-card">
-              <!-- Display hostel image if available -->
-              <% if (hostel.images) { %>
-              <img
-                src="/uploads/<%= hostel.images %>"
-                alt="<%= hostel.name %> Image"
-                class="card-image tenant-card-image"
-              />
-              <% } else { %>
-              <!-- Display a placeholder image or handle an empty image case -->
-              <img
-                src="/images/placeholder.jpg"
-                alt="Placeholder Image"
-                class="card-image tenant-card-image"
-              />
-              <% } %>
-              <div class="card-info tenant-card-info">
-                <h2><%= hostel.name %></h2>
-                <p>Location: <%= hostel.location %></p>
-                <p>Price: MK<%= hostel.price %></p>
-                <!-- Add more details as needed -->
-              </div>
-              <div class="booking-status tenant-booking-status">Booked</div>
-            </div>
-            <% }); %> <% } else { %>
-            <p>No confirmed bookings</p>
+        <div class="card-section tenant-card-section">
+          <% if (Array.isArray(bookedHostels) && bookedHostels.length > 0) { %>
+          <% bookedHostels.forEach((hostel) => { %>
+          <div class="card tenant-card">
+            <!-- Display hostel image if available -->
+            <% if (hostel.images) { %>
+            <img
+              src="/uploads/<%= hostel.images %>"
+              alt="<%= hostel.name %> Image"
+              class="card-image tenant-card-image"
+            />
+            <% } else { %>
+            <!-- Display a placeholder image or handle an empty image case -->
+            <img
+              src="/images/placeholder.jpg"
+              alt="Placeholder Image"
+              class="card-image tenant-card-image"
+            />
             <% } %>
+            <div class="card-info tenant-card-info">
+              <h2><%= hostel.name %></h2>
+              <p>Location: <%= hostel.location %></p>
+              <p>Price: MK<%= hostel.price %></p>
+              <!-- Add more details as needed -->
+              <a href="/tenant/feedback/<%= hostel.hostelId %>">
+                <button class="feedback-btn">Give Feedback</button>
+              </a>
+            </div>
+            <div class="booking-status tenant-booking-status">Booked</div>
           </div>
-        </form>
+          <% }); %> <% } else { %>
+          <p>No confirmed bookings</p>
+          <% } %>
+        </div>
       </div>
     </div>
     <script>

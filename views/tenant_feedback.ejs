@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <title>Tenant Feedback</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        display: flex;
+        margin: 0;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        background-color: #00022e;
+        color: #fff;
+        padding: 0.1rem;
+        width: 20vw; /* 20% of viewport width */
+        height: 100vh;
+        flex: 0 0 auto; /* Do not grow or shrink */
+        position: fixed; /* Fixed position */
+        top: 0; /* Stick to top */
+        left: 0; /* Initially show the sidebar on larger screens */
+        overflow-y: auto; /* Allow vertical scrolling */
+        transition: left 0.3s ease; /* Add smooth transition */
+      }
+      .sidebar.active {
+        left: 0;
+      }
+
+      .logo {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+        width: 5rem;
+        height: auto;
+        border-radius: 40px;
+      }
+
+      .nav-links {
+        list-style: none;
+        margin-bottom: 1rem;
+        padding: 0;
+      }
+
+      .nav-links li {
+        display: flex;
+        align-items: center;
+        margin-left: 0;
+      }
+
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #fff;
+        position: relative;
+        font-weight: bold;
+        width: 100%;
+      }
+
+      .nav-links .icon {
+        margin-right: 10px;
+        font-size: x-large;
+      }
+
+      /* Glowing effect */
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: calc(100% - 2rem);
+        height: 2px;
+        bottom: -5px;
+        left: 1rem;
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-links a:hover::before {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      /* Hamburger menu icon */
+      .menu-icon {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        z-index: 999;
+        display: none;
+      }
+
+      .menu-icon i {
+        font-size: xx-large;
+        color: #02a0f6;
+      }
+
+      /* Main content styles */
+      .main-content {
+        margin-left: 20vw;
+        padding: 20px;
+        flex-grow: 1;
+        transition: margin-left 0.3s ease;
+      }
+      .feedback-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #012569;
+        padding: 20px;
+        color: aliceblue;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .feedback-item {
+        border-bottom: 1px solid aliceblue;
+        padding: 10px 0;
+      }
+      .feedback-item:last-child {
+        border-bottom: none;
+      }
+      .hostel-name {
+        font-weight: bold;
+      }
+      .tenant-username {
+        color: aliceblue;
+      }
+      .rating {
+        color: gold;
+      }
+
+      /* Star rating styles */
+      .rating-stars {
+        display: inline-block;
+        font-size: 1.2rem;
+      }
+      .rating-stars i {
+        color: gold;
+      }
+
+      /* Comment section styling */
+      .comment {
+        font-style: italic;
+        color: aliceblue;
+        margin-bottom: 0.5rem;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .menu-icon {
+          display: block;
+        }
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+        .sidebar {
+          left: -100vw;
+          width: 60vw;
+        }
+        .sidebar.active {
+          left: 0;
+        }
+        .main-content.active {
+          margin-left: 60vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger menu icon -->
+    <div class="menu-icon" id="menu-icon">
+      <i class="fa fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <img class="logo" src="/images/logo.jpeg" alt="Logo" />
+      <ul class="nav-links">
+        <li>
+          <a href="/tenant">
+            <div class="icon">
+              <i
+                class="fa fa-dashboard"
+                aria-hidden="true"
+                style="color: #c68417"
+              ></i>
+            </div>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="/tenant/tenant_profile">
+            <div class="icon">
+              <i
+                class="fa fa-user"
+                aria-hidden="true"
+                style="color: olivedrab"
+              ></i>
+            </div>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a href="/tenant/pending_approval">
+            <div class="icon">
+              <i
+                class="fa fa-check-square"
+                aria-hidden="true"
+                style="color: #048e04"
+              ></i>
+            </div>
+            Pending Approval
+          </a>
+        </li>
+        <li>
+          <a href="/tenant_bookings">
+            <div class="icon">
+              <i
+                class="fa fa-history"
+                aria-hidden="true"
+                style="color: burlywood"
+              ></i>
+            </div>
+            Bookings History
+          </a>
+        </li>
+        <li>
+          <a href="/agent">
+            <div class="icon">
+              <i
+                class="fa fa-address-card"
+                aria-hidden="true"
+                style="color: #07f9f5"
+              ></i>
+            </div>
+            House Agents
+          </a>
+        </li>
+        <li>
+          <a href="/logout">
+            <div class="icon">
+              <i
+                class="fa fa-sign-out"
+                aria-hidden="true"
+                style="color: rgb(255, 0, 93)"
+              ></i>
+            </div>
+            Sign-Out
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+      <div class="feedback-container">
+        <h1>Feedback for <%= landlord.username %></h1>
+        <% if (feedback.length > 0) { %> <% feedback.forEach(item => { %>
+        <div class="feedback-item">
+          <p class="hostel-name">Hostel: <%= item.hostel_name %></p>
+          <p class="tenant-username">By: <%= item.username %></p>
+          <p class="rating-stars">
+            Rating: <% for (let i = 1; i <= 5; i++) { %>
+            <i
+              class="fa <%= i <= item.rating ? 'fa-star' : 'fa-star-o' %>"
+              aria-hidden="true"
+            ></i>
+            <% } %>
+          </p>
+          <p class="comment"><%= item.comment %></p>
+        </div>
+        <% }) %> <% } else { %>
+        <p>No feedback available for this landlord.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const menuIcon = document.getElementById("menu-icon");
+
+      menuIcon.addEventListener("click", () => {
+        sidebar.style.left = sidebar.style.left === "0px" ? "-60vw" : "0px";
+      });
+
+      function handleResize() {
+        if (window.innerWidth > 768) {
+          sidebar.style.left = "0";
+          menuIcon.style.display = "none";
+        } else {
+          sidebar.style.left = "-60vw";
+          menuIcon.style.display = "block";
+        }
+      }
+
+      window.addEventListener("resize", handleResize);
+      handleResize();
+    </script>
+  </body>
+</html>

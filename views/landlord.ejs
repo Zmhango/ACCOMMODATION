@@ -8,7 +8,6 @@
     />
     <style>
       /* Include your existing styles here */
-      /* Reset default margin and padding */
       * {
         margin: 0;
         padding: 0;
@@ -16,7 +15,6 @@
         font-family: Arial, sans-serif;
       }
 
-      /* Body styles */
       body {
         font-size: 16px;
         line-height: 1.6;
@@ -29,7 +27,6 @@
         display: flex;
       }
 
-      /* Sidebar styles */
       .sidebar {
         background-color: #00022e;
         color: #fff;
@@ -50,6 +47,12 @@
         width: 5rem;
         height: auto;
         border-radius: 40px;
+      }
+      .logo2 {
+        font-size: 0.3rem;
+        width: 3rem;
+        height: auto;
+        border-radius: 100%;
       }
 
       .nav-links {
@@ -88,7 +91,6 @@
         transform: scaleX(1);
       }
 
-      /* Hamburger menu icon */
       .menu-icon {
         position: fixed;
         top: 1rem;
@@ -103,7 +105,6 @@
         color: #02a0f6;
       }
 
-      /* Main content styles */
       .main-content {
         padding: 0.2rem;
         margin-left: 20vw;
@@ -199,9 +200,6 @@
         background-color: #ddd;
       }
 
-     
-
-      /* Dashboard specific styles */
       .dashboard-header {
         display: flex;
         justify-content: space-between;
@@ -297,6 +295,21 @@
         color: aliceblue;
         text-decoration: none;
       }
+      .delete-button {
+        padding: 8px 16px;
+        background-color: #980c0c;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 5px;
+      }
+
+      .delete-button:hover {
+        background-color: #cc0000;
+      }
 
       .listings .delete-btn:hover {
         background-color: #333;
@@ -317,44 +330,101 @@
       .listings .edit-btn:hover {
         background-color: #333;
       }
-      
 
-      /* CSS for table and image styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      thead {
+        background-color: #00022e;
+        color: aliceblue;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .hostel-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .image-cell {
+        text-align: center;
+      }
+
+      .hostel-image:hover {
+        transform: scale(1.1);
+      }
+ 
+  .feedback-section {
+    background-color: aliceblue;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .feedback-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .feedback-card {
+    background-color: #fff;
+    box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.8rem;
+    padding: 1rem;
+    width: calc(50% - 1rem);
+  }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1rem;
+  }
+
+  .rating {
+    color: gold;
+  }
+
+  .rating .fa-star,
+  .rating .fa-star-o {
+    margin-right: 0.2rem;
+  }
+
+  .comment {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-thead {
-  background-color: #00022e;
-  color: aliceblue;
-}
 
-th, td {
-  padding: 10px;
-  text-align: center;
-}
+  .hostel-info {
+    color: #333;
+  }
 
-.hostel-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-  transition: transform 0.3s ease;
-}
+  
 
-.image-cell {
-  text-align: center;
-}
-
-/* Hover effect for images */
-.hostel-image:hover {
-  transform: scale(1.1); /* Example: Enlarge image on hover */
-}
-
- /* Media Queries */
- @media screen and (max-width: 768px) {
+      @media screen and (max-width: 768px) {
         .sidebar {
           left: -20vw;
           width: 60vw;
@@ -373,13 +443,16 @@ th, td {
           width: calc(50% - 1rem);
         }
         .overview .card {
-        flex: 1;
-        text-align: center;
-        padding: 0.2rem;
-        background-color: aliceblue;
-        color: black;
-        margin-right: 0.1rem;
-      }
+          flex: 1;
+          text-align: center;
+          padding: 0.2rem;
+          background-color: aliceblue;
+          color: black;
+          margin-right: 0.1rem;
+        }
+        .feedback-card {
+      width: calc(100% - 1rem);
+    }
       }
     </style>
   </head>
@@ -403,7 +476,7 @@ th, td {
             Home
           </a>
         </li>
-        
+
         <li>
           <a href="/landlord/add_hostel">
             <div
@@ -464,7 +537,7 @@ th, td {
             Bookings History
           </a>
         </li>
-        
+
         <li>
           <a href="/landlord/agent-landlord">
             <div
@@ -537,7 +610,7 @@ th, td {
         <p><%= totalBookingsCount %></p>
       </div>
     </div>
-    
+
     <div class="listings">
       <h2 style="color: black">My Listings</h2>
       <table>
@@ -574,10 +647,48 @@ th, td {
           <% }); %>
         </tbody>
       </table>
-      
-      
     </div>
-  </div>
+    <section class="feedback-section">
+      <h2>Feedback from Tenants</h2>
+      <% if (feedbacks.length > 0) { %>
+        <div class="feedback-cards">
+          <% feedbacks.forEach(feedback => { %>
+            <div class="feedback-card">
+              <div class="feedback-header">
+                <div class="user-avatar">
+                  <img class="logo2" src="/images/feedback.jpg" alt="Avatar">
+                </div>
+                <div class="rating">
+                  <% for (let i = 0; i < 5; i++) { %>
+                    <% if (i < feedback.rating) { %>
+                      <i class="fa fa-star"></i>
+                    <% } else { %>
+                      <i class="fa fa-star-o"></i>
+                    <% } %>
+                  <% } %>
+                </div>
+              </div>
+              <div class="comment">
+                <p>"<%= feedback.comment %>"</p>
+              </div>
+              <div class="hostel-info">
+                <p><strong>Hostel:</strong> <%= feedback.hostelName %></p>
+                <p><strong>Tenant:</strong> <%= feedback.tenantUsername %></p>
+                <p><strong>Date Submitted:</strong> <%= feedback.date_submitted.toLocaleString() %></p>
+              </div>
+              <div class="delete-feedback">
+                <form action="/delete-feedback/<%= feedback.feedbackId %>" method="POST">
+                  <button type="submit" class="delete-button">Delete</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p>No feedback available yet.</p>
+      <% } %>
+    </section>
+    
   <script>
     const sidebar = document.getElementById("sidebar");
     const menuIcon = document.getElementById("menu-icon");
